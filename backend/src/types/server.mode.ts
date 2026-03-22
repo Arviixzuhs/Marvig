@@ -1,0 +1,4 @@
+export enum ServerMode {
+  PRODUCTION = 'PRODUCTION',
+  DEVELOPMENT = 'DEVELOPMENT',
+}
