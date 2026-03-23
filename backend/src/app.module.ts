@@ -11,6 +11,7 @@ import { AppController } from '@/app.controller'
 import { AuthMiddleware } from '@/middlewares/auth.middleware'
 import { EmployeeModule } from '@/modules/employee/employee.module'
 import { ApartamentModule } from '@/modules/apartament/apartament.module'
+import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
@@ -22,6 +23,7 @@ config()
     PrismaModule,
     EmployeeModule,
     ApartamentModule,
+    ReservationModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -37,6 +39,7 @@ config()
       debug: process.env['SERVER_MODE'] === 'DEVELOPMENT',
       playground: process.env['SERVER_MODE'] === 'DEVELOPMENT',
       csrfPrevention: false,
+      context: ({ req, res }) => ({ req, res, user: req.user }),
     }),
   ],
   controllers: [AppController],
