@@ -15,7 +15,7 @@ export class UserResolver {
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
-  ) { }
+  ) {}
 
   @Mutation(() => UserModel, { name: 'createUser' })
   createUser(@Args('data') data: UserDto): Promise<UserModel> {
@@ -33,11 +33,9 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean, { name: 'deleteUser' })
-  async deleteUser(
-    @Args('id', { type: () => Int }) id: number
-  ): Promise<boolean> {
-    await this.deleteUserUseCase.execute(id);
-    return true;
+  async deleteUser(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
+    await this.deleteUserUseCase.execute(id)
+    return true
   }
 
   @Query(() => UserModel, { name: 'updateUser' })

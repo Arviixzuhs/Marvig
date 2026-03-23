@@ -36,7 +36,8 @@ config()
     }),
   ],
   controllers: [AppController],
-  providers: [AppResolver,
+  providers: [
+    AppResolver,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
@@ -45,9 +46,6 @@ config()
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .exclude('auth/login', 'auth/register', '/api')
-      .forRoutes('*');
+    consumer.apply(AuthMiddleware).exclude('auth/login', 'auth/register', '/api').forRoutes('*')
   }
 }

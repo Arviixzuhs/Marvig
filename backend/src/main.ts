@@ -16,15 +16,15 @@ async function bootstrap() {
     credentials: true,
   })
 
-    const config = new DocumentBuilder()
-      .setTitle('Swagger')
-      .setDescription('Marvig API')
-      .addBearerAuth()
-      .setVersion('1.0')
-      .build()
+  const config = new DocumentBuilder()
+    .setTitle('Swagger')
+    .setDescription('Marvig API')
+    .addBearerAuth()
+    .setVersion('1.0')
+    .build()
 
-    const document = SwaggerModule.createDocument(app, config)
-    SwaggerModule.setup('api', app, document)
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('api', app, document)
 
   app.use(cookieParser())
   app.useGlobalPipes(ValidationPipe)
