@@ -10,6 +10,7 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { AppController } from '@/app.controller'
 import { AuthMiddleware } from '@/middlewares/auth.middleware'
 import { EmployeeModule } from '@/modules/employee/employee.module'
+import { ApartamentModule } from '@/modules/apartament/apartament.module'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
@@ -20,6 +21,7 @@ config()
     AuthModule,
     PrismaModule,
     EmployeeModule,
+    ApartamentModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
