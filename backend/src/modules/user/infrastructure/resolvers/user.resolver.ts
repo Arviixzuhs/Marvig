@@ -38,8 +38,11 @@ export class UserResolver {
     return true
   }
 
-  @Query(() => UserModel, { name: 'updateUser' })
-  updateUser(@Args('id') id: number, @Args('data') data: UserDto): Promise<UserModel> {
+  @Mutation(() => UserModel, { name: 'updateUser' })
+  updateUser(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('data') data: UserDto,
+  ): Promise<UserModel> {
     return this.updateUserUseCase.execute(id, data)
   }
 }
