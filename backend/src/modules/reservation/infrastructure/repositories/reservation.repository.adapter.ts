@@ -6,7 +6,7 @@ import { ReservationRepositoryPort } from '@/modules/reservation/domain/reposito
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   async createReservation(data: ReservationDto, userId: number): Promise<ReservationModel> {
     return await this.prisma.reservation.create({
@@ -28,27 +28,28 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
 
   async existsReservationById(id: number): Promise<boolean> {
     const reservation = await this.prisma.reservation.findFirst({
-      where: { id },
+      where: { id, isDeleted: false },
     })
     return !!reservation
   }
 
   async findReservationById(id: number): Promise<ReservationModel> {
     const reservation = await this.prisma.reservation.findFirst({
-      where: { id },
+      where: { id, isDeleted: false },
     })
     return reservation
   }
 
   async findReservations(): Promise<ReservationModel[]> {
     return await this.prisma.reservation.findMany({
+      where: { isDeleted: false },
       include: { apartament: true, user: true },
     })
   }
 
   async updateReservation(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel> {
     return await this.prisma.reservation.update({
-      where: { id },
+      where: { id, isDeleted: false },
       data: {
         ...newData,
         startDate: newData.startDate ? new Date(newData.startDate) : undefined,
@@ -59,14 +60,18 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
   }
 
   async deleteReservation(id: number): Promise<void> {
-    await this.prisma.reservation.delete({
+    await this.prisma.reservation.update({
       where: { id },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date()
+      }
     })
   }
 
   async updateStatus(id: number, status: any): Promise<ReservationModel> {
     return await this.prisma.reservation.update({
-      where: { id },
+      where: { id, isDeleted: false },
       data: { status },
       include: { apartament: true, user: true },
     })
@@ -76,6 +81,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     const overlappingReservations = await this.prisma.reservation.count({
       where: {
         apartamentId,
+        isDeleted: false,
         status: { in: ['CONFIRMED', 'PENDING'] },
         OR: [
           {

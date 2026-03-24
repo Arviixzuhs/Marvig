@@ -6,7 +6,7 @@ import { ApartamentRepositoryPort } from '@/modules/apartament/domain/repositori
 
 @Injectable()
 export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   async createApartament(data: ApartmentDto): Promise<ApartamentModel> {
     return await this.prisma.apartament.create({
@@ -18,14 +18,24 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
 
   async findApartaments(): Promise<ApartamentModel[]> {
     return await this.prisma.apartament.findMany({
-      include: { images: true },
+      where: {
+        isDeleted: false,
+      },
+      include: {
+        images: true
+      },
     })
   }
 
   async findApartament(apartamentId: number): Promise<ApartamentModel | null> {
     return await this.prisma.apartament.findUnique({
-      where: { id: apartamentId },
-      include: { images: true },
+      where: {
+        id: apartamentId,
+        isDeleted: false
+      },
+      include: {
+        images: true
+      },
     })
   }
 
@@ -34,17 +44,23 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
     newData: Partial<ApartmentDto>,
   ): Promise<ApartamentModel> {
     return await this.prisma.apartament.update({
-      where: { id: apartamentId },
+      where: { id: apartamentId, isDeleted: false },
       data: {
         ...newData,
       },
-      include: { images: true },
+      include: {
+        images: true
+      },
     })
   }
 
   async deleteApartament(apartamentId: number): Promise<void> {
-    await this.prisma.apartament.delete({
+    await this.prisma.apartament.update({
       where: { id: apartamentId },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      }
     })
   }
 
@@ -52,13 +68,16 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
     return await this.prisma.apartament.findMany({
       where: {
         status: 'AVAILABLE',
+        isDeleted: false,
         reservations: {
           none: {
             OR: [{ startDate: { lte: endDate }, endDate: { gte: startDate } }],
           },
         },
       },
-      include: { images: true },
+      include: {
+        images: true
+      },
     })
   }
 
@@ -76,7 +95,9 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
     return await this.prisma.apartament.update({
       where: { id: apartamentId },
       data: { status },
-      include: { images: true },
+      include: {
+        images: true
+      },
     })
   }
 }
