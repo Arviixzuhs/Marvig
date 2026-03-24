@@ -1,19 +1,20 @@
-import { join } from 'path'
-import { config } from 'dotenv'
-import { APP_GUARD } from '@nestjs/core'
-import { UserModule } from '@/modules/user/user.module'
-import { AuthModule } from '@/modules/auth/auth.module'
-import { AppResolver } from '@/app.resolver'
-import { ApolloDriver } from '@nestjs/apollo'
-import { PrismaModule } from '@/prisma/prisma.module'
-import { GraphQLModule } from '@nestjs/graphql'
 import { AppController } from '@/app.controller'
+import { AppResolver } from '@/app.resolver'
 import { AuthMiddleware } from '@/middlewares/auth.middleware'
-import { EmployeeModule } from '@/modules/employee/employee.module'
 import { ApartamentModule } from '@/modules/apartament/apartament.module'
+import { AuthModule } from '@/modules/auth/auth.module'
+import { EmployeeModule } from '@/modules/employee/employee.module'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+import { UserModule } from '@/modules/user/user.module'
+import { PrismaModule } from '@/prisma/prisma.module'
+import { ApolloDriver } from '@nestjs/apollo'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
+import { GraphQLModule } from '@nestjs/graphql'
+import { ThrottlerModule } from '@nestjs/throttler'
+import { config } from 'dotenv'
+import { join } from 'path'
+import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard'
 
 config()
 @Module({
@@ -47,12 +48,15 @@ config()
     AppResolver,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: GqlThrottlerGuard,
     },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).exclude('auth/login', 'auth/register', '/api').forRoutes('*')
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('auth/login', 'auth/register', '/api', 'graphql')
+      .forRoutes('*')
   }
 }
