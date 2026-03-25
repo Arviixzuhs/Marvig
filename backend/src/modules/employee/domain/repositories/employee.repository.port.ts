@@ -1,7 +1,7 @@
 import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
+import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
-import { EmployeePage } from '../../application/dto/employee-page.dto'
 
 export interface EmployeeRepositoryPort {
   findEmployee(employeeId: number): Promise<EmployeeModel>
