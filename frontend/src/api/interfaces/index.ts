@@ -10,3 +10,8 @@ export interface IPageResponse<T> {
   currentPage: number
   rowsPerPage: number
 }
+
+export enum ServerMode {
+  DEVELOPMENT = 'DEVELOPMENT',
+  PRODUCTION = 'PRODUCTION',
+}
