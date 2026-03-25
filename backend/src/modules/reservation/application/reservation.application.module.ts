@@ -8,7 +8,7 @@ import { FindReservationsUseCase } from './usecases/find-reservations.usecase'
 import { UpdateReservationUseCase } from './usecases/update-reservation.usecase'
 import { DeleteReservationUseCase } from './usecases/delete-reservation.usecase'
 import { UpdateReservationStatusUseCase } from './usecases/update-reservation-status.usecase'
-import { PrismaReservationRepositoryAdapter } from '../infrastructure/repositories/reservation.repository.adapter'
+import { PrismaReservationRepositoryAdapter } from '@/modules/reservation/infrastructure/repositories/prisma.reservation.repository.adapter'
 
 config()
 @Module({
