@@ -1,6 +1,7 @@
-import { ApartamentModel } from '@/modules/apartament/domain/models/apartament.model'
-import { ApartamentRepositoryPort } from '@/modules/apartament/domain/repositories/apartament.repository.port'
+import { ApartamentPage } from '@/modules/apartament/application/dto/apartament-page.dto'
 import { Inject, Injectable } from '@nestjs/common'
+import { ApartamentFilterDto } from '@/modules/apartament/application/dto/apartament-filter.dto'
+import { ApartamentRepositoryPort } from '@/modules/apartament/domain/repositories/apartament.repository.port'
 
 @Injectable()
 export class FindApartamentsUseCase {
@@ -8,7 +9,7 @@ export class FindApartamentsUseCase {
     @Inject('ApartamentRepository') private readonly apartamentRepository: ApartamentRepositoryPort,
   ) {}
 
-  async execute(): Promise<ApartamentModel[]> {
-    return await this.apartamentRepository.findApartaments()
+  async execute(filters: ApartamentFilterDto): Promise<ApartamentPage> {
+    return await this.apartamentRepository.findApartaments(filters)
   }
 }

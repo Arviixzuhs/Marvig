@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
 import { ApartmentDto } from '@/modules/apartament/application/dto/apartament.dto'
+import { ApartamentPage } from '@/modules/apartament/application/dto/apartament-page.dto'
 import { ApartamentModel } from '@/modules/apartament/domain/models/apartament.model'
+import { ApartamentFilterDto } from '@/modules/apartament/application/dto/apartament-filter.dto'
 import { ApartamentRepositoryPort } from '@/modules/apartament/domain/repositories/apartament.repository.port'
+import { ApartamentSpecificationBuilder } from './prisma.apartament.speficicationBuilder'
 
 @Injectable()
 export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPort {
@@ -16,15 +19,32 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
     })
   }
 
-  async findApartaments(): Promise<ApartamentModel[]> {
-    return await this.prisma.apartament.findMany({
-      where: {
-        isDeleted: false,
-      },
-      include: {
-        images: true,
-      },
-    })
+  async findApartaments(filters: ApartamentFilterDto): Promise<ApartamentPage> {
+    const query = new ApartamentSpecificationBuilder()
+      .withSearch(filters.search)
+      .withNumber(filters.number)
+      .withFloor(filters.floor)
+      .withStatus(filters.status)
+      .withRooms(filters.bedrooms, filters.bathrooms)
+      .withSquareMetersBetween(filters.minSquareMeters, filters.maxSquareMeters)
+      .withIsDeleted(false)
+      .withPagination(filters.page, filters.pageSize)
+      .withOrderBy({ number: 'asc' })
+      .withInclude({ images: true })
+      .build()
+
+    const [apartaments, totalItems] = await this.prisma.$transaction([
+      this.prisma.apartament.findMany(query),
+      this.prisma.apartament.count({ where: query.where }),
+    ])
+
+    return {
+      content: apartaments,
+      totalItems,
+      totalPages: Math.ceil(totalItems / (query.take || 10)),
+      currentPage: filters.page,
+      rowsPerPage: query.take,
+    }
   }
 
   async findApartament(apartamentId: number): Promise<ApartamentModel | null> {
@@ -60,23 +80,6 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
       data: {
         isDeleted: true,
         deletedAt: new Date(),
-      },
-    })
-  }
-
-  async findAvailable(startDate: Date, endDate: Date): Promise<ApartamentModel[]> {
-    return await this.prisma.apartament.findMany({
-      where: {
-        status: 'AVAILABLE',
-        isDeleted: false,
-        reservations: {
-          none: {
-            OR: [{ startDate: { lte: endDate }, endDate: { gte: startDate } }],
-          },
-        },
-      },
-      include: {
-        images: true,
       },
     })
   }

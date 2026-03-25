@@ -8,7 +8,6 @@ import { CreateApartamentUseCase } from './usecases/create-apartament.usecase'
 import { UpdateApartamentUseCase } from './usecases/update-apartament.usecase'
 import { DeleteApartamentUseCase } from './usecases/delete-apartament.usecase'
 import { UpdateApartamentStatusUseCase } from './usecases/update-apartament-status.usecase'
-import { FindAvailableApartamentsUseCase } from './usecases/find-available-apartaments.usecase'
 import { PrismaApartamentRepositoryAdapter } from '@/modules/apartament/infrastructure/repositories/prisma.apartament.repository.adapter'
 
 config()
@@ -27,7 +26,6 @@ config()
     UpdateApartamentUseCase,
     DeleteApartamentUseCase,
     UpdateApartamentStatusUseCase,
-    FindAvailableApartamentsUseCase,
     {
       provide: 'ApartamentRepository',
       useClass: PrismaApartamentRepositoryAdapter,
@@ -40,7 +38,6 @@ config()
     UpdateApartamentUseCase,
     DeleteApartamentUseCase,
     UpdateApartamentStatusUseCase,
-    FindAvailableApartamentsUseCase,
   ],
 })
 export class ApartamentApplicationModule {}
