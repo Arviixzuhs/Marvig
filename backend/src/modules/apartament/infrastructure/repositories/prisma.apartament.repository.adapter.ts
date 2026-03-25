@@ -6,7 +6,7 @@ import { ApartamentRepositoryPort } from '@/modules/apartament/domain/repositori
 
 @Injectable()
 export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   async createApartament(data: ApartmentDto): Promise<ApartamentModel> {
     return await this.prisma.apartament.create({
@@ -22,7 +22,7 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
         isDeleted: false,
       },
       include: {
-        images: true
+        images: true,
       },
     })
   }
@@ -31,10 +31,10 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
     return await this.prisma.apartament.findUnique({
       where: {
         id: apartamentId,
-        isDeleted: false
+        isDeleted: false,
       },
       include: {
-        images: true
+        images: true,
       },
     })
   }
@@ -49,7 +49,7 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
         ...newData,
       },
       include: {
-        images: true
+        images: true,
       },
     })
   }
@@ -60,7 +60,7 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
       data: {
         isDeleted: true,
         deletedAt: new Date(),
-      }
+      },
     })
   }
 
@@ -76,7 +76,7 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
         },
       },
       include: {
-        images: true
+        images: true,
       },
     })
   }
@@ -96,7 +96,7 @@ export class PrismaApartamentRepositoryAdapter implements ApartamentRepositoryPo
       where: { id: apartamentId },
       data: { status },
       include: {
-        images: true
+        images: true,
       },
     })
   }

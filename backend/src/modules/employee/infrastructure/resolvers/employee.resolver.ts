@@ -1,5 +1,7 @@
 import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
+import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
+import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
 import { FindEmployeeUseCase } from '@/modules/employee/application/usecases/find-employee.usecase'
 import { FindEmployeesUseCase } from '@/modules/employee/application/usecases/find-employees.usecase'
 import { CreateEmployeeUseCase } from '@/modules/employee/application/usecases/create-employee.usecase'
@@ -22,9 +24,9 @@ export class EmployeeResolver {
     return this.createEmployeeUseCase.execute(data)
   }
 
-  @Query(() => [EmployeeModel])
-  findEmployees(): Promise<EmployeeModel[]> {
-    return this.findEmployeesUseCase.execute()
+  @Query(() => EmployeePage)
+  findEmployees(@Args('filters') filters: EmployeeFilterDto): Promise<EmployeePage> {
+    return this.findEmployeesUseCase.execute(filters)
   }
 
   @Query(() => EmployeeModel)

@@ -6,7 +6,7 @@ import { ReservationRepositoryPort } from '@/modules/reservation/domain/reposito
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   async createReservation(data: ReservationDto, userId: number): Promise<ReservationModel> {
     return await this.prisma.reservation.create({
@@ -64,8 +64,8 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       where: { id },
       data: {
         isDeleted: true,
-        deletedAt: new Date()
-      }
+        deletedAt: new Date(),
+      },
     })
   }
 
