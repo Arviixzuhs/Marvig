@@ -1,4 +1,5 @@
-import { UserModel } from '@/modules/user/domain/models/user.model'
+import { UserPage } from '@/modules/user/application/dto/user-page.dto'
+import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -6,8 +7,8 @@ import { Inject, Injectable } from '@nestjs/common'
 export class FindUsersUseCase {
   constructor(@Inject('UserRepository') private userRepository: UserRepositoryPort) {}
 
-  async execute(): Promise<UserModel[]> {
-    const users = await this.userRepository.findUsers()
+  async execute(filters: UserFilterDto): Promise<UserPage> {
+    const users = await this.userRepository.findUsers(filters)
     return users
   }
 }

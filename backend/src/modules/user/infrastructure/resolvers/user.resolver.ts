@@ -1,5 +1,7 @@
 import { UserDto } from '@/modules/user/application/dto/user.dto'
+import { UserPage } from '@/modules/user/application/dto/user-page.dto'
 import { UserModel } from '@/modules/user/domain/models/user.model'
+import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { FindUserUseCase } from '@/modules/user/application/usecases/find-user.usecase'
 import { FindUsersUseCase } from '@/modules/user/application/usecases/find-users.usecase'
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user.usecase'
@@ -22,9 +24,9 @@ export class UserResolver {
     return this.createUserUseCase.execute(data)
   }
 
-  @Query(() => [UserModel], { name: 'users' })
-  findUsers(): Promise<UserModel[]> {
-    return this.findUsersUseCase.execute()
+  @Query(() => UserPage, { name: 'users' })
+  findUsers(@Args('filters') filters: UserFilterDto): Promise<UserPage> {
+    return this.findUsersUseCase.execute(filters)
   }
 
   @Query(() => UserModel, { name: 'user' })

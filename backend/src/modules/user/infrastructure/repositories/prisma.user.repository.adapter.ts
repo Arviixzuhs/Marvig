@@ -1,8 +1,11 @@
 import { UserDto } from '@/modules/user/application/dto/user.dto'
+import { UserPage } from '@/modules/user/application/dto/user-page.dto'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
+import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
+import { UserSpecificationBuilder } from './prisma.user.specificationBuilder'
 
 @Injectable()
 export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
@@ -15,8 +18,28 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     return createdUser
   }
 
-  async findUsers(): Promise<UserModel[]> {
-    return await this.prisma.user.findMany()
+  async findUsers(filters: UserFilterDto): Promise<UserPage> {
+    const query = new UserSpecificationBuilder()
+      .withSearch(filters.search)
+      .withName(filters.name)
+      .withEmail(filters.email)
+      .withCreatedAtBetween(filters.fromDate, filters.toDate)
+      .withPagination(filters.page, filters.pageSize)
+      .withOrderBy({ createdAt: 'desc' })
+      .build()
+
+    const [users, totalItems] = await this.prisma.$transaction([
+      this.prisma.user.findMany(query),
+      this.prisma.user.count({ where: query.where }),
+    ])
+
+    return {
+      content: users,
+      totalItems,
+      totalPages: Math.ceil(totalItems / (query.take || 10)),
+      currentPage: filters.page,
+      rowsPerPage: query.take,
+    }
   }
 
   async deleteUser(userId: number): Promise<void> {
