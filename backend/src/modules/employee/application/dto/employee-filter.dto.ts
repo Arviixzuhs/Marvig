@@ -1,8 +1,9 @@
-import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsOptional, IsString, IsInt, Min } from 'class-validator'
+import { Field, InputType } from '@nestjs/graphql'
+import { PaginationFilterDto } from '@/common/dto/pagination-filter.dto'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType()
-export class EmployeeFilterDto {
+export class EmployeeFilterDto extends PaginationFilterDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -27,18 +28,6 @@ export class EmployeeFilterDto {
   @IsOptional()
   @IsString()
   phone?: string
-
-  @Field(() => Int, { nullable: true, defaultValue: 0 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  page?: number
-
-  @Field(() => Int, { nullable: true, defaultValue: 10 })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  pageSize?: number
 
   @Field({ nullable: true })
   @IsOptional()
