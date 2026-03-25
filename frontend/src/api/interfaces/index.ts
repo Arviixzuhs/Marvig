@@ -1,6 +1,6 @@
 export interface IPaginationFilter {
-  page?: number;
-  pageSize?: number;
+  page?: number
+  pageSize?: number
 }
 
 export interface IPageResponse<T> {

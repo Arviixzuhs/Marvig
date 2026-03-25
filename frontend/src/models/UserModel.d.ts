@@ -1,4 +1,4 @@
-import { IPaginationFilter, IPageResponse } from "@/api/interfaces"
+import { IPaginationFilter, IPageResponse } from '@/api/interfaces'
 
 export interface UserModel {
   id: number
@@ -19,9 +19,10 @@ export interface GetUserResponseDto {
   user: UserModel
 }
 
-export interface CreateUserInput extends Pick<UserModel, 'name' | 'lastName' | 'email' | 'password'> { }
+export interface CreateUserInput
+  extends Pick<UserModel, 'name' | 'lastName' | 'email' | 'password'> {}
 
-export interface UpdateUserInput extends Partial<Omit<CreateUserInput, 'password'>> { }
+export interface UpdateUserInput extends Partial<Omit<CreateUserInput, 'password'>> {}
 
 export interface CreateUserResponse {
   createUser: Pick<UserModel, 'id' | 'name' | 'lastName' | 'email'>
