@@ -23,15 +23,14 @@ export const AdminUserPage = () => {
 
   const loadData = async () => {
     try {
-      const response = await userService.getAll()
-      dispatch(
-        setTableData({
-          content: response,
-          totalPages: 1,
-          currentPage: 1,
-          rowsPerPage: 10,
-        }),
-      )
+      const response = await userService.getAll({
+        page: table.currentPage,
+        search: debounceValue,
+        pageSize: table.rowsPerPage,
+      })
+      if (!response) return
+
+      dispatch(setTableData(response))
     } catch (error) {
       console.log(error)
     }

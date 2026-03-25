@@ -8,6 +8,7 @@ import {
   UpdateUserInput,
   DeleteUserResponse,
   UpdateUserResponse,
+  IUserFilter,
 } from '@/models/UserModel'
 import {
   CreateUserInput,
@@ -15,6 +16,7 @@ import {
   GetUserResponseDto,
   GetUsersResponseDto,
 } from '@/models/UserModel'
+import { IPageResponse } from '@/api/interfaces'
 
 export const userService = {
   queries: {
@@ -34,11 +36,14 @@ export const userService = {
     })
     return data?.user || null
   },
-  getAll: async (): Promise<UserModel[]> => {
+  getAll: async (filters: IUserFilter): Promise<IPageResponse<UserModel> | null> => {
     const { data } = await apolloClient.query<GetUsersResponseDto>({
       query: GET_USERS,
+      variables: {
+        filters,
+      },
     })
-    return data?.users || []
+    return data?.users || null
   },
   create: async (payload: CreateUserInput) => {
     const { data } = await apolloClient.mutate<CreateUserResponse>({
@@ -60,7 +65,6 @@ export const userService = {
     return data?.updateUser
   },
   delete: async (id: number): Promise<boolean> => {
-    console.log(id)
     const { data } = await apolloClient.mutate<DeleteUserResponse>({
       mutation: DELETE_USER,
       variables: { id },
