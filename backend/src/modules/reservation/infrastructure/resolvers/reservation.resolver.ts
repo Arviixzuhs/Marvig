@@ -1,10 +1,12 @@
 import { User } from '@/interfaces/user.interface'
 import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
+import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
+import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { FindReservationUseCase } from '@/modules/reservation/application/usecases/find-reservation.usecase'
-import { CreateReservationUseCase } from '@/modules/reservation/application/usecases/create-reservation.usecase'
 import { FindReservationsUseCase } from '@/modules/reservation/application/usecases/find-reservations.usecase'
+import { CreateReservationUseCase } from '@/modules/reservation/application/usecases/create-reservation.usecase'
 import { UpdateReservationUseCase } from '@/modules/reservation/application/usecases/update-reservation.usecase'
 import { DeleteReservationUseCase } from '@/modules/reservation/application/usecases/delete-reservation.usecase'
 import { UpdateReservationStatusUseCase } from '@/modules/reservation/application/usecases/update-reservation-status.usecase'
@@ -36,9 +38,9 @@ export class ReservationResolver {
     return this.findReservationUseCase.execute(id)
   }
 
-  @Query(() => [ReservationModel], { description: 'Obtiene el listado histórico de reservas' })
-  findReservations(): Promise<ReservationModel[]> {
-    return this.findReservationsUseCase.execute()
+  @Query(() => ReservationPage, { description: 'Obtiene el listado histórico de reservas' })
+  findReservations(@Args('filters') filters: ReservationFilterDto): Promise<ReservationPage> {
+    return this.findReservationsUseCase.execute(filters)
   }
 
   @Mutation(() => ReservationModel, { description: 'Actualiza los datos generales de una reserva' })

@@ -1,12 +1,46 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
+import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
+import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
+import { ReservationSpecificationBuilder } from './prisma.reservation.specificationBuilder'
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
   constructor(private prisma: PrismaClient) {}
+
+  async findReservations(filters: ReservationFilterDto): Promise<ReservationPage> {
+    const query = new ReservationSpecificationBuilder()
+      .withUserId(filters.userId)
+      .withApartamentId(filters.apartamentId)
+      .withStatus(filters.status)
+      .withType(filters.type)
+      .withSearch(filters.search)
+      .withStayDates(filters.startDate, filters.endDate)
+      .withTotalPriceBetween(filters.minPrice, filters.maxPrice)
+      .withIsDeleted(false)
+      .withOrderBy({ createdAt: 'desc' })
+      .withPagination(filters.page, filters.pageSize)
+      .withInclude({ user: true, apartament: true })
+      .build()
+
+    const [reservations, reservationsCount] = await this.prisma.$transaction([
+      this.prisma.reservation.findMany(query),
+      this.prisma.reservation.count({
+        where: query.where,
+      }),
+    ])
+
+    return {
+      content: reservations,
+      totalItems: reservationsCount,
+      totalPages: Math.ceil(reservationsCount / (query.take || 10)),
+      currentPage: filters.page,
+      rowsPerPage: query.take,
+    }
+  }
 
   async createReservation(data: ReservationDto, userId: number): Promise<ReservationModel> {
     return await this.prisma.reservation.create({
@@ -38,13 +72,6 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       where: { id, isDeleted: false },
     })
     return reservation
-  }
-
-  async findReservations(): Promise<ReservationModel[]> {
-    return await this.prisma.reservation.findMany({
-      where: { isDeleted: false },
-      include: { apartament: true, user: true },
-    })
   }
 
   async updateReservation(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel> {
