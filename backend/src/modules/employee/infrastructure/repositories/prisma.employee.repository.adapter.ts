@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
 import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
 import { PrismaClient } from 'generated/prisma/client'
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
+import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
 import { EmployeeRepositoryPort } from '@/modules/employee/domain/repositories/employee.repository.port'
 import { EmployeeSpecificationBuilder } from './prisma.employee.specificationBuilder'
@@ -57,7 +57,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
     })
   }
 
-  async updateEmployee(userId: number, newData: EmployeeDto): Promise<EmployeeModel> {
+  async updateEmployee(userId: number, newData: UpdateEmployeeDto): Promise<EmployeeModel> {
     const updatedEmployee = await this.prisma.employee.update({
       where: { id: userId, isDeleted: false },
       data: newData,
