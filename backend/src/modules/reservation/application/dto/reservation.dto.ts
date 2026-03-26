@@ -28,9 +28,9 @@ export class ReservationDto {
   startDate: string
 
   @Field(() => Int, { nullable: false })
-  @IsNotEmpty({ message: 'El ID del apartamento es obligatorio' })
-  @IsInt({ message: 'El ID del apartamento debe ser un número entero' })
-  apartamentId: number
+  @IsNotEmpty({ message: 'El ID del apartmento es obligatorio' })
+  @IsInt({ message: 'El ID del apartmento debe ser un número entero' })
+  apartmentId: number
 
   @Field(() => Float, { nullable: false })
   @IsNotEmpty({ message: 'El precio total es obligatorio' })

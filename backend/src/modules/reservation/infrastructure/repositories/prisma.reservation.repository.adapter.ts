@@ -14,7 +14,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
   async findReservations(filters: ReservationFilterDto): Promise<ReservationPage> {
     const query = new ReservationSpecificationBuilder()
       .withUserId(filters.userId)
-      .withApartamentId(filters.apartamentId)
+      .withApartmentId(filters.apartmentId)
       .withStatus(filters.status)
       .withType(filters.type)
       .withSearch(filters.search)
@@ -23,7 +23,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withIsDeleted(false)
       .withOrderBy({ createdAt: 'desc' })
       .withPagination(filters.page, filters.pageSize)
-      .withInclude({ user: true, apartament: true })
+      .withInclude({ user: true, apartment: true })
       .build()
 
     const [reservations, reservationsCount] = await this.prisma.$transaction([
@@ -53,8 +53,8 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         user: {
           connect: { id: userId },
         },
-        apartament: {
-          connect: { id: data.apartamentId },
+        apartment: {
+          connect: { id: data.apartmentId },
         },
       },
     })
@@ -82,7 +82,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         startDate: newData.startDate ? new Date(newData.startDate) : undefined,
         endDate: newData.endDate ? new Date(newData.endDate) : undefined,
       },
-      include: { apartament: true, user: true },
+      include: { apartment: true, user: true },
     })
   }
 
@@ -100,14 +100,14 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return await this.prisma.reservation.update({
       where: { id, isDeleted: false },
       data: { status },
-      include: { apartament: true, user: true },
+      include: { apartment: true, user: true },
     })
   }
 
-  async checkAvailability(apartamentId: number, startDate: Date, endDate: Date): Promise<boolean> {
+  async checkAvailability(apartmentId: number, startDate: Date, endDate: Date): Promise<boolean> {
     const overlappingReservations = await this.prisma.reservation.count({
       where: {
-        apartamentId,
+        apartmentId,
         isDeleted: false,
         status: { in: ['CONFIRMED', 'PENDING'] },
         OR: [

@@ -13,7 +13,7 @@ export class ReservationFilterDto extends PaginationFilterDto {
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
-  apartamentId?: number
+  apartmentId?: number
 
   @Field(() => ReservationStatus, { nullable: true })
   @IsOptional()

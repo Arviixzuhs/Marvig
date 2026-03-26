@@ -5,18 +5,23 @@ import { appConfig } from '@/config'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Users } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Home, Users } from 'lucide-react'
 
 const menuItems = [
   {
     title: 'Dashboard',
     icon: LayoutDashboard,
-    href: '/dashboard',
+    href: '/admin/dashboard',
+  },
+  {
+    title: 'Apartmentos',
+    icon: Home,
+    href: '/admin/apartments',
   },
   {
     title: 'Usuarios',
     icon: Users,
-    href: '/users',
+    href: '/admin/users',
   },
 ]
 
