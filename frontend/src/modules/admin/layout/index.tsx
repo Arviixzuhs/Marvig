@@ -16,7 +16,7 @@ export const AdminLayout = () => {
       <AdminSidebar />
       <div className='flex flex-col h-full w-full'>
         <AdminNavbar />
-        <div className='h-full w-full p-4 pl-20 sm:pl-4 overflow-auto hoverScrollbar'>
+        <div className='h-full w-full p-4 sm:pl-4 overflow-auto hoverScrollbar'>
           <Outlet />
         </div>
       </div>
