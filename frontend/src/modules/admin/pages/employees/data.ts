@@ -22,10 +22,6 @@ export const tableColumns: TableColumnInterface[] = [
     uid: 'address',
   },
   {
-    name: 'Dirección',
-    uid: 'address',
-  },
-  {
     name: 'Acciones',
     uid: 'actions',
   },
