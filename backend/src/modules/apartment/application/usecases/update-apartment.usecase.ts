@@ -7,7 +7,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 export class UpdateApartmentUseCase {
   constructor(
     @Inject('ApartmentRepository') private readonly apartmentRepository: ApartmentRepositoryPort,
-  ) { }
+  ) {}
 
   async execute(id: number, newData: UpdateApartmentDto): Promise<ApartmentModel> {
     const apartment = await this.apartmentRepository.findApartment(id)

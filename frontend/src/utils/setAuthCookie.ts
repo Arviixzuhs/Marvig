@@ -21,7 +21,7 @@ export const clearAuthCookies = () => {
 
 export const redirectToLogin = () => {
   const currentPath = window.location.pathname
-  const targetPath = "/login"
+  const targetPath = '/login'
 
   if (currentPath.endsWith(targetPath)) return
 

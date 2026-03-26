@@ -59,10 +59,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     })
   }
 
-  async updateApartment(
-    apartmentId: number,
-    newData: UpdateApartmentDto,
-  ): Promise<ApartmentModel> {
+  async updateApartment(apartmentId: number, newData: UpdateApartmentDto): Promise<ApartmentModel> {
     return await this.prisma.apartment.update({
       where: { id: apartmentId, isDeleted: false },
       data: {

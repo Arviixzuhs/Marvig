@@ -25,11 +25,11 @@ export class ApartmentDto {
   bathrooms?: number
 
   @Field(() => String, { nullable: true })
-  @Transform(({ value }) => value ? Number(value) : null)
+  @Transform(({ value }) => (value ? Number(value) : null))
   @IsNumber()
   @IsOptional()
   squareMeters?: number
 }
 
 @InputType()
-export class UpdateApartmentDto extends PartialType(ApartmentDto) { }
+export class UpdateApartmentDto extends PartialType(ApartmentDto) {}

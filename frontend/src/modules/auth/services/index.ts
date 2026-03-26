@@ -1,9 +1,6 @@
 import { authApi } from '@/api/axios-client'
 
-import {
-  type IAuthLoginUser,
-  type IAuthRegisterUser,
-} from './interfaces'
+import { type IAuthLoginUser, type IAuthRegisterUser } from './interfaces'
 
 export const authService = {
   login: (data: IAuthLoginUser) => authApi.post('/auth/login', data),
