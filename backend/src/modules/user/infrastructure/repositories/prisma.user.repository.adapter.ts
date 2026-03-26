@@ -1,8 +1,8 @@
-import { UserDto } from '@/modules/user/application/dto/user.dto'
 import { UserPage } from '@/modules/user/application/dto/user-page.dto'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
+import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
 import { UserSpecificationBuilder } from './prisma.user.specificationBuilder'
@@ -48,7 +48,7 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     })
   }
 
-  async updateUser(userId: number, newData: UserDto): Promise<UserModel> {
+  async updateUser(userId: number, newData: UpdateUserDto): Promise<UserModel> {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: newData,
