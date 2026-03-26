@@ -4,7 +4,7 @@ import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
-import { apartmentService } from '@/services/apartments'
+import { apartmentService } from '@/services/apartment'
 import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
 import {
