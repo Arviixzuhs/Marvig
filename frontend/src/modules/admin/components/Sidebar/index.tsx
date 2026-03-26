@@ -5,7 +5,7 @@ import { appConfig } from '@/config'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Home, Users } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Briefcase, Home, Users } from 'lucide-react'
 
 const menuItems = [
   {
@@ -17,6 +17,11 @@ const menuItems = [
     title: 'Apartmentos',
     icon: Home,
     href: '/admin/apartments',
+  },
+  {
+    title: 'Empleados',
+    icon: Briefcase,
+    href: '/admin/employees',
   },
   {
     title: 'Usuarios',
