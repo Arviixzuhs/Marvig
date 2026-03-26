@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
+import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
 import { ApartmentPage } from '@/modules/apartment/application/dto/apartment-page.dto'
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
+import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
 import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ApartmentSpecificationBuilder } from './prisma.apartment.speficicationBuilder'
-import { ApartmentDto, UpdateApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
 
 @Injectable()
 export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort {

@@ -1,8 +1,9 @@
+import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
 import { ApartmentPage } from '@/modules/apartment/application/dto/apartment-page.dto'
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
 import { ApartmentStatus } from 'generated/prisma/enums'
+import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
 import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
-import { ApartmentDto, UpdateApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
 
 export interface ApartmentRepositoryPort {
   updateStatus(apartmentId: number, status: ApartmentStatus): Promise<ApartmentModel>

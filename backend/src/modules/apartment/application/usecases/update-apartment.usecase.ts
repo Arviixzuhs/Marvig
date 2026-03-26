@@ -1,5 +1,5 @@
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
-import { UpdateApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
+import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 

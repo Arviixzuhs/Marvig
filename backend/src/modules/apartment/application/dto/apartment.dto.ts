@@ -1,5 +1,5 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql'
 import { Transform } from 'class-transformer'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 @InputType()
@@ -30,6 +30,3 @@ export class ApartmentDto {
   @IsOptional()
   squareMeters?: number
 }
-
-@InputType()
-export class UpdateApartmentDto extends PartialType(ApartmentDto) {}
