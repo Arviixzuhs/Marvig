@@ -11,7 +11,6 @@ export const RowsPerPage = () => {
   return (
     <Select
       size='sm'
-      color='primary'
       selectedKeys={new Set([String(table.rowsPerPage)])}
       className='w-[70px] sm:w-20 min-w-max text-xs sm:text-md'
       onChange={(e) => dispatch(setRowsPerPage(Number(e.target.value)))}
