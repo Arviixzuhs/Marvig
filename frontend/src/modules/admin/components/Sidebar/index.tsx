@@ -85,24 +85,26 @@ export const AdminSidebar = () => {
           )
         })}
       </nav>
-      <div className='border-t border-gray-300 p-4'>
-        <div className='flex items-center gap-3'>
-          <div className='flex min-h-8 min-w-8 items-center justify-center rounded-full bg-primary text-sidebar-primary-foreground'>
-            <span className='text-sm font-semibold'>{user?.name?.charAt(0)}</span>
-          </div>
-          <div
-            className={cn(
-              'flex-1 overflow-hidden transition-all duration-200',
-              isCollapsed ? 'opacity-0' : 'opacity-100',
-            )}
-          >
-            <p className='truncate text-sm font-medium'>
-              {user?.name} {user?.lastName}
-            </p>
-            <p className='truncate text-xs'>{user?.email}</p>
+      {user && (
+        <div className='border-t border-gray-300 p-4'>
+          <div className='flex items-center gap-3'>
+            <div className='flex min-h-8 min-w-8 items-center justify-center rounded-full bg-primary text-sidebar-primary-foreground'>
+              <span className='text-sm font-semibold'>{user?.name?.charAt(0)}</span>
+            </div>
+            <div
+              className={cn(
+                'flex-1 overflow-hidden transition-all duration-200',
+                isCollapsed ? 'opacity-0' : 'opacity-100',
+              )}
+            >
+              <p className='truncate text-sm font-medium'>
+                {user?.name} {user?.lastName}
+              </p>
+              <p className='truncate text-xs'>{user?.email}</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </aside>
   )
 }
