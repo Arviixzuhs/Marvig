@@ -2,6 +2,7 @@ import { UserDto } from '@/modules/user/application/dto/user.dto'
 import { UserPage } from '@/modules/user/application/dto/user-page.dto'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
+import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
 import { FindUserUseCase } from '@/modules/user/application/usecases/find-user.usecase'
 import { FindUsersUseCase } from '@/modules/user/application/usecases/find-users.usecase'
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user.usecase'
@@ -43,7 +44,7 @@ export class UserResolver {
   @Mutation(() => UserModel, { name: 'updateUser' })
   updateUser(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: UserDto,
+    @Args('data') data: UpdateUserDto,
   ): Promise<UserModel> {
     return this.updateUserUseCase.execute(id, data)
   }
