@@ -1,14 +1,16 @@
+import { GET_USER } from './graphql/getUserQuery'
 import { GET_USERS } from './graphql/getUsersQuery'
 import { CREATE_USER } from './graphql/createUserMutation'
 import { UPDATE_USER } from './graphql/updateUserMutation'
 import { DELETE_USER } from './graphql/deleteUserMutation'
 import { apolloClient } from '@/api/apollo-client'
+import { IPageResponse } from '@/api/interfaces'
 import {
   UserModel,
+  IUserFilter,
   UpdateUserInput,
   DeleteUserResponse,
   UpdateUserResponse,
-  IUserFilter,
 } from '@/models/UserModel'
 import {
   CreateUserInput,
@@ -16,18 +18,11 @@ import {
   GetUserResponseDto,
   GetUsersResponseDto,
 } from '@/models/UserModel'
-import { IPageResponse } from '@/api/interfaces'
 
 export const userService = {
-  queries: {
-    getUsers: GET_USERS,
-    createUser: CREATE_USER,
-    updateUser: UPDATE_USER,
-    deleteUser: DELETE_USER,
-  },
   get: async (id: number): Promise<UserModel | null> => {
     const { data } = await apolloClient.mutate<GetUserResponseDto>({
-      mutation: CREATE_USER,
+      mutation: GET_USER,
       variables: {
         data: {
           id,

@@ -1,7 +1,7 @@
 import { AppController } from '@/app.controller'
 import { AppResolver } from '@/app.resolver'
 import { AuthMiddleware } from '@/middlewares/auth.middleware'
-import { ApartamentModule } from '@/modules/apartament/apartament.module'
+import { ApartmentModule } from '@/modules/apartment/apartment.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { EmployeeModule } from '@/modules/employee/employee.module'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
@@ -23,7 +23,7 @@ config()
     AuthModule,
     PrismaModule,
     EmployeeModule,
-    ApartamentModule,
+    ApartmentModule,
     ReservationModule,
     ThrottlerModule.forRoot({
       throttlers: [

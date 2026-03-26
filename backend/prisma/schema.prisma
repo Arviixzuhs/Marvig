@@ -44,7 +44,7 @@ enum ApartmentStatus {
   MAINTENANCE
 }
 
-model Apartament {
+model Apartment {
   id           Int              @id @default(autoincrement())
   floor        Int
   number       String           @unique @db.VarChar(50)
@@ -64,8 +64,8 @@ model ApartmentImage {
   id           Int        @id @default(autoincrement())
   url          String
   isPrimary    Boolean    @default(false)
-  apartament   Apartament @relation(fields: [apartamentId], references: [id], onDelete: Cascade)
-  apartamentId Int
+  apartment   Apartment @relation(fields: [apartmentId], references: [id], onDelete: Cascade)
+  apartmentId Int
 }
 
 enum ReservationStatus {
@@ -92,8 +92,8 @@ model Reservation {
   user   User @relation(fields: [userId], references: [id])
   userId Int
 
-  apartament   Apartament @relation(fields: [apartamentId], references: [id])
-  apartamentId Int
+  apartment   Apartment @relation(fields: [apartmentId], references: [id])
+  apartmentId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,5 +102,5 @@ model Reservation {
   deletedAt DateTime?
 
   @@index([userId])
-  @@index([apartamentId])
+  @@index([apartmentId])
 }

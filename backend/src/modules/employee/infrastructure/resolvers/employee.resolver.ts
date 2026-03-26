@@ -2,6 +2,7 @@ import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
 import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
+import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 import { FindEmployeeUseCase } from '@/modules/employee/application/usecases/find-employee.usecase'
 import { FindEmployeesUseCase } from '@/modules/employee/application/usecases/find-employees.usecase'
 import { CreateEmployeeUseCase } from '@/modules/employee/application/usecases/create-employee.usecase'
@@ -43,7 +44,7 @@ export class EmployeeResolver {
   @Mutation(() => EmployeeModel)
   updateEmployee(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: EmployeeDto,
+    @Args('data') data: UpdateEmployeeDto,
   ): Promise<EmployeeModel> {
     return this.updateEmployeeUseCase.execute(id, data)
   }

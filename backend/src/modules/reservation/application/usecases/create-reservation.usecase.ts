@@ -19,13 +19,13 @@ export class CreateReservationUseCase {
     }
 
     const isAvailable = await this.reservationRepository.checkAvailability(
-      data.apartamentId,
+      data.apartmentId,
       start,
       end,
     )
 
     if (!isAvailable) {
-      throw new ConflictException('El apartamento no está disponible para las fechas seleccionadas')
+      throw new ConflictException('El apartmento no está disponible para las fechas seleccionadas')
     }
 
     return await this.reservationRepository.createReservation(data, userId)
