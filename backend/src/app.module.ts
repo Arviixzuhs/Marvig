@@ -1,6 +1,7 @@
 import { AppController } from '@/app.controller'
 import { AppResolver } from '@/app.resolver'
 import { AuthMiddleware } from '@/middlewares/auth.middleware'
+import { ServeStaticModule } from '@nestjs/serve-static'
 import { ApartmentModule } from '@/modules/apartment/apartment.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { EmployeeModule } from '@/modules/employee/employee.module'
@@ -14,11 +15,13 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { config } from 'dotenv'
 import { join } from 'path'
+import { FileModule } from './modules/file/file.module'
 import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard'
 
 config()
 @Module({
   imports: [
+    FileModule,
     UserModule,
     AuthModule,
     PrismaModule,
@@ -32,6 +35,25 @@ config()
           limit: 100,
         },
       ],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+      serveStaticOptions: {
+        setHeaders: (res, path) => {
+          const ext = path.split('.').pop()?.toLowerCase()
+          const mimeTypes: Record<string, string> = {
+            jpg: 'image/jpeg',
+            jpeg: 'image/jpeg',
+            png: 'image/png',
+            webp: 'image/webp',
+            gif: 'image/gif',
+          }
+          if (ext && mimeTypes[ext]) {
+            res.setHeader('Content-Type', mimeTypes[ext])
+          }
+        },
+      },
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'graphql/schema.gql'),
@@ -56,7 +78,15 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude('auth/login', 'auth/register', '/api', 'graphql')
+      .exclude(
+        'auth/login',
+        'auth/register',
+        '/api',
+        'graphql',
+        'file/upload',
+        'file/uploads',
+        '/uploads/(.*)',
+      )
       .forRoutes('*')
   }
 }

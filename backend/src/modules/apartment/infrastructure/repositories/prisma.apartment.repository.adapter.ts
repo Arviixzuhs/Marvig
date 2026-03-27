@@ -30,7 +30,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
       .withSquareMetersBetween(filters.minSquareMeters, filters.maxSquareMeters)
       .withIsDeleted(false)
       .withPagination(filters.page, filters.pageSize)
-      .withOrderBy({ number: 'asc' })
+      .withOrderBy({ createdAt: 'desc' })
       .withInclude({ images: true })
       .build()
 
@@ -83,7 +83,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
   }
 
   async existsByNumber(number: string): Promise<boolean> {
-    const apartment = await this.prisma.apartment.findUnique({
+    const apartment = await this.prisma.apartment.findFirst({
       where: {
         number,
       },

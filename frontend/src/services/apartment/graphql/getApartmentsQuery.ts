@@ -7,6 +7,11 @@ export const GET_APARTMENTS = gql`
         id
         floor
         number
+        images {
+          id
+          url
+          isPrimary
+        }
         bedrooms
         bathrooms
         squareMeters
