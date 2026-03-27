@@ -86,18 +86,6 @@ CREATE TABLE "Reservation" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Employee_phone_key" ON "Employee"("phone");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Employee_email_key" ON "Employee"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Employee_address_key" ON "Employee"("address");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Apartment_number_key" ON "Apartment"("number");
-
--- CreateIndex
 CREATE INDEX "Reservation_userId_idx" ON "Reservation"("userId");
 
 -- CreateIndex
