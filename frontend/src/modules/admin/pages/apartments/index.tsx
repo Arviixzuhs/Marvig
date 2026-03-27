@@ -74,9 +74,9 @@ export const AdminApartmentPage = () => {
           await apartmentService.updateImages(newApartment.id, uploadRes.fileUrls)
         }
 
+        resetFormData()
         await loadData()
         toast.success('Apartamento creado correctamente')
-        resetFormData()
       } catch (error) {
         console.error(error)
         toast.error('Error al crear el apartamento')

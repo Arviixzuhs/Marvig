@@ -11,7 +11,7 @@ export const AdminNavbar = () => {
     <Navbar maxWidth='full' className='z-30 h-16 bg-background/70 backdrop-blur-md'>
       <NavbarContent justify='start'>
         <NavbarItem>
-          <h1 className='text-xl font-semibold text-foreground hidden md:block'>
+          <h1 className='text-xl font-semibold text-foreground hidden lg:block'>
             Buenos días, <span className='text-primary'>{user?.name || 'Invitado'}</span>
           </h1>
         </NavbarItem>
