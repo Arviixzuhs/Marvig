@@ -8,7 +8,9 @@ import { CreateApartmentUseCase } from './usecases/create-apartment.usecase'
 import { UpdateApartmentUseCase } from './usecases/update-apartment.usecase'
 import { DeleteApartmentUseCase } from './usecases/delete-apartment.usecase'
 import { UpdateApartmentStatusUseCase } from './usecases/update-apartment-status.usecase'
+import { UpdateApartmentImagesUseCase } from './usecases/update-apartment-images.usecase'
 import { PrismaApartmentRepositoryAdapter } from '@/modules/apartment/infrastructure/repositories/prisma.apartment.repository.adapter'
+import { PrismaApartmentImageRepositoryAdapter } from '@/modules/apartment/infrastructure/repositories/prisma.apartment-image.repository.adapter'
 
 config()
 @Module({
@@ -25,7 +27,12 @@ config()
     CreateApartmentUseCase,
     UpdateApartmentUseCase,
     DeleteApartmentUseCase,
+    UpdateApartmentImagesUseCase,
     UpdateApartmentStatusUseCase,
+    {
+      provide: 'ApartmentImageRepository',
+      useClass: PrismaApartmentImageRepositoryAdapter,
+    },
     {
       provide: 'ApartmentRepository',
       useClass: PrismaApartmentRepositoryAdapter,
@@ -37,6 +44,7 @@ config()
     CreateApartmentUseCase,
     UpdateApartmentUseCase,
     DeleteApartmentUseCase,
+    UpdateApartmentImagesUseCase,
     UpdateApartmentStatusUseCase,
   ],
 })

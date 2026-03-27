@@ -5,6 +5,7 @@ import { GET_APARTMENTS } from './graphql/getApartmentsQuery'
 import { DELETE_APARTMENT } from './graphql/deleteApartmentMutation'
 import { UPDATE_APARTMENT } from './graphql/updateApartmentMutation'
 import { CREATE_APARTMENT } from './graphql/createApartmentMutation'
+import { UPDATE_APARTMENT_IMAGES } from './graphql/updateApartmentImagesMutation'
 import { ApartmentModel, IApartmentFilter } from '@/models/ApartmentModel'
 
 export const apartmentService = {
@@ -25,6 +26,7 @@ export const apartmentService = {
       variables: {
         filters,
       },
+      fetchPolicy: 'network-only',
     })
     return data?.findApartments || null
   },
@@ -36,6 +38,18 @@ export const apartmentService = {
       },
     })
     return data?.createApartment
+  },
+  updateImages: async (id: number, imageUrls: string[]) => {
+    const { data } = await apolloClient.mutate<{ updateApartmentImages: ApartmentModel }>({
+      mutation: UPDATE_APARTMENT_IMAGES,
+      variables: {
+        data: {
+          id,
+          imageUrls,
+        },
+      },
+    })
+    return data?.updateApartmentImages
   },
   update: async (id: number, payload: Partial<ApartmentModel>) => {
     const { data } = await apolloClient.mutate<{ updateApartment: ApartmentModel }>({
