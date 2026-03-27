@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button, cn } from '@heroui/react'
 import { BiSolidDockRight } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Briefcase, Home, Users } from 'lucide-react'
+import { LayoutDashboard, Briefcase, Home, Users, Receipt } from 'lucide-react'
 
 const menuItems = [
   {
@@ -23,6 +23,11 @@ const menuItems = [
     href: '/admin/employees',
   },
   {
+    label: 'Reservas',
+    icon: Receipt,
+    href: '/admin/reservations',
+  },
+  {
     label: 'Usuarios',
     icon: Users,
     href: '/admin/users',
@@ -38,7 +43,7 @@ export function AdminSidebar() {
     <>
       <aside
         className={cn(
-          'rounded-r-2xl absolute z-50 flex h-screen flex-col bg-sidebar transition-all duration-300 sm:relative',
+          'rounded-r-2xl absolute z-50 flex h-screen flex-col bg-sidebar transition-all duration-300 lg:relative',
           isOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full lg:w-[68px] lg:translate-x-0',
         )}
       >
