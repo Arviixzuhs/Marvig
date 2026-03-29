@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ReservationResolver } from '@/modules/reservation/infrastructure/resolvers/reservation.resolver'
+import { ReservationResolver } from '@/modules/reservation/infrastructure/graphql/resolvers/reservation.resolver'
 import { ReservationApplicationModule } from '@/modules/reservation/application/reservation.application.module'
 
 @Module({

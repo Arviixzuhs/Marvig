@@ -1,6 +1,6 @@
 import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
+import { EmployeeType } from '@/modules/employee/infrastructure/graphql/types/employee.type'
 import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
-import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
 import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 import { FindEmployeeUseCase } from '@/modules/employee/application/usecases/find-employee.usecase'
@@ -10,7 +10,7 @@ import { DeleteEmployeeUseCase } from '@/modules/employee/application/usecases/d
 import { UpdateEmployeeUseCase } from '@/modules/employee/application/usecases/update-employee.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
-@Resolver(() => EmployeeModel)
+@Resolver(() => EmployeeType)
 export class EmployeeResolver {
   constructor(
     private readonly findEmployeeUseCase: FindEmployeeUseCase,
@@ -20,8 +20,8 @@ export class EmployeeResolver {
     private readonly createEmployeeUseCase: CreateEmployeeUseCase,
   ) {}
 
-  @Mutation(() => EmployeeModel)
-  createEmployee(@Args('data') data: EmployeeDto): Promise<EmployeeModel> {
+  @Mutation(() => EmployeeType)
+  createEmployee(@Args('data') data: EmployeeDto): Promise<EmployeeType> {
     return this.createEmployeeUseCase.execute(data)
   }
 
@@ -30,8 +30,8 @@ export class EmployeeResolver {
     return this.findEmployeesUseCase.execute(filters)
   }
 
-  @Query(() => EmployeeModel)
-  findEmployeeById(@Args('id', { type: () => Int }) id: number): Promise<EmployeeModel> {
+  @Query(() => EmployeeType)
+  findEmployeeById(@Args('id', { type: () => Int }) id: number): Promise<EmployeeType> {
     return this.findEmployeeUseCase.execute(id)
   }
 
@@ -41,11 +41,11 @@ export class EmployeeResolver {
     return true
   }
 
-  @Mutation(() => EmployeeModel)
+  @Mutation(() => EmployeeType)
   updateEmployee(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateEmployeeDto,
-  ): Promise<EmployeeModel> {
+  ): Promise<EmployeeType> {
     return this.updateEmployeeUseCase.execute(id, data)
   }
 }

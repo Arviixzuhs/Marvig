@@ -1,6 +1,6 @@
 import { UserDto } from '@/modules/user/application/dto/user.dto'
+import { UserType } from '@/modules/user/infrastructure/graphql/types/user.type'
 import { UserPage } from '@/modules/user/application/dto/user-page.dto'
-import { UserModel } from '@/modules/user/domain/models/user.model'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
 import { FindUserUseCase } from '@/modules/user/application/usecases/find-user.usecase'
@@ -10,7 +10,7 @@ import { DeleteUserUseCase } from '@/modules/user/application/usecases/delete-us
 import { UpdateUserUseCase } from '@/modules/user/application/usecases/update-user.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
-@Resolver(() => UserModel)
+@Resolver(() => UserType)
 export class UserResolver {
   constructor(
     private readonly findUserUseCase: FindUserUseCase,
@@ -20,8 +20,8 @@ export class UserResolver {
     private readonly createUserUseCase: CreateUserUseCase,
   ) {}
 
-  @Mutation(() => UserModel, { name: 'createUser' })
-  createUser(@Args('data') data: UserDto): Promise<UserModel> {
+  @Mutation(() => UserType)
+  createUser(@Args('data') data: UserDto): Promise<UserType> {
     return this.createUserUseCase.execute(data)
   }
 
@@ -30,22 +30,22 @@ export class UserResolver {
     return this.findUsersUseCase.execute(filters)
   }
 
-  @Query(() => UserModel, { name: 'user' })
-  findOne(@Args('id') id: number): Promise<UserModel> {
+  @Query(() => UserType, { name: 'user' })
+  findOne(@Args('id') id: number): Promise<UserType> {
     return this.findUserUseCase.execute(id)
   }
 
-  @Mutation(() => Boolean, { name: 'deleteUser' })
+  @Mutation(() => Boolean)
   async deleteUser(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteUserUseCase.execute(id)
     return true
   }
 
-  @Mutation(() => UserModel, { name: 'updateUser' })
+  @Mutation(() => UserType)
   updateUser(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateUserDto,
-  ): Promise<UserModel> {
+  ): Promise<UserType> {
     return this.updateUserUseCase.execute(id, data)
   }
 }

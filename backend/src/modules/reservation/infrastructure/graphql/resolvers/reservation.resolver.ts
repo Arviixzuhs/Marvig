@@ -1,8 +1,8 @@
 import { User } from '@/interfaces/user.interface'
 import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
+import { ReservationType } from '@/modules/reservation/infrastructure/graphql/types/reservation.type'
 import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
-import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { FindReservationUseCase } from '@/modules/reservation/application/usecases/find-reservation.usecase'
 import { FindReservationsUseCase } from '@/modules/reservation/application/usecases/find-reservations.usecase'
@@ -12,7 +12,7 @@ import { DeleteReservationUseCase } from '@/modules/reservation/application/usec
 import { UpdateReservationStatusUseCase } from '@/modules/reservation/application/usecases/update-reservation-status.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
-@Resolver(() => ReservationModel)
+@Resolver(() => ReservationType)
 export class ReservationResolver {
   constructor(
     private readonly findReservationUseCase: FindReservationUseCase,
@@ -23,18 +23,18 @@ export class ReservationResolver {
     private readonly updateReservationStatusUseCase: UpdateReservationStatusUseCase,
   ) {}
 
-  @Mutation(() => ReservationModel, {
+  @Mutation(() => ReservationType, {
     description: 'Crea una nueva reserva validando disponibilidad',
   })
   createReservation(
     @Args('data') data: ReservationDto,
     @CurrentUser() user: User,
-  ): Promise<ReservationModel> {
+  ): Promise<ReservationType> {
     return this.createReservationUseCase.execute(data, user.userId)
   }
 
-  @Query(() => ReservationModel, { description: 'Obtiene los detalles de una reserva' })
-  findReservation(@Args('id', { type: () => Int }) id: number): Promise<ReservationModel> {
+  @Query(() => ReservationType, { description: 'Obtiene los detalles de una reserva' })
+  findReservation(@Args('id', { type: () => Int }) id: number): Promise<ReservationType> {
     return this.findReservationUseCase.execute(id)
   }
 
@@ -43,21 +43,21 @@ export class ReservationResolver {
     return this.findReservationsUseCase.execute(filters)
   }
 
-  @Mutation(() => ReservationModel, { description: 'Actualiza los datos generales de una reserva' })
+  @Mutation(() => ReservationType, { description: 'Actualiza los datos generales de una reserva' })
   updateReservation(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: ReservationDto,
-  ): Promise<ReservationModel> {
+  ): Promise<ReservationType> {
     return this.updateReservationUseCase.execute(id, data)
   }
 
-  @Mutation(() => ReservationModel, {
+  @Mutation(() => ReservationType, {
     description: 'Cambia el estado de la reserva (Confirmar, Cancelar, etc)',
   })
   updateReservationStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('status') status: string,
-  ): Promise<ReservationModel> {
+  ): Promise<ReservationType> {
     return this.updateReservationStatusUseCase.execute(id, status)
   }
 
