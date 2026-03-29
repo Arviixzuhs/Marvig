@@ -10,7 +10,6 @@ export class FindApartmentUseCase {
 
   async execute(id: number): Promise<ApartmentModel> {
     const apartment = await this.apartmentRepository.findApartment(id)
-
     if (!apartment) throw new NotFoundException('Apartment not found')
 
     return apartment

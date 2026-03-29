@@ -25,16 +25,6 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
     return createdExpense
   }
 
-  async existsExpense(expenseId: number): Promise<boolean> {
-    const expense = await this.prisma.expense.findFirst({
-      where: {
-        id: expenseId,
-        isDeleted: false,
-      },
-    })
-    return !!expense
-  }
-
   async findExpenses(filters: ExpenseFilterDto): Promise<ExpensePage> {
     const query = new ExpenseSpecificationBuilder()
       .withSearch(filters.search)
@@ -121,5 +111,15 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
         deletedAt: new Date(),
       },
     })
+  }
+
+  async existsExpenseById(id: number): Promise<boolean> {
+    const expense = await this.prisma.expense.findFirst({
+      where: {
+        id,
+        isDeleted: false,
+      },
+    })
+    return !!expense
   }
 }

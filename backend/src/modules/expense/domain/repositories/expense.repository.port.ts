@@ -8,8 +8,8 @@ export interface ExpenseRepositoryPort {
   findExpense(expenseId: number): Promise<ExpenseModel>
   findExpenses(filters: ExpenseFilterDto): Promise<ExpensePage>
   createExpense(expense: ExpenseDto): Promise<ExpenseModel>
-  existsExpense(expenseId: number): Promise<boolean>
   deleteExpense(expenseId: number): Promise<void>
   updateExpense(expenseId: number, newData: UpdateExpenseDto): Promise<ExpenseModel>
+  existsExpenseById(expenseId: number): Promise<boolean>
   findExpensesByApartment(apartmentId: number): Promise<ExpenseModel[]>
 }

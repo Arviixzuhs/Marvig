@@ -42,6 +42,16 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     }
   }
 
+  async existsById(id: number): Promise<boolean> {
+    const reservation = await this.prisma.reservation.findFirst({
+      where: {
+        id,
+        isDeleted: false,
+      },
+    })
+    return !!reservation
+  }
+
   async createReservation(data: ReservationDto, userId: number): Promise<ReservationModel> {
     return await this.prisma.reservation.create({
       data: {
@@ -60,16 +70,12 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     })
   }
 
-  async existsReservationById(id: number): Promise<boolean> {
-    const reservation = await this.prisma.reservation.findFirst({
-      where: { id, isDeleted: false },
-    })
-    return !!reservation
-  }
-
   async findReservationById(id: number): Promise<ReservationModel> {
     const reservation = await this.prisma.reservation.findFirst({
-      where: { id, isDeleted: false },
+      where: {
+        id,
+        isDeleted: false,
+      },
     })
     return reservation
   }

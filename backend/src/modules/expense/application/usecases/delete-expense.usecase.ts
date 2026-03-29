@@ -9,7 +9,7 @@ export class DeleteExpenseUseCase {
   ) {}
 
   async execute(expenseId: number): Promise<void> {
-    const expense = await this.expenseRepository.existsExpense(expenseId)
+    const expense = await this.expenseRepository.existsExpenseById(expenseId)
     if (!expense) throw new NotFoundException('Expense not found')
 
     await this.expenseRepository.deleteExpense(expenseId)

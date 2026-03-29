@@ -6,6 +6,7 @@ import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-a
 import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
 
 export interface ApartmentRepositoryPort {
+  existsById(id: number): Promise<boolean>
   updateStatus(apartmentId: number, status: ApartmentStatus): Promise<ApartmentModel>
   findApartment(apartmentId: number): Promise<ApartmentModel | null>
   existsByNumber(number: string): Promise<boolean>

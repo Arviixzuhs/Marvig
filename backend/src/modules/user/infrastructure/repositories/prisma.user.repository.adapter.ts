@@ -53,15 +53,20 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
       where: { id: userId },
       data: newData,
     })
-
     return updatedUser
+  }
+
+  async existsById(id: number): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    })
+    return !!user
   }
 
   async findUser(userId: number): Promise<UserModel> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     })
-
     return user
   }
 }

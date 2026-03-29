@@ -5,6 +5,7 @@ import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-f
 import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 
 export interface EmployeeRepositoryPort {
+  existsById(employeeId: number): Promise<boolean>
   findEmployee(employeeId: number): Promise<EmployeeModel>
   findEmployees(filters: EmployeeFilterDto): Promise<EmployeePage>
   createEmployee(employee: EmployeeDto): Promise<EmployeeModel>

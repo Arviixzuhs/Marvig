@@ -88,7 +88,16 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
         number,
       },
     })
+    return !!apartment
+  }
 
+  async existsById(id: number): Promise<boolean> {
+    const apartment = await this.prisma.apartment.findFirst({
+      where: {
+        id,
+        isDeleted: false,
+      },
+    })
     return !!apartment
   }
 

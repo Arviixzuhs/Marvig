@@ -9,5 +9,6 @@ export interface UserRepositoryPort {
   findUsers(filters: UserFilterDto): Promise<UserPage>
   createUser(user: UserDto): Promise<UserModel>
   deleteUser(userId: number): Promise<void>
+  existsById(userId: number): Promise<boolean>
   updateUser(userId: number, newData: UpdateUserDto): Promise<UserModel>
 }
