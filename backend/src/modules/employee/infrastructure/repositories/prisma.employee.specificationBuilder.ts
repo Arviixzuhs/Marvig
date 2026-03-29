@@ -70,7 +70,7 @@ export class EmployeeSpecificationBuilder {
     return this
   }
 
-  withPagination(page: number = 1, pageSize: number = 10) {
+  withPagination(page: number = 0, pageSize: number = 10) {
     this.skip = page * pageSize
     this.take = pageSize
     return this

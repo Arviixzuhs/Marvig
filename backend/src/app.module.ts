@@ -17,6 +17,7 @@ import { config } from 'dotenv'
 import { join } from 'path'
 import { FileModule } from './modules/file/file.module'
 import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard'
+import { ExpenseModule } from './modules/expense/expense.module'
 
 config()
 @Module({
@@ -25,6 +26,7 @@ config()
     UserModule,
     AuthModule,
     PrismaModule,
+    ExpenseModule,
     EmployeeModule,
     ApartmentModule,
     ReservationModule,
