@@ -10,7 +10,7 @@ export class UpdateApartmentStatusUseCase {
   ) {}
 
   async execute(id: number, status: ApartmentStatus): Promise<ApartmentModel> {
-    const apartment = await this.apartmentRepository.findApartment(id)
+    const apartment = await this.apartmentRepository.existsById(id)
     if (!apartment) throw new NotFoundException('Apartment not found')
 
     return await this.apartmentRepository.updateStatus(id, status)

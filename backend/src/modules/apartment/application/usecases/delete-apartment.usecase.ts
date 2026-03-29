@@ -8,8 +8,7 @@ export class DeleteApartmentUseCase {
   ) {}
 
   async execute(id: number): Promise<void> {
-    const apartment = await this.apartmentRepository.findApartment(id)
-
+    const apartment = await this.apartmentRepository.existsById(id)
     if (!apartment) throw new NotFoundException('Apartment not found')
 
     await this.apartmentRepository.deleteApartment(id)

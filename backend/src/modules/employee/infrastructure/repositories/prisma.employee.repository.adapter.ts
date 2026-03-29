@@ -47,9 +47,11 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
     }
   }
 
-  async deleteEmployee(userId: number): Promise<void> {
+  async deleteEmployee(id: number): Promise<void> {
     await this.prisma.employee.update({
-      where: { id: userId },
+      where: {
+        id,
+      },
       data: {
         isDeleted: true,
         deletedAt: new Date(),
@@ -57,17 +59,30 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
     })
   }
 
-  async updateEmployee(userId: number, newData: UpdateEmployeeDto): Promise<EmployeeModel> {
+  async updateEmployee(id: number, newData: UpdateEmployeeDto): Promise<EmployeeModel> {
     const updatedEmployee = await this.prisma.employee.update({
-      where: { id: userId, isDeleted: false },
+      where: { id, isDeleted: false },
       data: newData,
     })
     return updatedEmployee
   }
 
-  async findEmployee(userId: number): Promise<EmployeeModel> {
+  async existsById(id: number): Promise<boolean> {
     const employee = await this.prisma.employee.findUnique({
-      where: { id: userId, isDeleted: false },
+      where: {
+        id,
+        isDeleted: false,
+      },
+    })
+    return !!employee
+  }
+
+  async findEmployee(id: number): Promise<EmployeeModel> {
+    const employee = await this.prisma.employee.findUnique({
+      where: {
+        id,
+        isDeleted: false,
+      },
     })
     return employee
   }

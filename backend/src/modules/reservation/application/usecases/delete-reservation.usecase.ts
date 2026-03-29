@@ -9,7 +9,7 @@ export class DeleteReservationUseCase {
   ) {}
 
   async execute(id: number): Promise<void> {
-    const existsReservation = await this.reservationRepository.existsReservationById(id)
+    const existsReservation = await this.reservationRepository.existsById(id)
     if (!existsReservation) throw new NotFoundException('Reservation not found')
 
     await this.reservationRepository.deleteReservation(id)

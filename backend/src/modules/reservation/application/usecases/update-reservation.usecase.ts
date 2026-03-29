@@ -11,7 +11,7 @@ export class UpdateReservationUseCase {
   ) {}
 
   async execute(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel> {
-    const existsReservation = await this.reservationRepository.existsReservationById(id)
+    const existsReservation = await this.reservationRepository.existsById(id)
     if (!existsReservation) throw new NotFoundException('Reservation not found')
 
     return await this.reservationRepository.updateReservation(id, newData)
