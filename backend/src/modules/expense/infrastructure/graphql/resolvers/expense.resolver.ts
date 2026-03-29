@@ -1,7 +1,6 @@
-import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 import { ExpenseDto } from '@/modules/expense/application/dto/expense.dto'
+import { ExpenseType } from '@/modules/expense/infrastructure/graphql/types/expense.type'
 import { ExpensePage } from '@/modules/expense/application/dto/expense-page.dto'
-import { ExpenseModel } from '@/modules/expense/domain/models/expense.model'
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { UpdateExpenseDto } from '@/modules/expense/application/dto/update-expense.dto'
 import { FindExpenseUseCase } from '@/modules/expense/application/usecases/find-expense.usecase'
@@ -9,8 +8,9 @@ import { FindExpensesUseCase } from '@/modules/expense/application/usecases/find
 import { CreateExpenseUseCase } from '@/modules/expense/application/usecases/create-expense.usecase'
 import { DeleteExpenseUseCase } from '@/modules/expense/application/usecases/delete-expense.usecase'
 import { UpdateExpenseUseCase } from '@/modules/expense/application/usecases/update-expense.usecase'
+import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
-@Resolver(() => ExpenseModel)
+@Resolver(() => ExpenseType)
 export class ExpenseResolver {
   constructor(
     private readonly findExpenseUseCase: FindExpenseUseCase,
@@ -20,8 +20,8 @@ export class ExpenseResolver {
     private readonly createExpenseUseCase: CreateExpenseUseCase,
   ) {}
 
-  @Mutation(() => ExpenseModel)
-  createExpense(@Args('data') data: ExpenseDto): Promise<ExpenseModel> {
+  @Mutation(() => ExpenseType)
+  createExpense(@Args('data') data: ExpenseDto): Promise<ExpenseType> {
     return this.createExpenseUseCase.execute(data)
   }
 
@@ -30,8 +30,8 @@ export class ExpenseResolver {
     return this.findExpensesUseCase.execute(filters)
   }
 
-  @Query(() => ExpenseModel)
-  findExpenseById(@Args('id', { type: () => Int }) id: number): Promise<ExpenseModel> {
+  @Query(() => ExpenseType)
+  findExpenseById(@Args('id', { type: () => Int }) id: number): Promise<ExpenseType> {
     return this.findExpenseUseCase.execute(id)
   }
 
@@ -41,11 +41,11 @@ export class ExpenseResolver {
     return true
   }
 
-  @Mutation(() => ExpenseModel)
+  @Mutation(() => ExpenseType)
   updateExpense(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateExpenseDto,
-  ): Promise<ExpenseModel> {
+  ): Promise<ExpenseType> {
     return this.updateExpenseUseCase.execute(id, data)
   }
 }

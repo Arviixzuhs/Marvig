@@ -1,7 +1,7 @@
 import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
 import { ApartmentPage } from '@/modules/apartment/application/dto/apartment-page.dto'
+import { ApartmentType } from '../types/apartment.type'
 import { ApartmentStatus } from 'generated/prisma/enums'
-import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
 import { ApartmentImageDto } from '@/modules/apartment/application/dto/apartment-image.dto'
 import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
 import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
@@ -14,7 +14,7 @@ import { UpdateApartmentImagesUseCase } from '@/modules/apartment/application/us
 import { UpdateApartmentStatusUseCase } from '@/modules/apartment/application/usecases/update-apartment-status.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
-@Resolver(() => ApartmentModel)
+@Resolver(() => ApartmentType)
 export class ApartmentResolver {
   constructor(
     private readonly findApartmentUseCase: FindApartmentUseCase,
@@ -26,8 +26,8 @@ export class ApartmentResolver {
     private readonly updateApartmentStatusUseCase: UpdateApartmentStatusUseCase,
   ) {}
 
-  @Mutation(() => ApartmentModel)
-  createApartment(@Args('data') data: ApartmentDto): Promise<ApartmentModel> {
+  @Mutation(() => ApartmentType)
+  createApartment(@Args('data') data: ApartmentDto): Promise<ApartmentType> {
     return this.createApartmentUseCase.execute(data)
   }
 
@@ -36,29 +36,29 @@ export class ApartmentResolver {
     return this.findApartmentsUseCase.execute(filters)
   }
 
-  @Query(() => ApartmentModel)
-  findApartmentById(@Args('id', { type: () => Int }) id: number): Promise<ApartmentModel> {
+  @Query(() => ApartmentType)
+  findApartmentById(@Args('id', { type: () => Int }) id: number): Promise<ApartmentType> {
     return this.findApartmentUseCase.execute(id)
   }
 
-  @Mutation(() => ApartmentModel)
+  @Mutation(() => ApartmentType)
   updateApartment(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateApartmentDto,
-  ): Promise<ApartmentModel> {
+  ): Promise<ApartmentType> {
     return this.updateApartmentUseCase.execute(id, data)
   }
 
-  @Mutation(() => ApartmentModel)
+  @Mutation(() => ApartmentType)
   updateApartmentStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('status') status: ApartmentStatus,
-  ): Promise<ApartmentModel> {
+  ): Promise<ApartmentType> {
     return this.updateApartmentStatusUseCase.execute(id, status)
   }
 
-  @Mutation(() => ApartmentModel)
-  updateApartmentImages(@Args('data') data: ApartmentImageDto): Promise<ApartmentModel> {
+  @Mutation(() => ApartmentType)
+  updateApartmentImages(@Args('data') data: ApartmentImageDto): Promise<ApartmentType> {
     return this.updateApartmentImageUseCase.execute(data)
   }
 

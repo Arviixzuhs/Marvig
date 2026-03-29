@@ -1,6 +1,6 @@
 import { PageType } from '@/common/dto/page-response.dto'
 import { ObjectType } from '@nestjs/graphql'
-import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
+import { EmployeeType } from '@/modules/employee/infrastructure/graphql/types/employee.type'
 
 @ObjectType()
-export class EmployeePage extends PageType(EmployeeModel) {}
+export class EmployeePage extends PageType(EmployeeType) {}
