@@ -62,7 +62,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
     ])
 
     return {
-      content: expenses as unknown as ExpenseModel[],
+      content: expenses,
       totalPages: Math.ceil(expensesCount / query.take),
       totalItems: expensesCount,
       currentPage: filters.page,
