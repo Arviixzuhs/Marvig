@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button, cn } from '@heroui/react'
 import { BiSolidDockRight } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Briefcase, Home, Users, Receipt } from 'lucide-react'
+import { LayoutDashboard, Briefcase, Home, Users, Receipt, Wallet } from 'lucide-react'
 
 const menuItems = [
   {
@@ -16,6 +16,11 @@ const menuItems = [
     label: 'Apartmentos',
     icon: Home,
     href: '/admin/apartments',
+  },
+  {
+    label: 'Gastos',
+    icon: Wallet,
+    href: '/admin/expenses',
   },
   {
     label: 'Empleados',
