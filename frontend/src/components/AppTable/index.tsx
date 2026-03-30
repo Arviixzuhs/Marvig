@@ -59,8 +59,11 @@ export const AppTable = ({
         topContentPlacement='outside'
         bottomContentPlacement='outside'
         classNames={{
-          wrapper: 'h-full',
           base: 'h-full',
+          tbody: 'h-full',
+          table: [`${table.data.length === 0 && 'h-full'}`],
+          wrapper: 'h-full',
+          emptyWrapper: 'h-full',
         }}
       >
         <TableHeader columns={table.columns}>
