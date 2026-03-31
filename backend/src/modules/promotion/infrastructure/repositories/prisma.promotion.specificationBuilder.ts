@@ -42,16 +42,16 @@ export class PromotionSpecificationBuilder {
     return this
   }
 
-  withPagination(page: number = 1, rowsPerPage: number = 10) {
-    // Ajuste: Si tu sistema usa base 1 para páginas, restamos 1 para el skip de Prisma
-    const currentPage = Math.max(1, page)
-    this.skip = (currentPage - 1) * rowsPerPage
-    this.take = rowsPerPage
+  withPagination(page: number = 0, pageSize: number = 10) {
+    this.skip = page * pageSize
+    this.take = pageSize
     return this
   }
 
   withOrderBy(orderBy?: Prisma.PromotionOrderByWithRelationInput) {
-    this.orderBy = orderBy || { createdAt: 'desc' }
+    if (orderBy) {
+      this.orderBy = orderBy
+    }
     return this
   }
 
