@@ -23,7 +23,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withIsDeleted(false)
       .withOrderBy({ createdAt: 'desc' })
       .withPagination(filters.page, filters.pageSize)
-      .withInclude({ user: true, apartment: true })
+      .withInclude({ user: true, apartments: true })
       .build()
 
     const [reservations, reservationsCount] = await this.prisma.$transaction([
@@ -63,7 +63,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         user: {
           connect: { id: userId },
         },
-        apartment: {
+        apartments: {
           connect: { id: data.apartmentId },
         },
       },
@@ -88,7 +88,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         startDate: newData.startDate ? new Date(newData.startDate) : undefined,
         endDate: newData.endDate ? new Date(newData.endDate) : undefined,
       },
-      include: { apartment: true, user: true },
+      include: { apartments: true, user: true },
     })
   }
 
@@ -106,14 +106,18 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return await this.prisma.reservation.update({
       where: { id, isDeleted: false },
       data: { status },
-      include: { apartment: true, user: true },
+      include: { apartments: true, user: true },
     })
   }
 
   async checkAvailability(apartmentId: number, startDate: Date, endDate: Date): Promise<boolean> {
     const overlappingReservations = await this.prisma.reservation.count({
       where: {
-        apartmentId,
+        apartments: {
+          some: {
+            id: apartmentId,
+          },
+        },
         isDeleted: false,
         status: { in: ['CONFIRMED', 'PENDING'] },
         OR: [

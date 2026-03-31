@@ -24,7 +24,10 @@ export class ReservationSpecificationBuilder {
 
   withApartmentId(apartmentId?: number) {
     if (apartmentId) {
-      this.where.apartmentId = apartmentId
+      this.where.apartments.some = {
+        id: apartmentId,
+        isDeleted: false,
+      }
     }
     return this
   }
@@ -48,7 +51,6 @@ export class ReservationSpecificationBuilder {
       this.where.OR = [
         { user: { name: { contains: search, mode: 'insensitive' } } },
         { user: { lastName: { contains: search, mode: 'insensitive' } } },
-        { apartment: { number: { contains: search, mode: 'insensitive' } } },
       ]
     }
     return this
