@@ -1,23 +1,24 @@
-import { AppController } from '@/app.controller'
-import { AppResolver } from '@/app.resolver'
-import { AuthMiddleware } from '@/middlewares/auth.middleware'
-import { ServeStaticModule } from '@nestjs/serve-static'
-import { ApartmentModule } from '@/modules/apartment/apartment.module'
+import { join } from 'path'
+import { config } from 'dotenv'
+import { APP_GUARD } from '@nestjs/core'
 import { AuthModule } from '@/modules/auth/auth.module'
-import { EmployeeModule } from '@/modules/employee/employee.module'
-import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { UserModule } from '@/modules/user/user.module'
+import { FileModule } from '@/modules/file/file.module'
+import { AppResolver } from '@/app.resolver'
 import { PrismaModule } from '@/prisma/prisma.module'
 import { ApolloDriver } from '@nestjs/apollo'
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
-import { APP_GUARD } from '@nestjs/core'
+import { AppController } from '@/app.controller'
+import { ExpenseModule } from '@/modules/expense/expense.module'
 import { GraphQLModule } from '@nestjs/graphql'
+import { EmployeeModule } from '@/modules/employee/employee.module'
+import { AuthMiddleware } from '@/middlewares/auth.middleware'
+import { ApartmentModule } from '@/modules/apartment/apartment.module'
 import { ThrottlerModule } from '@nestjs/throttler'
-import { config } from 'dotenv'
-import { join } from 'path'
-import { FileModule } from './modules/file/file.module'
-import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard'
-import { ExpenseModule } from './modules/expense/expense.module'
+import { PromotionModule } from '@/modules/promotion/promotion.module'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { ReservationModule } from '@/modules/reservation/reservation.module'
+import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
 config()
 @Module({
@@ -28,6 +29,7 @@ config()
     PrismaModule,
     ExpenseModule,
     EmployeeModule,
+    PromotionModule,
     ApartmentModule,
     ReservationModule,
     ThrottlerModule.forRoot({
