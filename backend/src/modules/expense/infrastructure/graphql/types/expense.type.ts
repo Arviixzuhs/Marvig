@@ -1,13 +1,7 @@
-import { Decimal } from '@prisma/client/runtime/client'
 import { EmployeeType } from '@/modules/employee/infrastructure/graphql/types/employee.type'
 import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
-import { ExpenseCategory } from 'generated/prisma/enums'
-import { ObjectType, Field, Int, Float, registerEnumType } from '@nestjs/graphql'
-
-registerEnumType(ExpenseCategory, {
-  name: 'ExpenseCategory',
-  description: 'Categorías permitidas para la clasificación de gastos',
-})
+import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql'
 
 @ObjectType()
 export class ExpenseType {
@@ -18,7 +12,7 @@ export class ExpenseType {
   description: string
 
   @Field(() => Float)
-  amount: Decimal
+  amount: number
 
   @Field(() => ExpenseCategory)
   category: ExpenseCategory

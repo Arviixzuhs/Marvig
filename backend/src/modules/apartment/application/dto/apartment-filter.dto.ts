@@ -1,4 +1,4 @@
-import { ApartmentStatus } from 'generated/prisma/client'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { PaginationFilterDto } from '@/common/dto/pagination-filter.dto'
 import { InputType, Field, Int, Float } from '@nestjs/graphql'
 import { IsOptional, IsString, IsInt, Min, IsEnum, IsNumber } from 'class-validator'
@@ -25,10 +25,10 @@ export class ApartmentFilterDto extends PaginationFilterDto {
   @IsInt()
   floor?: number
 
-  @Field(() => ApartmentStatus, { nullable: true })
+  @Field(() => ApartmentStatusEnum, { nullable: true })
   @IsOptional()
-  @IsEnum(ApartmentStatus)
-  status?: ApartmentStatus
+  @IsEnum(ApartmentStatusEnum)
+  status?: ApartmentStatusEnum
 
   @Field(() => Int, { nullable: true })
   @IsOptional()

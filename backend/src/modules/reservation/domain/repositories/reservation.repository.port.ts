@@ -1,7 +1,7 @@
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
-import { ReservationStatus } from 'generated/prisma/enums'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 
 export interface ReservationRepositoryPort {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
 import { PrismaClient } from 'generated/prisma/client'
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
+import { EmployeeMapper } from '@/modules/employee/infrastructure/mappers/employee.mapper'
 import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
 import { EmployeeRepositoryPort } from '@/modules/employee/domain/repositories/employee.repository.port'
@@ -11,11 +12,14 @@ import { EmployeeSpecificationBuilder } from './prisma.employee.specificationBui
 export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
   constructor(private prisma: PrismaClient) {}
 
+  private readonly employeeMapper = new EmployeeMapper()
+
   async createEmployee(data: EmployeeModel): Promise<EmployeeModel> {
     const createdEmployee = await this.prisma.employee.create({
       data: { ...data },
     })
-    return createdEmployee
+
+    return this.employeeMapper.modelToDomain(createdEmployee)
   }
 
   async findEmployees(filters: EmployeeFilterDto): Promise<EmployeePage> {
@@ -39,7 +43,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
     ])
 
     return {
-      content: employees,
+      content: this.employeeMapper.modelsToDomain(employees),
       totalPages: Math.ceil(employeesCount / query.take),
       totalItems: employeesCount,
       currentPage: filters.page,
@@ -64,7 +68,8 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
       where: { id, isDeleted: false },
       data: newData,
     })
-    return updatedEmployee
+
+    return this.employeeMapper.modelToDomain(updatedEmployee)
   }
 
   async existsById(id: number): Promise<boolean> {
@@ -74,6 +79,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
         isDeleted: false,
       },
     })
+
     return !!employee
   }
 
@@ -84,6 +90,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
         isDeleted: false,
       },
     })
-    return employee
+
+    return this.employeeMapper.modelToDomain(employee)
   }
 }

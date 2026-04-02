@@ -1,6 +1,4 @@
 import { PageType } from '@/common/dto/page-response.dto'
-import { ObjectType } from '@nestjs/graphql'
-import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
+import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
 
-@ObjectType()
-export class ApartmentPage extends PageType(ApartmentType) {}
+export class ApartmentPage extends PageType(ApartmentModel) {}

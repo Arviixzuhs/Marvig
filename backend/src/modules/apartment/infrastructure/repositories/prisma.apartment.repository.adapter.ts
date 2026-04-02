@@ -3,8 +3,10 @@ import { PrismaClient } from 'generated/prisma/client'
 import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
 import { ApartmentPage } from '@/modules/apartment/application/dto/apartment-page.dto'
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
+import { ApartmentMapper } from '@/modules/apartment/infrastructure/mappers/apartment.mapper'
 import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
 import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ApartmentSpecificationBuilder } from './prisma.apartment.speficicationBuilder'
 
@@ -12,12 +14,16 @@ import { ApartmentSpecificationBuilder } from './prisma.apartment.speficicationB
 export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort {
   constructor(private prisma: PrismaClient) {}
 
+  private readonly apartmentMapper = new ApartmentMapper()
+
   async createApartment(data: ApartmentDto): Promise<ApartmentModel> {
-    return await this.prisma.apartment.create({
+    const apartment = await this.prisma.apartment.create({
       data: {
         ...data,
       },
     })
+
+    return this.apartmentMapper.modelToDomain(apartment)
   }
 
   async findApartments(filters: ApartmentFilterDto): Promise<ApartmentPage> {
@@ -41,7 +47,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     ])
 
     return {
-      content: apartments,
+      content: this.apartmentMapper.modelsToDomain(apartments),
       totalItems,
       totalPages: Math.ceil(totalItems / query.take),
       currentPage: filters.page,
@@ -50,7 +56,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
   }
 
   async findApartment(apartmentId: number): Promise<ApartmentModel | null> {
-    return await this.prisma.apartment.findUnique({
+    const apartment = await this.prisma.apartment.findUnique({
       where: {
         id: apartmentId,
         isDeleted: false,
@@ -59,10 +65,12 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
         images: true,
       },
     })
+
+    return this.apartmentMapper.modelToDomain(apartment)
   }
 
   async updateApartment(apartmentId: number, newData: UpdateApartmentDto): Promise<ApartmentModel> {
-    return await this.prisma.apartment.update({
+    const updatedApartment = await this.prisma.apartment.update({
       where: { id: apartmentId, isDeleted: false },
       data: {
         ...newData,
@@ -71,6 +79,8 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
         images: true,
       },
     })
+
+    return this.apartmentMapper.modelToDomain(updatedApartment)
   }
 
   async deleteApartment(apartmentId: number): Promise<void> {
@@ -102,13 +112,15 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     return !!apartment
   }
 
-  async updateStatus(apartmentId: number, status: any): Promise<ApartmentModel> {
-    return await this.prisma.apartment.update({
+  async updateStatus(apartmentId: number, status: ApartmentStatusEnum): Promise<ApartmentModel> {
+    const updatedApartment = await this.prisma.apartment.update({
       where: { id: apartmentId },
       data: { status },
       include: {
         images: true,
       },
     })
+
+    return this.apartmentMapper.modelToDomain(updatedApartment)
   }
 }

@@ -1,6 +1,4 @@
 import { PageType } from '@/common/dto/page-response.dto'
-import { ObjectType } from '@nestjs/graphql'
-import { ReservationType } from '@/modules/reservation/infrastructure/graphql/types/reservation.type'
+import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 
-@ObjectType()
-export class ReservationPage extends PageType(ReservationType) {}
+export class ReservationPage extends PageType(ReservationModel) {}

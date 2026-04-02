@@ -1,16 +1,7 @@
-import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
-import { ApiPropertyOptional } from '@nestjs/swagger' // Importación de Swagger
 import { IsInt, IsOptional } from 'class-validator'
-import { RentalType, ReservationStatus } from 'generated/prisma/enums'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { CreateReservationDto } from './create-reservation.dto'
-
-registerEnumType(ReservationStatus, {
-  name: 'ReservationStatus',
-})
-
-registerEnumType(RentalType, {
-  name: 'RentalType',
-})
+import { Field, InputType, Int } from '@nestjs/graphql'
 
 @InputType()
 export class ReservationDto extends CreateReservationDto {

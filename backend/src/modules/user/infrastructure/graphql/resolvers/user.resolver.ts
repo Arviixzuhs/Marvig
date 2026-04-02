@@ -1,23 +1,23 @@
 import { UserDto } from '@/modules/user/application/dto/user.dto'
 import { UserType } from '@/modules/user/infrastructure/graphql/types/user.type'
-import { UserPage } from '@/modules/user/application/dto/user-page.dto'
+import { UserPageType } from '@/modules/user/infrastructure/graphql/types/user-page.type'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
 import { FindUserUseCase } from '@/modules/user/application/usecases/find-user.usecase'
 import { FindUsersUseCase } from '@/modules/user/application/usecases/find-users.usecase'
-import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user.usecase'
 import { DeleteUserUseCase } from '@/modules/user/application/usecases/delete-user.usecase'
 import { UpdateUserUseCase } from '@/modules/user/application/usecases/update-user.usecase'
+import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
 @Resolver(() => UserType)
 export class UserResolver {
   constructor(
+    private readonly createUserUseCase: CreateUserUseCase,
     private readonly findUserUseCase: FindUserUseCase,
     private readonly findUsersUseCase: FindUsersUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
-    private readonly createUserUseCase: CreateUserUseCase,
   ) {}
 
   @Mutation(() => UserType)
@@ -25,8 +25,8 @@ export class UserResolver {
     return this.createUserUseCase.execute(data)
   }
 
-  @Query(() => UserPage, { name: 'users' })
-  findUsers(@Args('filters') filters: UserFilterDto): Promise<UserPage> {
+  @Query(() => UserPageType, { name: 'users' })
+  findUsers(@Args('filters') filters: UserFilterDto): Promise<UserPageType> {
     return this.findUsersUseCase.execute(filters)
   }
 

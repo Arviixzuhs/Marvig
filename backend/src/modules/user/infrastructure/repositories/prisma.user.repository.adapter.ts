@@ -1,6 +1,7 @@
 import { UserPage } from '@/modules/user/application/dto/user-page.dto'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { Injectable } from '@nestjs/common'
+import { UserMapper } from '@/modules/user/infrastructure/mapper/user.mapper'
 import { PrismaClient } from 'generated/prisma/client'
 import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
@@ -11,11 +12,18 @@ import { UserSpecificationBuilder } from './prisma.user.specificationBuilder'
 export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
   constructor(private prisma: PrismaClient) {}
 
+  private readonly userMapper = new UserMapper()
+
   async createUser(data: UserModel): Promise<UserModel> {
     const createdUser = await this.prisma.user.create({
-      data: { ...data },
+      data: {
+        name: data.name,
+        lastName: data.lastName,
+        email: data.email,
+      },
     })
-    return createdUser
+
+    return this.userMapper.modelToDomain(createdUser)
   }
 
   async findUsers(filters: UserFilterDto): Promise<UserPage> {
@@ -34,7 +42,7 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     ])
 
     return {
-      content: users,
+      content: this.userMapper.modelsToDomain(users),
       totalItems,
       totalPages: Math.ceil(totalItems / (query.take || 10)),
       currentPage: filters.page,
@@ -53,7 +61,8 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
       where: { id: userId },
       data: newData,
     })
-    return updatedUser
+
+    return this.userMapper.modelToDomain(updatedUser)
   }
 
   async existsById(id: number): Promise<boolean> {
@@ -67,6 +76,7 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     })
-    return user
+
+    return this.userMapper.modelToDomain(user)
   }
 }

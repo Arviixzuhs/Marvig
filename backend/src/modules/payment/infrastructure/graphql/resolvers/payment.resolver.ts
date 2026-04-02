@@ -1,5 +1,5 @@
-import { PaymentPage } from '@/modules/payment/application/dto/payment-page.dto'
 import { PaymentType } from '@/modules/payment/infrastructure/graphql/types/payment.type'
+import { PaymentPageType } from '@/modules/payment/infrastructure/graphql/types/payment-page.type'
 import { CreatePaymentDto } from '@/modules/payment/application/dto/create-payment.dto'
 import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
 import { FindPaymentUseCase } from '@/modules/payment/application/usecases/find-payments.usecase'
@@ -20,8 +20,8 @@ export class PaymentResolver {
     return this.createPaymentUseCase.execute(data)
   }
 
-  @Query(() => PaymentPage)
-  findPayments(@Args('filters') filters: PaymentFilterDto): Promise<PaymentPage> {
+  @Query(() => PaymentPageType)
+  findPayments(@Args('filters') filters: PaymentFilterDto): Promise<PaymentPageType> {
     return this.findPaymentsUseCase.execute(filters)
   }
 

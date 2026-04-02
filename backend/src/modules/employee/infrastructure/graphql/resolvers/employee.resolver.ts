@@ -1,6 +1,6 @@
 import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
 import { EmployeeType } from '@/modules/employee/infrastructure/graphql/types/employee.type'
-import { EmployeePage } from '@/modules/employee/application/dto/employee-page.dto'
+import { EmployeePageType } from '@/modules/employee/infrastructure/graphql/types/employee-page.type'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
 import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 import { FindEmployeeUseCase } from '@/modules/employee/application/usecases/find-employee.usecase'
@@ -25,8 +25,8 @@ export class EmployeeResolver {
     return this.createEmployeeUseCase.execute(data)
   }
 
-  @Query(() => EmployeePage)
-  findEmployees(@Args('filters') filters: EmployeeFilterDto): Promise<EmployeePage> {
+  @Query(() => EmployeePageType)
+  findEmployees(@Args('filters') filters: EmployeeFilterDto): Promise<EmployeePageType> {
     return this.findEmployeesUseCase.execute(filters)
   }
 

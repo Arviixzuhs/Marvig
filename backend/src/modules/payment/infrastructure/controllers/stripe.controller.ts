@@ -1,7 +1,8 @@
 import { Stripe } from 'stripe'
 import { config } from 'dotenv'
+import { ApiBearerAuth } from '@nestjs/swagger'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
-import { ReservationStatus } from 'generated/prisma/enums'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { Request, Response } from 'express'
 import { CreatePaymentUseCase } from '@/modules/payment/application/usecases/create-payment.usecase'
 import { CreateReservationUseCase } from '@/modules/reservation/application/usecases/create-reservation.usecase'
@@ -16,7 +17,6 @@ import {
   RawBodyRequest,
   BadRequestException,
 } from '@nestjs/common'
-import { ApiBearerAuth } from '@nestjs/swagger'
 
 config()
 

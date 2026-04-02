@@ -1,6 +1,4 @@
 import { PageType } from '@/common/dto/page-response.dto'
-import { UserType } from '@/modules/user/infrastructure/graphql/types/user.type'
-import { ObjectType } from '@nestjs/graphql'
+import { UserModel } from '@/modules/user/domain/models/user.model'
 
-@ObjectType()
-export class UserPage extends PageType(UserType) {}
+export class UserPage extends PageType(UserModel) {}

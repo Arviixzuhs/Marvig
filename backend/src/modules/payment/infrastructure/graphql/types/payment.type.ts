@@ -1,4 +1,3 @@
-import { Decimal } from '@prisma/client/runtime/client'
 import { ReservationType } from '@/modules/reservation/infrastructure/graphql/types/reservation.type'
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql'
 
@@ -8,7 +7,7 @@ export class PaymentType {
   id: number
 
   @Field(() => Float)
-  amount: Decimal
+  amount: number
 
   @Field({ nullable: true })
   description?: string | null

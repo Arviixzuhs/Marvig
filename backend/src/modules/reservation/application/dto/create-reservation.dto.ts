@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { RentalType } from 'generated/prisma/enums'
+import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { Field, Float, InputType, Int } from '@nestjs/graphql'
 import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator'
 

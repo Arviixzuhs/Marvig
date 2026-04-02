@@ -25,6 +25,14 @@ export class CreateReservationUseCase {
     const diffTime = Math.abs(end.getTime() - start.getTime())
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
+    const apartments = await this.apartmentRepository.findApartments({
+      ids: data.apartmentIds,
+    })
+
+    if (apartments.content.length !== data.apartmentIds.length) {
+      throw new BadRequestException('Algunos de los apartamentos no existen')
+    }
+
     const isAvailable = await this.reservationRepository.checkAvailability(
       data.apartmentIds,
       start,
@@ -33,14 +41,6 @@ export class CreateReservationUseCase {
 
     if (!isAvailable) {
       throw new ConflictException('Uno o más apartamentos no están disponibles')
-    }
-
-    const apartments = await this.apartmentRepository.findApartments({
-      ids: data.apartmentIds,
-    })
-
-    if (apartments.content.length !== data.apartmentIds.length) {
-      throw new BadRequestException('Algunos de los apartamentos no existen')
     }
 
     const calculatedTotal = apartments.content.reduce((acc, apartment) => {

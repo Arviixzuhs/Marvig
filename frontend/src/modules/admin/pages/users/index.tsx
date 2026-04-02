@@ -64,6 +64,6 @@ export const AdminUserPage = () => {
   }
 
   return (
-    <AppTable tableActions={tableActions} searchbarPlaceholder='Buscar usuario por nombre...' />
+    <AppTable tableActions={tableActions} searchbarPlaceholder='Buscar usuario por nombre...' hiddeAdd />
   )
 }

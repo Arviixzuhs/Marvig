@@ -1,6 +1,6 @@
+import { Type } from 'class-transformer'
 import { InputType, Field, Int, Float } from '@nestjs/graphql'
 import { IsNotEmpty, IsOptional, IsString, MaxLength, IsNumber, Min, IsInt } from 'class-validator'
-import { Type } from 'class-transformer'
 
 @InputType()
 export class CreatePaymentDto {
