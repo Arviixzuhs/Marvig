@@ -10,6 +10,11 @@ export class ApartmentFilterDto extends PaginationFilterDto {
   @IsString()
   search?: string
 
+  @Field(() => [Int], { nullable: true })
+  @IsOptional()
+  @IsInt({ each: true })
+  ids?: number[]
+
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

@@ -9,6 +9,7 @@ import { UpdateReservationUseCase } from './usecases/update-reservation.usecase'
 import { DeleteReservationUseCase } from './usecases/delete-reservation.usecase'
 import { UpdateReservationStatusUseCase } from './usecases/update-reservation-status.usecase'
 import { PrismaReservationRepositoryAdapter } from '@/modules/reservation/infrastructure/repositories/prisma.reservation.repository.adapter'
+import { PrismaApartmentRepositoryAdapter } from '@/modules/apartment/infrastructure/repositories/prisma.apartment.repository.adapter'
 
 config()
 @Module({
@@ -29,6 +30,10 @@ config()
     {
       provide: 'ReservationRepository',
       useClass: PrismaReservationRepositoryAdapter,
+    },
+    {
+      provide: 'ApartmentRepository',
+      useClass: PrismaApartmentRepositoryAdapter,
     },
   ],
   exports: [

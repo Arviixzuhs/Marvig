@@ -3,7 +3,6 @@ import toast from 'react-hot-toast'
 import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
-import { userService } from '@/services/user'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { reservationService } from '@/services/reservation'
 import { useDispatch, useSelector } from 'react-redux'
@@ -49,17 +48,17 @@ export const AdminReservationPage = () => {
 
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await userService.create(table.formData as any)
+      const response = await reservationService.create(table.formData)
       dispatch(addItem(response))
       toast.success('Reservación creada correctamente')
     },
     delete: async () => {
-      await userService.delete(table.currentItemToDelete)
+      await reservationService.delete(table.currentItemToDelete)
       dispatch(deleteItem(table.currentItemToDelete))
       toast.success('Reservación eliminada correctamente')
     },
     update: async () => {
-      await userService.update(table.currentItemToUpdate, table.formData)
+      await reservationService.update(table.currentItemToUpdate, table.formData)
       dispatch(updateItem({ id: table.currentItemToUpdate, newData: table.formData }))
       toast.success('Reservación actualizada correctamente')
     },

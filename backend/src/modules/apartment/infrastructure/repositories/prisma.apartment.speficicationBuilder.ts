@@ -43,6 +43,13 @@ export class ApartmentSpecificationBuilder {
     return this
   }
 
+  withIds(ids?: number[]) {
+    if (ids && ids.length > 0) {
+      this.where.id = { in: ids }
+    }
+    return this
+  }
+
   withRooms(bedrooms?: number, bathrooms?: number) {
     if (bedrooms !== undefined) {
       this.where.bedrooms = { gte: bedrooms }

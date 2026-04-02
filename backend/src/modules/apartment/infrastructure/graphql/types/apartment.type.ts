@@ -1,10 +1,12 @@
-import { ObjectType, Field, Int, Float, registerEnumType } from '@nestjs/graphql'
-import { ApartmentImageType } from './apartment-image.type'
+import { Decimal } from '@prisma/client/runtime/client'
+import { PromotionType } from '@/modules/promotion/infrastructure/graphql/types/promotion.type'
 import { ApartmentStatus } from 'generated/prisma/enums'
+import { ApartmentImageType } from './apartment-image.type'
+import { ObjectType, Field, Int, Float, registerEnumType } from '@nestjs/graphql'
 
 registerEnumType(ApartmentStatus, {
   name: 'ApartmentStatus',
-  description: 'Los estados posibles de un apartmento en la posada',
+  description: 'Los estados posibles de un apartamento en la posada',
 })
 
 @ObjectType()
@@ -27,15 +29,21 @@ export class ApartmentType {
   @Field(() => Int)
   bathrooms: number
 
+  @Field(() => Float)
+  pricePerDay: Decimal
+
   @Field(() => Float, { nullable: true })
   squareMeters?: number | null
 
   @Field(() => [ApartmentImageType], { nullable: 'itemsAndList' })
   images?: ApartmentImageType[] | null
 
-  @Field({ nullable: true })
-  createdAt?: Date | null
+  @Field(() => PromotionType, { nullable: true })
+  promotion?: PromotionType | null
 
-  @Field({ nullable: true })
-  updatedAt?: Date | null
+  @Field()
+  createdAt: Date
+
+  @Field()
+  updatedAt: Date
 }

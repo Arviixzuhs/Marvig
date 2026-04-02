@@ -3,6 +3,7 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationType } from '@/modules/reservation/infrastructure/graphql/types/reservation.type'
 import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
+import { ReservationStatus } from 'generated/prisma/enums'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { FindReservationUseCase } from '@/modules/reservation/application/usecases/find-reservation.usecase'
 import { FindReservationsUseCase } from '@/modules/reservation/application/usecases/find-reservations.usecase'
@@ -56,7 +57,7 @@ export class ReservationResolver {
   })
   updateReservationStatus(
     @Args('id', { type: () => Int }) id: number,
-    @Args('status') status: string,
+    @Args('status') status: ReservationStatus,
   ): Promise<ReservationType> {
     return this.updateReservationStatusUseCase.execute(id, status)
   }

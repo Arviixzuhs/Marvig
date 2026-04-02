@@ -22,11 +22,12 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
 
   async findApartments(filters: ApartmentFilterDto): Promise<ApartmentPage> {
     const query = new ApartmentSpecificationBuilder()
+      .withIds(filters.ids)
+      .withFloor(filters.floor)
+      .withRooms(filters.bedrooms, filters.bathrooms)
       .withSearch(filters.search)
       .withNumber(filters.number)
-      .withFloor(filters.floor)
       .withStatus(filters.status)
-      .withRooms(filters.bedrooms, filters.bathrooms)
       .withSquareMetersBetween(filters.minSquareMeters, filters.maxSquareMeters)
       .withIsDeleted(false)
       .withPagination(filters.page, filters.pageSize)
@@ -42,7 +43,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     return {
       content: apartments,
       totalItems,
-      totalPages: Math.ceil(totalItems / (query.take || 10)),
+      totalPages: Math.ceil(totalItems / query.take),
       currentPage: filters.page,
       rowsPerPage: query.take,
     }

@@ -14,6 +14,8 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
   async createPromotion(data: PromotionModel): Promise<PromotionModel> {
     const createdPromotion = await this.prisma.promotion.create({
       data: {
+        type: data.type,
+        value: data.value,
         name: data.name,
         description: data.description,
       },
