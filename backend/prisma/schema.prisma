@@ -146,6 +146,7 @@ model Payment {
   amount      Decimal @db.Decimal(10, 2)
   description String? @db.VarChar(200)
 
+  createdAt     DateTime    @default(now())
   reservation   Reservation @relation(fields: [reservationId], references: [id])
   reservationId Int
 }
