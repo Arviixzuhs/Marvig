@@ -1,3 +1,5 @@
+import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
+
 export class UserModel {
   id: number
   name: string
@@ -6,4 +8,5 @@ export class UserModel {
   avatar?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
+  reservations: ReservationModel[]
 }

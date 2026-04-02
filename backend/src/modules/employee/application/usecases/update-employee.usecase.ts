@@ -1,5 +1,5 @@
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
-import { UpdateEmployeeDto } from '../dto/update-employee.dto'
+import { UpdateEmployeeDto } from '@/modules/employee/application/dto/update-employee.dto'
 import { EmployeeRepositoryPort } from '@/modules/employee/domain/repositories/employee.repository.port'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 

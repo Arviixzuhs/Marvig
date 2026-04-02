@@ -3,6 +3,7 @@ import { ExpenseDto } from '@/modules/expense/application/dto/expense.dto'
 import { ExpensePage } from '@/modules/expense/application/dto/expense-page.dto'
 import { PrismaClient } from 'generated/prisma/client'
 import { ExpenseModel } from '@/modules/expense/domain/models/expense.model'
+import { ExpenseMapper } from '@/modules/expense/infrastructure/mapper/expense.mapper'
 import { UpdateExpenseDto } from '@/modules/expense/application/dto/update-expense.dto'
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { ExpenseRepositoryPort } from '@/modules/expense/domain/repositories/expense.repository.port'
@@ -11,6 +12,8 @@ import { ExpenseSpecificationBuilder } from './prisma.expense.specificationBuild
 @Injectable()
 export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
   constructor(private prisma: PrismaClient) {}
+
+  private readonly expenseMapper = new ExpenseMapper()
 
   async createExpense(data: ExpenseDto): Promise<ExpenseModel> {
     const createdExpense = await this.prisma.expense.create({
@@ -22,7 +25,8 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
         employee: true,
       },
     })
-    return createdExpense
+
+    return this.expenseMapper.modelToDomain(createdExpense)
   }
 
   async findExpenses(filters: ExpenseFilterDto): Promise<ExpensePage> {
@@ -52,7 +56,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
     ])
 
     return {
-      content: expenses,
+      content: this.expenseMapper.modelsToDomain(expenses),
       totalPages: Math.ceil(expensesCount / query.take),
       totalItems: expensesCount,
       currentPage: filters.page,
@@ -68,7 +72,8 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
       },
       orderBy: { createdAt: 'desc' },
     })
-    return expenses
+
+    return this.expenseMapper.modelsToDomain(expenses)
   }
 
   async findExpense(expenseId: number): Promise<ExpenseModel> {
@@ -82,7 +87,8 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
         employee: true,
       },
     })
-    return expense
+
+    return this.expenseMapper.modelToDomain(expense)
   }
 
   async updateExpense(expenseId: number, newData: UpdateExpenseDto): Promise<ExpenseModel> {
@@ -97,7 +103,8 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
         employee: true,
       },
     })
-    return updatedExpense
+
+    return this.expenseMapper.modelToDomain(updatedExpense)
   }
 
   async deleteExpense(expenseId: number): Promise<void> {

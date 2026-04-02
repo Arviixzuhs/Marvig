@@ -1,11 +1,10 @@
-import { Decimal } from '@prisma/client/runtime/client'
 import { EmployeeModel } from '@/modules/employee/domain/models/employee.model'
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
-import { ExpenseCategory } from 'generated/prisma/enums'
+import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
 
 export class ExpenseModel {
   id: number
-  amount: Decimal
+  amount: number
   category: ExpenseCategory
   employee?: EmployeeModel | null
   createdAt?: Date | null

@@ -1,6 +1,6 @@
 import { ExpenseDto } from '@/modules/expense/application/dto/expense.dto'
 import { ExpenseType } from '@/modules/expense/infrastructure/graphql/types/expense.type'
-import { ExpensePage } from '@/modules/expense/application/dto/expense-page.dto'
+import { ExpensePageType } from '@/modules/expense/infrastructure/graphql/types/expense-page.type'
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { UpdateExpenseDto } from '@/modules/expense/application/dto/update-expense.dto'
 import { FindExpenseUseCase } from '@/modules/expense/application/usecases/find-expense.usecase'
@@ -25,8 +25,8 @@ export class ExpenseResolver {
     return this.createExpenseUseCase.execute(data)
   }
 
-  @Query(() => ExpensePage)
-  findExpenses(@Args('filters') filters: ExpenseFilterDto): Promise<ExpensePage> {
+  @Query(() => ExpensePageType)
+  findExpenses(@Args('filters') filters: ExpenseFilterDto): Promise<ExpensePageType> {
     return this.findExpensesUseCase.execute(filters)
   }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PaymentPage } from '@/modules/payment/application/dto/payment-page.dto'
 import { PaymentModel } from '@/modules/payment/domain/models/payment.model'
 import { PrismaClient } from 'generated/prisma/client'
+import { PaymentMapper } from '@/modules/payment/infrastructure/mappers/payment.mapper'
 import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
 import { CreatePaymentDto } from '@/modules/payment/application/dto/create-payment.dto'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
@@ -10,6 +11,8 @@ import { PaymentSpecificationBuilder } from './prisma.payment.specificationBuild
 @Injectable()
 export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
   constructor(private prisma: PrismaClient) {}
+
+  private readonly paymentMapper = new PaymentMapper()
 
   async createPayment(data: CreatePaymentDto): Promise<PaymentModel> {
     const createdPayment = await this.prisma.payment.create({
@@ -20,7 +23,7 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
       },
     })
 
-    return createdPayment
+    return this.paymentMapper.modelToDomain(createdPayment)
   }
 
   async findPayments(filters: PaymentFilterDto): Promise<PaymentPage> {
@@ -40,7 +43,7 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
     const rowsPerPage = builder.take || 10
 
     return {
-      content: payments,
+      content: this.paymentMapper.modelsToDomain(payments),
       totalItems,
       totalPages: Math.ceil(totalItems / rowsPerPage),
       currentPage: filters.page,
@@ -61,6 +64,6 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
       where: { id: paymentId },
     })
 
-    return payment
+    return this.paymentMapper.modelToDomain(payment)
   }
 }

@@ -1,6 +1,4 @@
 import { PageType } from '@/common/dto/page-response.dto'
-import { ObjectType } from '@nestjs/graphql'
-import { ExpenseType } from '@/modules/expense/infrastructure/graphql/types/expense.type'
+import { ExpenseModel } from '@/modules/expense/domain/models/expense.model'
 
-@ObjectType()
-export class ExpensePage extends PageType(ExpenseType) {}
+export class ExpensePage extends PageType(ExpenseModel) {}

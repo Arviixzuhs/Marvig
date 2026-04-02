@@ -1,4 +1,5 @@
-import { Prisma, ApartmentStatus } from 'generated/prisma/client'
+import { Prisma } from 'generated/prisma/client'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 
 export interface ApartmentSpecificationBuild {
   where: Prisma.ApartmentWhereInput
@@ -36,7 +37,7 @@ export class ApartmentSpecificationBuilder {
     return this
   }
 
-  withStatus(status?: ApartmentStatus) {
+  withStatus(status?: ApartmentStatusEnum) {
     if (status) {
       this.where.status = status
     }

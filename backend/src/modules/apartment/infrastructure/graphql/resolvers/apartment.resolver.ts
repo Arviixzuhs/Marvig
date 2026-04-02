@@ -1,10 +1,10 @@
 import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
-import { ApartmentPage } from '@/modules/apartment/application/dto/apartment-page.dto'
 import { ApartmentType } from '../types/apartment.type'
-import { ApartmentStatus } from 'generated/prisma/enums'
+import { ApartmentPageType } from '@/modules/apartment/infrastructure/graphql/types/apartment-page.type'
 import { ApartmentImageDto } from '@/modules/apartment/application/dto/apartment-image.dto'
 import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
 import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { FindApartmentUseCase } from '@/modules/apartment/application/usecases/find-apartment.usecase'
 import { FindApartmentsUseCase } from '@/modules/apartment/application/usecases/find-apartments.usecase'
 import { UpdateApartmentUseCase } from '@/modules/apartment/application/usecases/update-apartment.usecase'
@@ -31,8 +31,8 @@ export class ApartmentResolver {
     return this.createApartmentUseCase.execute(data)
   }
 
-  @Query(() => ApartmentPage)
-  findApartments(@Args('filters') filters: ApartmentFilterDto): Promise<ApartmentPage> {
+  @Query(() => ApartmentPageType)
+  findApartments(@Args('filters') filters: ApartmentFilterDto): Promise<ApartmentPageType> {
     return this.findApartmentsUseCase.execute(filters)
   }
 
@@ -52,7 +52,7 @@ export class ApartmentResolver {
   @Mutation(() => ApartmentType)
   updateApartmentStatus(
     @Args('id', { type: () => Int }) id: number,
-    @Args('status') status: ApartmentStatus,
+    @Args('status') status: ApartmentStatusEnum,
   ): Promise<ApartmentType> {
     return this.updateApartmentStatusUseCase.execute(id, status)
   }
