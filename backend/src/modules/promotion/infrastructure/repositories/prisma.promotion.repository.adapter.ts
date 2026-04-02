@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
 import { PromotionPage } from '@/modules/promotion/application/dto/promotion-page.dto'
 import { PromotionModel } from '@/modules/promotion/domain/models/promotion.model'
+import { PromotionMapper } from '@/modules/promotion/infrastructure/mappers/promotion.mapper'
 import { UpdatePromotionDto } from '@/modules/promotion/application/dto/update-promotion.dto'
 import { PromotionFilterDto } from '@/modules/promotion/application/dto/promotion-filter.dto'
 import { PromotionRepositoryPort } from '@/modules/promotion/domain/repositories/promotion.repository.port'
@@ -10,6 +11,8 @@ import { PromotionSpecificationBuilder } from './prisma.promotion.specificationB
 @Injectable()
 export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort {
   constructor(private prisma: PrismaClient) {}
+
+  private readonly promotionMapper = new PromotionMapper()
 
   async createPromotion(data: PromotionModel): Promise<PromotionModel> {
     const createdPromotion = await this.prisma.promotion.create({
@@ -20,7 +23,8 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
         description: data.description,
       },
     })
-    return createdPromotion
+
+    return this.promotionMapper.modelToDomain(createdPromotion)
   }
 
   async findPromotions(filters: PromotionFilterDto): Promise<PromotionPage> {
@@ -40,7 +44,7 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
     const rowsPerPage = builder.take || 10
 
     return {
-      content: promotions,
+      content: this.promotionMapper.modelsToDomain(promotions),
       totalItems,
       totalPages: Math.ceil(totalItems / rowsPerPage),
       currentPage: filters.page,
@@ -63,7 +67,7 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
       where: { id: promotionId },
       data: newData,
     })
-    return updatedPromotion
+    return this.promotionMapper.modelToDomain(updatedPromotion)
   }
 
   async existsById(id: number): Promise<boolean> {
@@ -78,6 +82,7 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
     const promotion = await this.prisma.promotion.findUnique({
       where: { id: promotionId },
     })
-    return promotion
+
+    return this.promotionMapper.modelToDomain(promotion)
   }
 }

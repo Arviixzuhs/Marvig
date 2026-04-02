@@ -1,6 +1,4 @@
 import { PageType } from '@/common/dto/page-response.dto'
-import { ObjectType } from '@nestjs/graphql'
-import { PromotionType } from '@/modules/promotion/infrastructure/graphql/types/promotion.type'
+import { PromotionModel } from '@/modules/promotion/domain/models/promotion.model'
 
-@ObjectType()
-export class PromotionPage extends PageType(PromotionType) {}
+export class PromotionPage extends PageType(PromotionModel) {}

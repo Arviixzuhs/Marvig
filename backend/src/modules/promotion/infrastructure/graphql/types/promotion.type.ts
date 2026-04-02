@@ -1,5 +1,4 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime/client'
 import { PromotionType as PromotionTypeEnum } from 'generated/prisma/enums'
 
 @ObjectType()
@@ -14,7 +13,7 @@ export class PromotionType {
   type: PromotionTypeEnum
 
   @Field(() => Float)
-  value: Decimal
+  value: number
 
   @Field({ nullable: true })
   description?: string | null

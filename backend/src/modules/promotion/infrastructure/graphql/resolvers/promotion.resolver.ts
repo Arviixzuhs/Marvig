@@ -1,6 +1,6 @@
 import { PromotionDto } from '@/modules/promotion/application/dto/promotion.dto'
 import { PromotionType } from '@/modules/promotion/infrastructure/graphql/types/promotion.type'
-import { PromotionPage } from '@/modules/promotion/application/dto/promotion-page.dto'
+import { PromotionPageType } from '@/modules/promotion/infrastructure/graphql/types/promotion-page.type'
 import { PromotionFilterDto } from '@/modules/promotion/application/dto/promotion-filter.dto'
 import { UpdatePromotionDto } from '@/modules/promotion/application/dto/update-promotion.dto'
 import { FindPromotionUseCase } from '@/modules/promotion/application/usecases/find-promotion.usecase'
@@ -25,8 +25,8 @@ export class PromotionResolver {
     return this.createPromotionUseCase.execute(data)
   }
 
-  @Query(() => PromotionPage)
-  findPromotions(@Args('filters') filters: PromotionFilterDto): Promise<PromotionPage> {
+  @Query(() => PromotionPageType)
+  findPromotions(@Args('filters') filters: PromotionFilterDto): Promise<PromotionPageType> {
     return this.findPromotionsUseCase.execute(filters)
   }
 

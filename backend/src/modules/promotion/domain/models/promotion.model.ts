@@ -1,14 +1,13 @@
-import { Decimal } from '@prisma/client/runtime/client'
-import { PromotionType } from 'generated/prisma/enums'
+import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
 
 export class PromotionModel {
   id: number
   name: string
-  description?: string | null
-  isDeleted?: boolean | null
-  type: PromotionType
-  value: Decimal
+  type: PromotionTypeEnum
+  value: number
   createdAt?: Date | null
   updatedAt?: Date | null
   deletedAt?: Date | null
+  isDeleted?: boolean | null
+  description?: string | null
 }
