@@ -105,6 +105,7 @@ enum ExpenseCategory {
 }
 
 enum ReservationStatus {
+  FAILED
   PENDING
   CONFIRMED
   CANCELLED
@@ -151,13 +152,20 @@ model Payment {
   reservationId Int
 }
 
+enum PromotionType {
+  FIXED
+  PERCENTAGE
+}
+
 model Promotion {
-  id          Int         @id @default(autoincrement())
-  name        String      @db.VarChar(50)
-  isDeleted   Boolean?    @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(50)
+  isDeleted   Boolean?      @default(false)
+  type        PromotionType
+  value       Decimal       @db.Decimal(10, 2)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   deletedAt   DateTime?
   apartments  Apartment[]
-  description String?     @db.VarChar(200)
+  description String?       @db.VarChar(200)
 }
