@@ -9,6 +9,9 @@ export const authApi = axios.create({
 export const api = axios.create({
   baseURL: ENV['VITE_SERVER_API'],
   withCredentials: true,
+  headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('token'),
+  },
   paramsSerializer: (params) =>
     qs.stringify(params, {
       encode: false,
