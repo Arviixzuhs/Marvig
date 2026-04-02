@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaClient } from 'generated/prisma/client'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
+import { PrismaClient, ReservationStatus } from 'generated/prisma/client'
 import { ReservationSpecificationBuilder } from './prisma.reservation.specificationBuilder'
 
 @Injectable()
@@ -56,7 +56,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return await this.prisma.reservation.create({
       data: {
         type: data.type,
-        status: data.status,
+        status: ReservationStatus.PENDING,
         endDate: data.endDate,
         startDate: data.startDate,
         totalPrice: data.totalPrice,
@@ -64,8 +64,16 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
           connect: { id: userId },
         },
         apartments: {
-          connect: { id: data.apartmentId },
+          connect: data.apartmentIds.map((id) => ({ id })),
         },
+      },
+      include: {
+        apartments: {
+          include: {
+            promotion: true,
+          },
+        },
+        user: true,
       },
     })
   }
@@ -102,7 +110,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     })
   }
 
-  async updateStatus(id: number, status: any): Promise<ReservationModel> {
+  async updateStatus(id: number, status: ReservationStatus): Promise<ReservationModel> {
     return await this.prisma.reservation.update({
       where: { id, isDeleted: false },
       data: { status },
@@ -110,31 +118,39 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     })
   }
 
-  async checkAvailability(apartmentId: number, startDate: Date, endDate: Date): Promise<boolean> {
+  async checkAvailability(
+    apartmentIds: number[],
+    startDate: Date,
+    endDate: Date,
+  ): Promise<boolean> {
     const overlappingReservations = await this.prisma.reservation.count({
       where: {
         apartments: {
           some: {
-            id: apartmentId,
+            id: { in: apartmentIds },
           },
         },
         isDeleted: false,
         status: { in: ['CONFIRMED', 'PENDING'] },
-        OR: [
+        AND: [
           {
-            // Caso 1: La nueva reserva empieza durante una existente
-            startDate: { lte: startDate },
-            endDate: { gte: startDate },
-          },
-          {
-            // Caso 2: La nueva reserva termina durante una existente
-            startDate: { lte: endDate },
-            endDate: { gte: endDate },
-          },
-          {
-            // Caso 3: La nueva reserva envuelve completamente a una existente
-            startDate: { gte: startDate },
-            endDate: { lte: endDate },
+            OR: [
+              {
+                // Caso 1: La nueva reserva empieza durante una existente
+                startDate: { lte: startDate },
+                endDate: { gt: startDate }, // Usamos 'gt' para permitir check-in el mismo día del check-out
+              },
+              {
+                // Caso 2: La nueva reserva termina durante una existente
+                startDate: { lt: endDate },
+                endDate: { gte: endDate },
+              },
+              {
+                // Caso 3: La nueva reserva envuelve completamente a una existente
+                startDate: { gte: startDate },
+                endDate: { lte: endDate },
+              },
+            ],
           },
         ],
       },
