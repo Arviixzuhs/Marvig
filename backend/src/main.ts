@@ -9,7 +9,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 config()
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  })
   app.set('trust proxy', 'loopback')
   app.enableCors({
     origin: process.env.CLIENT_ORIGIN,
