@@ -1,5 +1,6 @@
-import { InputType, Field } from '@nestjs/graphql'
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator'
+import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
+import { InputType, Field, Float } from '@nestjs/graphql'
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator'
 
 @InputType()
 export class PromotionDto {
@@ -14,4 +15,15 @@ export class PromotionDto {
   @IsOptional()
   @MaxLength(200, { message: 'La descripción no puede exceder los 200 caracteres' })
   description?: string
+
+  @Field(() => PromotionTypeEnum)
+  @IsEnum(PromotionTypeEnum, { message: 'El tipo de promoción no es válido' })
+  @IsNotEmpty({ message: 'El tipo de promoción es obligatorio' })
+  type: PromotionTypeEnum
+
+  @Field(() => Float)
+  @IsNumber({}, { message: 'El valor debe ser un número' })
+  @Min(0, { message: 'El valor no puede ser negativo' })
+  @IsNotEmpty({ message: 'El valor de la promoción es obligatorio' })
+  value: number
 }

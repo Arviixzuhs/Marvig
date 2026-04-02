@@ -31,7 +31,7 @@ export class PromotionResolver {
   }
 
   @Query(() => PromotionType)
-  findOne(@Args('id', { type: () => Int }) id: number): Promise<PromotionType> {
+  findPromotion(@Args('id', { type: () => Int }) id: number): Promise<PromotionType> {
     return this.findPromotionUseCase.execute(id)
   }
 
