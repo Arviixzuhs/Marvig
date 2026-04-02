@@ -9,6 +9,7 @@ import { PrismaModule } from '@/prisma/prisma.module'
 import { ApolloDriver } from '@nestjs/apollo'
 import { AppController } from '@/app.controller'
 import { ExpenseModule } from '@/modules/expense/expense.module'
+import { PaymentModule } from '@/modules/payment/payment.module'
 import { GraphQLModule } from '@nestjs/graphql'
 import { EmployeeModule } from '@/modules/employee/employee.module'
 import { AuthMiddleware } from '@/middlewares/auth.middleware'
@@ -28,6 +29,7 @@ config()
     AuthModule,
     PrismaModule,
     ExpenseModule,
+    PaymentModule,
     EmployeeModule,
     PromotionModule,
     ApartmentModule,
@@ -85,6 +87,7 @@ export class AppModule implements NestModule {
       .exclude(
         'auth/login',
         'auth/register',
+        '/stripe/(.*)',
         '/api',
         'graphql',
         'file/upload',
