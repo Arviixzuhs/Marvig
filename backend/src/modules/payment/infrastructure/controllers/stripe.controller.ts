@@ -1,55 +1,72 @@
 import { Stripe } from 'stripe'
 import { config } from 'dotenv'
+import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
+import { ReservationStatus } from 'generated/prisma/enums'
 import { Request, Response } from 'express'
 import { CreatePaymentUseCase } from '@/modules/payment/application/usecases/create-payment.usecase'
+import { CreateReservationUseCase } from '@/modules/reservation/application/usecases/create-reservation.usecase'
+import { UpdateReservationStatusUseCase } from '@/modules/reservation/application/usecases/update-reservation-status.usecase'
 import {
   Req,
   Res,
   Post,
+  Body,
   Headers,
   Controller,
   RawBodyRequest,
   BadRequestException,
 } from '@nestjs/common'
+import { ApiBearerAuth } from '@nestjs/swagger'
 
 config()
 
 @Controller('stripe')
+@ApiBearerAuth()
 export class StripeController {
   private stripe: Stripe
 
-  constructor(private readonly createPaymentUseCase: CreatePaymentUseCase) {
+  constructor(
+    private readonly createPaymentUseCase: CreatePaymentUseCase,
+    private readonly createReservationUseCase: CreateReservationUseCase,
+    private readonly updateReservationStatusUseCase: UpdateReservationStatusUseCase,
+  ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
   }
 
   @Post('create-session')
-  async createSession() {
+  async createSession(@Body() reservationDto: ReservationDto, @Req() req: Request) {
     try {
+      const reservation = await this.createReservationUseCase.execute(
+        reservationDto,
+        req.user.userId,
+      )
+
       const session = await this.stripe.checkout.sessions.create({
         metadata: {
-          reservationId: null,
+          reservationId: reservation.id.toString(),
         },
         line_items: [
           {
             price_data: {
               product_data: {
-                name: 'Laptop',
+                name: `Reserva en Posada Marvig - Aptos: ${reservationDto.apartmentIds.join(', ')}`,
+                description: `Estadía desde ${reservationDto.startDate} hasta ${reservationDto.endDate}`,
               },
               currency: 'usd',
-              unit_amount: 2000,
+              unit_amount: Number(reservation.totalPrice) * 100,
             },
             quantity: 1,
           },
         ],
         mode: 'payment',
-        success_url: 'http://localhost:3000/success',
-        cancel_url: 'http://localhost:3000/cancel',
+        success_url: `http://localhost:3000/success?reservationId=${reservation.id}`,
+        cancel_url: `http://localhost:3000/cancel`,
       })
 
-      console.log(session)
-      return session
+      return { url: session.url }
     } catch (error) {
-      console.log(error)
+      console.error('Error al crear sesión:', error)
+      throw new BadRequestException(error.message)
     }
   }
 
@@ -60,7 +77,6 @@ export class StripeController {
     @Res() res: Response,
   ) {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
-
     let event: Stripe.Event
 
     try {
@@ -79,6 +95,10 @@ export class StripeController {
       case 'payment_intent.payment_failed':
         const paymentIntent = event.data.object as Stripe.PaymentIntent
         console.log(`Pago fallido: ${paymentIntent.id}`)
+        this.updateReservationStatusUseCase.execute(
+          Number(session.metadata?.reservationId),
+          ReservationStatus.FAILED,
+        )
         break
 
       default:
@@ -103,6 +123,6 @@ export class StripeController {
       reservationId: Number(reservationId),
     })
 
-    console.log(`Pago registrado para la reserva #${reservationId}`)
+    this.updateReservationStatusUseCase.execute(Number(reservationId), ReservationStatus.CONFIRMED)
   }
 }
