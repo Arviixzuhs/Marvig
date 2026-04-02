@@ -1,9 +1,6 @@
-import { Decimal } from '@prisma/client/runtime/index-browser'
-import { RentalType, ReservationStatus } from 'generated/prisma/enums'
-import { Field, Float, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
-
-registerEnumType(ReservationStatus, { name: 'ReservationStatus' })
-registerEnumType(RentalType, { name: 'RentalType' })
+import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ReservationType {
@@ -23,7 +20,7 @@ export class ReservationType {
   status: ReservationStatus
 
   @Field(() => Float)
-  totalPrice: Decimal
+  totalPrice: number
 
   @Field(() => Int)
   userId: number

@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common'
+import { PrismaClient } from 'generated/prisma/client'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
+import { ReservationMapper } from '@/modules/reservation/infrastructure/mappers/reservation.mapper'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
-import { PrismaClient, ReservationStatus } from 'generated/prisma/client'
 import { ReservationSpecificationBuilder } from './prisma.reservation.specificationBuilder'
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
   constructor(private prisma: PrismaClient) {}
+
+  private readonly reservationMapper = new ReservationMapper()
 
   async findReservations(filters: ReservationFilterDto): Promise<ReservationPage> {
     const query = new ReservationSpecificationBuilder()
@@ -34,7 +38,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     ])
 
     return {
-      content: reservations,
+      content: this.reservationMapper.modelsToDomain(reservations),
       totalItems: reservationsCount,
       totalPages: Math.ceil(reservationsCount / (query.take || 10)),
       currentPage: filters.page,
@@ -53,7 +57,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
   }
 
   async createReservation(data: ReservationDto, userId: number): Promise<ReservationModel> {
-    return await this.prisma.reservation.create({
+    const reservation = await this.prisma.reservation.create({
       data: {
         type: data.type,
         status: ReservationStatus.PENDING,
@@ -76,6 +80,8 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         user: true,
       },
     })
+
+    return this.reservationMapper.modelToDomain(reservation)
   }
 
   async findReservationById(id: number): Promise<ReservationModel> {
@@ -85,11 +91,12 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         isDeleted: false,
       },
     })
-    return reservation
+
+    return this.reservationMapper.modelToDomain(reservation)
   }
 
   async updateReservation(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel> {
-    return await this.prisma.reservation.update({
+    const updatedReservation = await this.prisma.reservation.update({
       where: { id, isDeleted: false },
       data: {
         ...newData,
@@ -98,6 +105,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       },
       include: { apartments: true, user: true },
     })
+    return this.reservationMapper.modelToDomain(updatedReservation)
   }
 
   async deleteReservation(id: number): Promise<void> {
@@ -111,11 +119,13 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
   }
 
   async updateStatus(id: number, status: ReservationStatus): Promise<ReservationModel> {
-    return await this.prisma.reservation.update({
+    const updatedReservation = await this.prisma.reservation.update({
       where: { id, isDeleted: false },
       data: { status },
       include: { apartments: true, user: true },
     })
+
+    return this.reservationMapper.modelToDomain(updatedReservation)
   }
 
   async checkAvailability(

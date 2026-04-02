@@ -2,8 +2,8 @@ import { User } from '@/interfaces/user.interface'
 import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationType } from '@/modules/reservation/infrastructure/graphql/types/reservation.type'
-import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
-import { ReservationStatus } from 'generated/prisma/enums'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { ReservationPageType } from '@/modules/reservation/infrastructure/graphql/types/reservation-page.type'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { FindReservationUseCase } from '@/modules/reservation/application/usecases/find-reservation.usecase'
 import { FindReservationsUseCase } from '@/modules/reservation/application/usecases/find-reservations.usecase'
@@ -39,8 +39,8 @@ export class ReservationResolver {
     return this.findReservationUseCase.execute(id)
   }
 
-  @Query(() => ReservationPage, { description: 'Obtiene el listado histórico de reservas' })
-  findReservations(@Args('filters') filters: ReservationFilterDto): Promise<ReservationPage> {
+  @Query(() => ReservationPageType, { description: 'Obtiene el listado histórico de reservas' })
+  findReservations(@Args('filters') filters: ReservationFilterDto): Promise<ReservationPageType> {
     return this.findReservationsUseCase.execute(filters)
   }
 

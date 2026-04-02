@@ -1,4 +1,6 @@
-import { Prisma, RentalType, ReservationStatus } from 'generated/prisma/client'
+import { Prisma } from 'generated/prisma/client'
+import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 
 export interface ReservationSpecificationBuild {
   where: Prisma.ReservationWhereInput

@@ -1,6 +1,7 @@
+import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { PaginationFilterDto } from '@/common/dto/pagination-filter.dto'
 import { InputType, Field, Int } from '@nestjs/graphql'
-import { ReservationStatus, RentalType } from 'generated/prisma/client'
 import { IsOptional, IsString, IsInt, IsEnum, IsNumber } from 'class-validator'
 
 @InputType()

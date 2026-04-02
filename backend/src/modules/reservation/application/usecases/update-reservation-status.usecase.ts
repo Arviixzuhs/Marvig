@@ -1,5 +1,5 @@
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
-import { ReservationStatus } from 'generated/prisma/enums'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 

@@ -1,9 +1,9 @@
-import { ApartmentStatus } from 'generated/prisma/enums'
-import { ApartmentImageModel } from './apartment-image.model'
-import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model' // Ajusta los paths
-import { ExpenseModel } from '@/modules/expense/domain/models/expense.model'
 import { Decimal } from '@prisma/client/runtime/client'
+import { ExpenseModel } from '@/modules/expense/domain/models/expense.model'
 import { PromotionModel } from '@/modules/promotion/domain/models/promotion.model'
+import { ApartmentStatus } from 'generated/prisma/enums'
+import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
+import { ApartmentImageModel } from './apartment-image.model'
 
 export class ApartmentModel {
   id: number

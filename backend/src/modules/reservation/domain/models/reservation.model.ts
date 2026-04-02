@@ -1,6 +1,6 @@
-import { Decimal } from '@prisma/client/runtime/index-browser'
+import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
-import { RentalType, ReservationStatus } from 'generated/prisma/enums'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 
 export class ReservationModel {
   id: number
@@ -11,6 +11,6 @@ export class ReservationModel {
   startDate: Date
   createdAt?: Date
   updatedAt?: Date
-  totalPrice: Decimal
+  totalPrice: number
   apartments?: ApartmentModel[]
 }
