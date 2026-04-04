@@ -1,6 +1,8 @@
 import { Stripe } from 'stripe'
 import { config } from 'dotenv'
 import { ApiBearerAuth } from '@nestjs/swagger'
+import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
+import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { Request, Response } from 'express'
@@ -118,7 +120,11 @@ export class StripeController {
     }
 
     await this.createPaymentUseCase.execute({
+      date: new Date(),
       amount: amount,
+      status: PaymentStatus.CONFIRMED,
+      method: PaymentMethod.STRIPE,
+      reference: session.id,
       description: `Pago en línea (Stripe) - Session ID: ${session.id}`,
       reservationId: Number(reservationId),
     })
