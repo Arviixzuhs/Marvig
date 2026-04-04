@@ -11,6 +11,8 @@ import {
   ModalHeader,
   ModalFooter,
   ModalContent,
+  Select,
+  SelectItem,
 } from '@heroui/react'
 
 export interface AddItemModalProps {
@@ -26,11 +28,43 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   const dispatch = useDispatch()
 
   React.useEffect(() => {
-    dispatch(clearFormData(null))
-  }, [table.isAddItemModalOpen])
+    if (table.isAddItemModalOpen) {
+      dispatch(clearFormData(null))
+    }
+  }, [table.isAddItemModalOpen, dispatch])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    dispatch(setFormData({ name: e.target.name, value: e.target.value }))
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
+    const { name, value } = e.target
+    let processedValue: string | number | null = value
+
+    if (value === '') {
+      dispatch(setFormData({ name, value: null }))
+      return
+    }
+
+    if (type === 'number' || type === 'float') {
+      const regex = type === 'float' ? /[^0-9.]/g : /[^0-9]/g
+      const sanitizedString = value.replace(regex, '')
+
+      if (type === 'float' && (sanitizedString.match(/\./g) || []).length > 1) return
+
+      if (sanitizedString.endsWith('.')) {
+        dispatch(setFormData({ name, value: sanitizedString }))
+        return
+      }
+
+      processedValue =
+        type === 'float' ? parseFloat(sanitizedString) : parseInt(sanitizedString, 10)
+
+      if (isNaN(processedValue)) return
+    }
+
+    dispatch(setFormData({ name, value: processedValue }))
+  }
+
+  const handleSelectChange = (name: string, value: string) => {
+    dispatch(setFormData({ name, value }))
+  }
 
   const toggleModal = () => {
     dispatch(toggleAddItemModal(null))
@@ -39,65 +73,80 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    /* Object.fromEntries(new FormData(e.currentTarget)) */
+    const cleanData = { ...table.formData }
+
+    table.modalInputs.forEach((input) => {
+      const value = cleanData[input.name]
+      if (input.type === 'number') {
+        cleanData[input.name] = parseInt(String(value), 10) || 0
+      } else if (input.type === 'float') {
+        cleanData[input.name] = parseFloat(String(value)) || 0
+      }
+    })
+
     action()
     toggleModal()
   }
 
   return (
-    <>
-      <Modal
-        size='4xl'
-        isOpen={table.isAddItemModalOpen}
-        onClose={toggleModal}
-        placement='center'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex flex-col gap-1'>Agregar</ModalHeader>
-
-          <Form onSubmit={onSubmit} className='overflow-auto'>
-            <ModalBody className='w-full'>
-              <div className='w-full flex flex-col gap-4'>
-                {table.modalInputs.map((item, index) => (
-                  <div
-                    key={index}
-                    className='flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4'
-                  >
-                    <Input
-                      min={0}
-                      max={999999}
-                      size='sm'
-                      type={item.type}
-                      name={item.name}
-                      value={String(table.formData?.[item.name] || '')}
+    <Modal
+      size='4xl'
+      isOpen={table.isAddItemModalOpen}
+      onClose={toggleModal}
+      placement='center'
+      scrollBehavior='inside'
+    >
+      <ModalContent>
+        <ModalHeader className='flex flex-col gap-1'>Agregar Registro</ModalHeader>
+        <Form onSubmit={onSubmit} className='overflow-auto'>
+          <ModalBody className='w-full'>
+            <div className='w-full flex flex-col gap-4'>
+              {table.modalInputs.map((item, index) => (
+                <div key={index} className='w-full mb-2'>
+                  {item.type === 'select' ? (
+                    <Select
                       label={item.label}
-                      required={item.required}
-                      onChange={handleChange}
                       placeholder={item.placeholder}
+                      name={item.name}
+                      isRequired={item.required}
+                      selectedKeys={
+                        table.formData?.[item.name] ? [String(table.formData[item.name])] : []
+                      }
+                      onSelectionChange={(keys) =>
+                        handleSelectChange(item.name, Array.from(keys)[0] as string)
+                      }
+                    >
+                      {(item.options || []).map((opt) => (
+                        <SelectItem key={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </Select>
+                  ) : (
+                    <Input
+                      size='md'
+                      type={item.type === 'date' ? 'date' : 'text'}
+                      name={item.name}
+                      label={item.label}
+                      placeholder={item.placeholder}
+                      isRequired={item.required}
+                      value={String(table.formData?.[item.name] || '')}
+                      onChange={(e) => handleChange(e, item.type)}
                     />
-                  </div>
-                ))}
-                {children}
-              </div>
-            </ModalBody>
-            <ModalFooter className='flex gap-2 mt-3 w-full'>
-              <Button
-                type='button'
-                radius='sm'
-                variant='flat'
-                onPress={toggleModal}
-                className='w-full'
-              >
-                Cerrar
-              </Button>
-              <Button className='w-full' type='submit' color='primary' radius='sm'>
-                Guardar
-              </Button>
-            </ModalFooter>
-          </Form>
-        </ModalContent>
-      </Modal>
-    </>
+                  )}
+                </div>
+              ))}
+              {children}
+            </div>
+          </ModalBody>
+          <ModalFooter className='flex gap-2 w-full'>
+            <Button type='button' variant='flat' onPress={toggleModal} className='w-full'>
+              Cancelar
+            </Button>
+            <Button type='submit' color='primary' className='w-full'>
+              Guardar
+            </Button>
+          </ModalFooter>
+        </Form>
+      </ModalContent>
+    </Modal>
   )
 }
