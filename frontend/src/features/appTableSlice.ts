@@ -17,13 +17,28 @@ export interface DateFilter {
   end: string
   start: string
 }
+export type InputType =
+  | 'text'
+  | 'number'
+  | 'email'
+  | 'password'
+  | 'date'
+  | 'select'
+  | 'float'
+  | 'textarea'
+
+export interface SelectOption {
+  label: string
+  value: string | number
+}
 
 export interface ModalInput {
   name: string
-  type?: string
-  label?: string
-  required?: boolean
+  label: string
+  type?: InputType
   placeholder?: string
+  required?: boolean
+  options?: SelectOption[]
 }
 
 export interface AppTableInterface<T> {

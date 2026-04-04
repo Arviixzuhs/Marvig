@@ -142,13 +142,33 @@ model Reservation {
   @@index([userId])
 }
 
-model Payment {
-  id          Int     @id @default(autoincrement())
-  amount      Decimal @db.Decimal(10, 2)
-  description String? @db.VarChar(200)
+enum PaymentMethod {
+  CASH
+  PAYPAL
+  STRIPE
+  PAGO_MOVIL
+  DEBIT_CARD
+  CREDID_CARD
+  BANK_TRANSFER
+}
 
-  createdAt     DateTime    @default(now())
-  reservation   Reservation @relation(fields: [reservationId], references: [id])
+enum PaymentStatus {
+  FAILED
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  date          DateTime
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  reference     String        @db.VarChar(200)
+  description   String?       @db.VarChar(200)
+  createdAt     DateTime      @default(now())
+  reservation   Reservation   @relation(fields: [reservationId], references: [id])
   reservationId Int
 }
 

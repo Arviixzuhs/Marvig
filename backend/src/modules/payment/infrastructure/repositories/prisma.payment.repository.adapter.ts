@@ -17,6 +17,10 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
   async createPayment(data: CreatePaymentDto): Promise<PaymentModel> {
     const createdPayment = await this.prisma.payment.create({
       data: {
+        date: data.date,
+        method: data.method,
+        reference: data.reference,
+        status: data.status,
         amount: data.amount,
         description: data.description,
         reservationId: data.reservationId,

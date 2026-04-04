@@ -4,13 +4,37 @@ import { useState } from 'react'
 import { Button, cn } from '@heroui/react'
 import { BiSolidDockRight } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Briefcase, Home, Users, Receipt, Wallet, Tag } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Briefcase,
+  Home,
+  Users,
+  Receipt,
+  Wallet,
+  Tag,
+  CreditCard,
+} from 'lucide-react'
 
 const menuItems = [
   {
     label: 'Dashboard',
     icon: LayoutDashboard,
     href: '/admin/dashboard',
+  },
+  {
+    label: 'Reservas',
+    icon: Receipt,
+    href: '/admin/reservations',
+  },
+  {
+    label: 'Pagos',
+    icon: CreditCard,
+    href: '/admin/payments',
+  },
+  {
+    label: 'Gastos',
+    icon: Wallet,
+    href: '/admin/expenses',
   },
   {
     label: 'Apartmentos',
@@ -23,24 +47,14 @@ const menuItems = [
     href: '/admin/promotions',
   },
   {
-    label: 'Gastos',
-    icon: Wallet,
-    href: '/admin/expenses',
+    label: 'Usuarios',
+    icon: Users,
+    href: '/admin/users',
   },
   {
     label: 'Empleados',
     icon: Briefcase,
     href: '/admin/employees',
-  },
-  {
-    label: 'Reservas',
-    icon: Receipt,
-    href: '/admin/reservations',
-  },
-  {
-    label: 'Usuarios',
-    icon: Users,
-    href: '/admin/users',
   },
 ]
 
