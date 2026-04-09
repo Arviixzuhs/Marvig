@@ -1,3 +1,4 @@
+import { PromotionType } from '@/models/PromotionModel'
 import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
 
 export const tableColumns: TableColumnInterface[] = [
@@ -8,6 +9,11 @@ export const tableColumns: TableColumnInterface[] = [
   {
     name: 'Tipo',
     uid: 'type',
+    style: 'chip',
+    chipConfig: {
+      [PromotionType.FIXED]: { label: 'Fijo', color: '#3B82F6' },
+      [PromotionType.PERCENTAGE]: { label: 'Porcentaje', color: '#10B981' },
+    },
   },
   {
     name: 'Valor',
@@ -30,6 +36,17 @@ export const modalInputs: ModalInput[] = [
     type: 'text',
     placeholder: 'Ej: Descuento de Verano',
     required: true,
+  },
+  {
+    name: 'type',
+    label: 'Tipo de Promoción',
+    type: 'select',
+    placeholder: 'Selecciona el tipo',
+    required: true,
+    options: [
+      { label: 'Monto Fijo', value: PromotionType.FIXED },
+      { label: 'Porcentaje', value: PromotionType.PERCENTAGE },
+    ],
   },
   {
     name: 'value',

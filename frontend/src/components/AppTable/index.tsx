@@ -83,7 +83,8 @@ export const AppTable = ({
               {(columnKey) => (
                 <TableCell className='default-text-color'>
                   <RenderCell
-                    column={columnKey}
+                    column={table.columns.find((col) => col.uid === columnKey)}
+                    columnKey={columnKey}
                     value={item[columnKey]}
                     itemId={item.id}
                     dropdownItems={dropdownItems}

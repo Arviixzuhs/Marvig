@@ -4,6 +4,7 @@ export const tableColumns: TableColumnInterface[] = [
   {
     name: 'Monto',
     uid: 'amount',
+    style: 'currency',
   },
   {
     name: 'Descripción',

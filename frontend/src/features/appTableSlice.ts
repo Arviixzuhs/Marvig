@@ -1,10 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export interface TableColumnInterface {
+export type TableColumnStyle = 'date' | 'currency' | 'chip' | 'user'
+
+export interface IChipConfig {
+  label: string
+  color: string
+}
+
+interface BaseColumn {
   uid: string
   name: string
   sortable?: boolean
 }
+
+interface ChipColumn extends BaseColumn {
+  style: 'chip'
+  chipConfig: {
+    [key: string]: IChipConfig
+  }
+}
+
+interface OtherColumn extends BaseColumn {
+  style?: Exclude<TableColumnStyle, 'chip'>
+  chipConfig?: never
+}
+
+export type TableColumnInterface = ChipColumn | OtherColumn
 
 export enum DateFilterPeriod {
   TODAY = 'TODAY',
