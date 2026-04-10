@@ -2,8 +2,8 @@ import { PaymentType } from '@/modules/payment/infrastructure/graphql/types/paym
 import { PaymentPageType } from '@/modules/payment/infrastructure/graphql/types/payment-page.type'
 import { CreatePaymentDto } from '@/modules/payment/application/dto/create-payment.dto'
 import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
-import { FindPaymentUseCase } from '@/modules/payment/application/usecases/find-payments.usecase'
-import { FindPaymentsUseCase } from '@/modules/payment/application/usecases/find-payment.usecase'
+import { FindPaymentUseCase } from '@/modules/payment/application/usecases/find-payment.usecase'
+import { FindPaymentsUseCase } from '@/modules/payment/application/usecases/find-payments.usecase'
 import { CreatePaymentUseCase } from '@/modules/payment/application/usecases/create-payment.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 

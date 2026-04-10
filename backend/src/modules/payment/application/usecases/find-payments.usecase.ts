@@ -1,18 +1,16 @@
-import { PaymentModel } from '@/modules/payment/domain/models/payment.model'
+import { PaymentPage } from '@/modules/payment/application/dto/payment-page.dto'
+import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
+import { Inject, Injectable } from '@nestjs/common'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 @Injectable()
-export class FindPaymentUseCase {
+export class FindPaymentsUseCase {
   constructor(
     @Inject('PaymentRepository')
     private readonly paymentRepository: PaymentRepositoryPort,
   ) {}
 
-  async execute(id: number): Promise<PaymentModel> {
-    const payment = await this.paymentRepository.existsById(id)
-    if (!payment) throw new NotFoundException('Payment not found')
-
-    return await this.paymentRepository.findPayment(id)
+  async execute(filters: PaymentFilterDto): Promise<PaymentPage> {
+    return await this.paymentRepository.findPayments(filters)
   }
 }
