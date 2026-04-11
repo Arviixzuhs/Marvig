@@ -46,16 +46,9 @@ export const tableColumns: TableColumnInterface[] = [
 export const modalInputs: ModalInput[] = [
   {
     name: 'userId',
-    label: 'ID de la reser',
+    label: 'ID del usuario',
     type: 'number',
-    placeholder: 'ID del cliente',
-    required: true,
-  },
-  {
-    name: 'apartmentId',
-    label: 'ID de Apartamento',
-    type: 'number',
-    placeholder: 'ID del inmueble',
+    placeholder: 'Ingresar ID del usuario',
     required: true,
   },
   {
