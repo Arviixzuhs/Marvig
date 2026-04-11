@@ -1,3 +1,4 @@
+import { ApartmentStatus } from '@/models/ApartmentModel'
 import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
 
 export const tableColumns: TableColumnInterface[] = [
@@ -22,6 +23,22 @@ export const tableColumns: TableColumnInterface[] = [
     uid: 'squareMeters',
   },
   {
+    name: 'Precio por Día',
+    uid: 'pricePerDay',
+    style: 'currency',
+  },
+  {
+    name: 'Estado',
+    uid: 'status',
+    style: 'chip',
+    chipConfig: {
+      [ApartmentStatus.AVAILABLE]: { color: '#10B981', label: 'Disponible' },
+      [ApartmentStatus.OCCUPIED]: { color: '#EF4444', label: 'Ocupado' },
+      [ApartmentStatus.RESERVED]: { color: '#3B82F6', label: 'Reservado' },
+      [ApartmentStatus.MAINTENANCE]: { color: '#F59E0B', label: 'En Mantenimiento' },
+    },
+  },
+  {
     name: 'Acciones',
     uid: 'actions',
   },
@@ -43,10 +60,30 @@ export const modalInputs: ModalInput[] = [
     required: true,
   },
   {
+    name: 'status',
+    placeholder: 'Selecciona el estado del apartamento',
+    label: 'Estado del Apartamento',
+    type: 'select',
+    required: true,
+    options: [
+      { value: ApartmentStatus.AVAILABLE, label: 'Disponible' },
+      { value: ApartmentStatus.OCCUPIED, label: 'Ocupado' },
+      { value: ApartmentStatus.RESERVED, label: 'Reservado' },
+      { value: ApartmentStatus.MAINTENANCE, label: 'En Mantenimiento' },
+    ],
+  },
+  {
     name: 'bedrooms',
     label: 'Habitaciones',
     type: 'number',
     placeholder: 'Cantidad de habitaciones',
+    required: true,
+  },
+  {
+    name: 'pricePerDay',
+    label: 'Precio por día',
+    type: 'number',
+    placeholder: 'Precio por dóa',
     required: true,
   },
   {
