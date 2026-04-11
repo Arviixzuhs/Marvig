@@ -7,6 +7,7 @@ export interface ApartmentModel {
   status: ApartmentStatus
   bedrooms: number
   bathrooms: number
+  pricePerDay: number
   squareMeters?: number | null
   images?: IApartmentImage[] | null
   createdAt?: Date | null
