@@ -72,18 +72,6 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    const cleanData = { ...table.formData }
-
-    table.modalInputs.forEach((input) => {
-      const value = cleanData[input.name]
-      if (input.type === 'number') {
-        cleanData[input.name] = parseInt(String(value), 10) || 0
-      } else if (input.type === 'float') {
-        cleanData[input.name] = parseFloat(String(value)) || 0
-      }
-    })
-
     action()
     toggleModal()
   }

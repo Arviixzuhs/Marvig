@@ -5,6 +5,7 @@ import { ReservationType } from '@/modules/reservation/infrastructure/graphql/ty
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationPageType } from '@/modules/reservation/infrastructure/graphql/types/reservation-page.type'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
+import { UpdateReservationDto } from '@/modules/reservation/application/dto/update-reservation.dto'
 import { FindReservationUseCase } from '@/modules/reservation/application/usecases/find-reservation.usecase'
 import { FindReservationsUseCase } from '@/modules/reservation/application/usecases/find-reservations.usecase'
 import { CreateReservationUseCase } from '@/modules/reservation/application/usecases/create-reservation.usecase'
@@ -47,7 +48,7 @@ export class ReservationResolver {
   @Mutation(() => ReservationType, { description: 'Actualiza los datos generales de una reserva' })
   updateReservation(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: ReservationDto,
+    @Args('data') data: UpdateReservationDto,
   ): Promise<ReservationType> {
     return this.updateReservationUseCase.execute(id, data)
   }

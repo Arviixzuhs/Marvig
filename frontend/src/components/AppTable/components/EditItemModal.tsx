@@ -16,7 +16,11 @@ import {
   ModalHeader,
   ModalFooter,
   ModalContent,
+  Select,
+  SelectItem,
+  DatePicker,
 } from '@heroui/react'
+import { parseAbsoluteToLocal } from '@internationalized/date'
 
 export interface EditItemModalProps {
   action: () => void
@@ -29,7 +33,18 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
+
   const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
+
+  const parseDateTime = (value: any) => {
+    if (!value) return null
+
+    try {
+      return parseAbsoluteToLocal(value)
+    } catch {
+      return null
+    }
+  }
 
   React.useEffect(() => {
     if (!table.isEditItemModalOpen) {
@@ -38,8 +53,42 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     }
   }, [table.isEditItemModalOpen])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    dispatch(setFormData({ name: e.target.name, value: e.target.value }))
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
+    const { name, value } = e.target
+
+    let processedValue: string | number | null = value
+
+    if (value === '') {
+      dispatch(setFormData({ name, value: null }))
+      return
+    }
+
+    if (type === 'number' || type === 'float') {
+      const regex = type === 'float' ? /[^0-9.]/g : /[^0-9]/g
+
+      const sanitizedString = value.replace(regex, '')
+
+      if (type === 'float') {
+        if ((sanitizedString.match(/\./g) || []).length > 1) return
+      }
+
+      if (sanitizedString.endsWith('.')) {
+        dispatch(setFormData({ name, value: sanitizedString }))
+        return
+      }
+
+      processedValue =
+        type === 'float' ? parseFloat(sanitizedString) : parseInt(sanitizedString, 10)
+
+      if (isNaN(processedValue)) return
+    }
+
+    dispatch(setFormData({ name, value: processedValue }))
+  }
+
+  const handleSelectChange = (name: string, value: string) => {
+    dispatch(setFormData({ name, value }))
+  }
 
   const toggleModal = () => {
     dispatch(toggleEditItemModal(null))
@@ -51,59 +100,98 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     toggleModal()
   }
 
+  const handleDateChange = (name: string, value: any) => {
+    if (!value) {
+      dispatch(setFormData({ name, value: null }))
+      return
+    }
+
+    dispatch(
+      setFormData({
+        name,
+        value: value.toDate().toISOString(),
+      }),
+    )
+  }
+
   return (
-    <>
-      <Modal
-        size='4xl'
-        isOpen={table.isEditItemModalOpen}
-        onClose={toggleModal}
-        placement='center'
-        scrollBehavior='inside'
-        isKeyboardDismissDisabled={true}
-      >
-        <ModalContent>
-          <ModalHeader className='flex flex-col gap-1'>Editar</ModalHeader>
-          <Form onSubmit={onSubmit} className='overflow-auto'>
-            <ModalBody className='w-full'>
-              <div className='w-full flex flex-col gap-4'>
-                {table.modalInputs.map((item, index) => (
-                  <div
-                    key={index}
-                    className='flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4'
-                  >
+    <Modal
+      size='4xl'
+      isOpen={table.isEditItemModalOpen}
+      onClose={toggleModal}
+      placement='center'
+      scrollBehavior='inside'
+      isKeyboardDismissDisabled={true}
+    >
+      <ModalContent>
+        <ModalHeader>Editar</ModalHeader>
+
+        <Form onSubmit={onSubmit} className='overflow-auto'>
+          <ModalBody className='w-full'>
+            <div className='w-full flex flex-col gap-4'>
+              {table.modalInputs.map((item, index) => (
+                <div key={index} className='w-full'>
+                  {item.type === 'select' && (
+                    <Select
+                      label={item.label}
+                      placeholder={item.placeholder}
+                      name={item.name}
+                      isRequired={item.required}
+                      defaultSelectedKeys={
+                        currentItemToEdit?.[item.name]
+                          ? [String(currentItemToEdit?.[item.name])]
+                          : []
+                      }
+                      onSelectionChange={(keys) =>
+                        handleSelectChange(item.name, Array.from(keys)[0] as string)
+                      }
+                    >
+                      {(item.options || []).map((opt) => (
+                        <SelectItem key={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                  {item.type === 'date' && (
+                    <DatePicker
+                      label={item.label}
+                      granularity='minute'
+                      hourCycle={24}
+                      isRequired={item.required}
+                      value={parseDateTime(
+                        table.formData?.[item.name] ?? currentItemToEdit?.[item.name],
+                      )}
+                      onChange={(value) => handleDateChange(item.name, value)}
+                    />
+                  )}
+                  {item.type !== 'select' && item.type !== 'date' && (
                     <Input
-                      min={0}
-                      size='sm'
-                      type={item.type}
+                      size='md'
+                      type='text'
                       name={item.name}
                       label={item.label}
-                      required={item.required}
-                      onChange={handleChange}
                       placeholder={item.placeholder}
+                      isRequired={item.required}
                       defaultValue={currentItemToEdit?.[item.name]}
+                      onChange={(e) => handleChange(e, item.type)}
                     />
-                  </div>
-                ))}
-                {children}
-              </div>
-            </ModalBody>
-            <ModalFooter className='flex gap-2 mt-3 w-full'>
-              <Button
-                type='button'
-                radius='sm'
-                variant='flat'
-                onPress={toggleModal}
-                className='w-full'
-              >
-                Cerrar
-              </Button>
-              <Button className='w-full' type='submit' color='primary' radius='sm'>
-                Guardar
-              </Button>
-            </ModalFooter>
-          </Form>
-        </ModalContent>
-      </Modal>
-    </>
+                  )}
+                </div>
+              ))}
+              {children}
+            </div>
+          </ModalBody>
+
+          <ModalFooter className='flex gap-2 w-full'>
+            <Button type='button' variant='flat' onPress={toggleModal} className='w-full'>
+              Cancelar
+            </Button>
+
+            <Button type='submit' color='primary' className='w-full'>
+              Guardar
+            </Button>
+          </ModalFooter>
+        </Form>
+      </ModalContent>
+    </Modal>
   )
 }
