@@ -7,6 +7,7 @@ export const GET_APARTMENTS = gql`
         id
         floor
         number
+        status
         images {
           id
           url
@@ -14,6 +15,7 @@ export const GET_APARTMENTS = gql`
         }
         bedrooms
         bathrooms
+        pricePerDay
         squareMeters
       }
       totalItems

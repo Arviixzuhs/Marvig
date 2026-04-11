@@ -1,50 +1,28 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '@heroui/react'
 import { appConfig } from '@/config'
-import { Link } from 'react-router-dom'
-
-const apartments = [
-  {
-    id: 1,
-    name: 'Apartamento con Vista al Mar',
-    location: 'Miami Beach, FL',
-    price: '$180 / noche',
-    image:
-      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1600&auto=format&fit=crop',
-    description:
-      'Moderno apartamento frente al mar con impresionantes vistas al océano y balcón privado.',
-  },
-  {
-    id: 2,
-    name: 'Loft de Lujo en el Centro',
-    location: 'Nueva York, NY',
-    price: '$220 / noche',
-    image:
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1600&auto=format&fit=crop',
-    description:
-      'Elegante loft ubicado en el corazón de la ciudad, cerca de restaurantes y atracciones.',
-  },
-  {
-    id: 3,
-    name: 'Refugio en la Montaña',
-    location: 'Aspen, CO',
-    price: '$200 / noche',
-    image:
-      'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1600&auto=format&fit=crop',
-    description: 'Acogedor apartamento rodeado de naturaleza, perfecto para escapadas relajantes.',
-  },
-  {
-    id: 4,
-    name: 'Suite con Vista a la Ciudad',
-    location: 'Chicago, IL',
-    price: '$195 / noche',
-    image:
-      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=1600&auto=format&fit=crop',
-    description: 'Elegante apartamento con vistas panorámicas de la ciudad y comodidades premium.',
-  },
-]
+import { ApartmentModel } from '@/models/ApartmentModel'
+import { apartmentService } from '@/services/apartment'
+import { formatCurrency } from '@/utils/formatCurrency'
 
 export const LandingPage = () => {
+  const [apartments, setApartments] = React.useState<ApartmentModel[]>([])
+  const loadData = async () => {
+    const response = await apartmentService.getAll({
+      page: 0,
+      pageSize: 4,
+    })
+    if (response) {
+      setApartments(response.content)
+    }
+  }
+
+  React.useEffect(() => {
+    loadData()
+  }, [])
+
   return (
     <div className='min-h-screen bg-gray-50 text-gray-900'>
       <header className='sticky top-0 z-50 bg-white/80 backdrop-blur border-b'>
@@ -134,22 +112,17 @@ export const LandingPage = () => {
               >
                 <div className='overflow-hidden'>
                   <img
-                    src={apartment.image}
-                    alt={apartment.name}
+                    src={apartment?.images?.[0]?.url}
                     className='w-full h-56 object-cover group-hover:scale-105 transition duration-300'
                   />
                 </div>
 
                 <div className='p-6 flex flex-col gap-3'>
                   <div className='flex items-start justify-between'>
-                    <h4 className='text-lg font-semibold'>{apartment.name}</h4>
+                    <h4 className='text-lg font-semibold'>Apartamento #{apartment.number}</h4>
 
-                    <span className='text-blue-600 font-medium'>{apartment.price}</span>
+                    <span className='text-blue-600 font-medium'>{formatCurrency(apartment.pricePerDay)}</span>
                   </div>
-
-                  <p className='text-sm text-gray-500'>{apartment.location}</p>
-
-                  <p className='text-gray-600 text-sm leading-relaxed'>{apartment.description}</p>
 
                   <div className='pt-3 mt-auto'>
                     <Button className='w-full' color='primary'>
