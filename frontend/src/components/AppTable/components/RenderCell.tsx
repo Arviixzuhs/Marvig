@@ -85,6 +85,6 @@ export const RenderCell = (props: RenderCellProps) => {
     }
 
     default:
-      return <>{props.value}</>
+      return <>{String(props.value).length === 0 || !props.value ? <span className='text-sm text-gray-500'>Sin contenido</span> : props.value}</>
   }
 }
