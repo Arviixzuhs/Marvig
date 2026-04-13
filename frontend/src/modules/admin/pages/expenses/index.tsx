@@ -4,7 +4,6 @@ import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
 import { expenseService } from '@/services/exepense'
-import { ExpenseCategory } from '@/models/ExpenseModel'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
@@ -48,11 +47,7 @@ export const AdminExepensePage = () => {
 
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await expenseService.create({
-        ...table.formData,
-        amount: Number(table.formData.amount),
-        category: ExpenseCategory.MAINTENANCE
-      })
+      const response = await expenseService.create(table.formData)
       dispatch(addItem(response))
       toast.success('Gasto creado correctamente')
     },
