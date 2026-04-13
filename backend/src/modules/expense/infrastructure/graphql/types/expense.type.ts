@@ -8,8 +8,8 @@ export class ExpenseType {
   @Field(() => Int)
   id: number
 
-  @Field()
-  description: string
+  @Field({ nullable: true })
+  description?: string | null
 
   @Field(() => Float)
   amount: number
