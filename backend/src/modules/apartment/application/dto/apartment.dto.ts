@@ -1,12 +1,10 @@
-import { Transform } from 'class-transformer'
 import { Field, InputType } from '@nestjs/graphql'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 @InputType()
 export class ApartmentDto {
-  @Field(() => String)
-  @Transform(({ value }) => Number(value))
+  @Field(() => Number)
   @IsInt({ message: 'El piso debe ser un número entero' })
   @Min(0)
   floor: number
@@ -19,23 +17,19 @@ export class ApartmentDto {
   @IsEnum(ApartmentStatusEnum, { message: 'El estado no es válido' })
   status: ApartmentStatusEnum
 
-  @Field(() => String, { defaultValue: '1' })
-  @Transform(({ value }) => Number(value))
+  @Field(() => Number, { defaultValue: 1 })
   @IsInt()
   bedrooms: number
 
-  @Field(() => String, { defaultValue: '1' })
-  @Transform(({ value }) => Number(value))
+  @Field(() => Number, { defaultValue: 1 })
   @IsInt()
   pricePerDay: number
 
-  @Field(() => String, { defaultValue: '1' })
-  @Transform(({ value }) => Number(value))
+  @Field(() => Number, { defaultValue: 1 })
   @IsInt()
   bathrooms?: number
 
-  @Field(() => String, { nullable: true })
-  @Transform(({ value }) => (value ? Number(value) : null))
+  @Field(() => Number, { nullable: true })
   @IsNumber()
   @IsOptional()
   squareMeters?: number
