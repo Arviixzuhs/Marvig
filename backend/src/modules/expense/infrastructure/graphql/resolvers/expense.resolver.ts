@@ -8,6 +8,8 @@ import { FindExpensesUseCase } from '@/modules/expense/application/usecases/find
 import { CreateExpenseUseCase } from '@/modules/expense/application/usecases/create-expense.usecase'
 import { DeleteExpenseUseCase } from '@/modules/expense/application/usecases/delete-expense.usecase'
 import { UpdateExpenseUseCase } from '@/modules/expense/application/usecases/update-expense.usecase'
+import { ExpensePerformanceType } from '@/modules/expense/infrastructure/graphql/types/expense-performance.type'
+import { GetExpensesPerformanceUseCase } from '@/modules/expense/application/usecases/get-expense-performance-by-category.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
 @Resolver(() => ExpenseType)
@@ -18,6 +20,7 @@ export class ExpenseResolver {
     private readonly updateExpenseUseCase: UpdateExpenseUseCase,
     private readonly deleteExpenseUseCase: DeleteExpenseUseCase,
     private readonly createExpenseUseCase: CreateExpenseUseCase,
+    private readonly getExpensesPerformanceUseCase: GetExpensesPerformanceUseCase,
   ) {}
 
   @Mutation(() => ExpenseType)
@@ -47,5 +50,12 @@ export class ExpenseResolver {
     @Args('data') data: UpdateExpenseDto,
   ): Promise<ExpenseType> {
     return this.updateExpenseUseCase.execute(id, data)
+  }
+
+  @Query(() => [ExpensePerformanceType])
+  async getExpensesPerformance(
+    @Args('filters') filters: ExpenseFilterDto,
+  ): Promise<ExpensePerformanceType[]> {
+    return this.getExpensesPerformanceUseCase.execute(filters)
   }
 }

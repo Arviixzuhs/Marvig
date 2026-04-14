@@ -37,3 +37,13 @@ export interface IPaymentFilter extends IPaginationFilter {
   fromDate?: string
   toDate?: string
 }
+
+export interface IPaymentPerformance {
+  salesPerformanceData: { name: string; value: number }[]
+  metrics: {
+    weeklySales: { amount: string; percentage: string; isPositive: boolean }
+    dailySales: { amount: string; percentage: string; isPositive: boolean }
+    totalSales: { count: number; percentage: string; isPositive: boolean }
+    profit: { amount: string; percentage: string; isPositive: boolean }
+  }
+}

@@ -5,6 +5,8 @@ import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filt
 import { FindPaymentUseCase } from '@/modules/payment/application/usecases/find-payment.usecase'
 import { FindPaymentsUseCase } from '@/modules/payment/application/usecases/find-payments.usecase'
 import { CreatePaymentUseCase } from '@/modules/payment/application/usecases/create-payment.usecase'
+import { PaymentPerformanceType } from '@/modules/payment/infrastructure/graphql/types/payment-performance.type'
+import { GetPaymentsPerformanceUseCase } from '@/modules/payment/application/usecases/get-payments-performance.usercase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
 @Resolver(() => PaymentType)
@@ -13,6 +15,7 @@ export class PaymentResolver {
     private readonly findPaymentUseCase: FindPaymentUseCase,
     private readonly findPaymentsUseCase: FindPaymentsUseCase,
     private readonly createPaymentUseCase: CreatePaymentUseCase,
+    private readonly getPaymentsPerformanceUseCase: GetPaymentsPerformanceUseCase,
   ) {}
 
   @Mutation(() => PaymentType)
@@ -28,5 +31,12 @@ export class PaymentResolver {
   @Query(() => PaymentType)
   findPaymentById(@Args('id', { type: () => Int }) id: number): Promise<PaymentType> {
     return this.findPaymentUseCase.execute(id)
+  }
+
+  @Query(() => PaymentPerformanceType)
+  getPaymentsPerformance(
+    @Args('filters') filters: PaymentFilterDto,
+  ): Promise<PaymentPerformanceType> {
+    return this.getPaymentsPerformanceUseCase.execute(filters)
   }
 }

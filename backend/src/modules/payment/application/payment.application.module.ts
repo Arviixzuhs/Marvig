@@ -7,6 +7,8 @@ import { FindPaymentsUseCase } from './usecases/find-payments.usecase'
 import { CreatePaymentUseCase } from './usecases/create-payment.usecase'
 import { PrismaPaymentRepositoryAdapter } from '@/modules/payment/infrastructure/repositories/prisma.payment.repository.adapter'
 import { PrismaReservationRepositoryAdapter } from '@/modules/reservation/infrastructure/repositories/prisma.reservation.repository.adapter'
+import { GetPaymentsPerformanceUseCase } from './usecases/get-payments-performance.usercase'
+import { PrismaExpenseRepositoryAdapter } from '@/modules/expense/infrastructure/repositories/prisma.expense.repository.adapter'
 
 config()
 
@@ -22,15 +24,25 @@ config()
     FindPaymentUseCase,
     FindPaymentsUseCase,
     CreatePaymentUseCase,
+    GetPaymentsPerformanceUseCase,
     {
       provide: 'PaymentRepository',
       useClass: PrismaPaymentRepositoryAdapter,
+    },
+    {
+      provide: 'ExpenseRepository',
+      useClass: PrismaExpenseRepositoryAdapter,
     },
     {
       provide: 'ReservationRepository',
       useClass: PrismaReservationRepositoryAdapter,
     },
   ],
-  exports: [FindPaymentUseCase, FindPaymentsUseCase, CreatePaymentUseCase],
+  exports: [
+    FindPaymentUseCase,
+    FindPaymentsUseCase,
+    CreatePaymentUseCase,
+    GetPaymentsPerformanceUseCase,
+  ],
 })
 export class PaymentApplicationModule {}

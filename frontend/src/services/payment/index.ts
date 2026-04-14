@@ -3,6 +3,8 @@ import { FIND_PAYMENT } from './graphql/getPaymentQuery'
 import { IPageResponse } from '@/api/interfaces'
 import { FIND_PAYMENTS } from './graphql/getPaymentsQuery'
 import { CREATE_PAYMENT } from './graphql/createPaymentMutation'
+import { IPaymentPerformance } from '@/models/PaymentModel'
+import { GET_PAYMENTS_PERFORMANCE } from './graphql/getPaymentPerformanceQuery'
 import { PaymentModel, IPaymentFilter } from '@/models/PaymentModel'
 
 export const paymentService = {
@@ -21,7 +23,13 @@ export const paymentService = {
     })
     return data?.findPayments || null
   },
-
+  getPerformance: async (filters: IPaymentFilter): Promise<IPaymentPerformance | null> => {
+    const { data } = await apolloClient.query<{ getPaymentsPerformance: IPaymentPerformance }>({
+      query: GET_PAYMENTS_PERFORMANCE,
+      variables: { filters },
+    })
+    return data?.getPaymentsPerformance || null
+  },
   create: async (payload: PaymentModel): Promise<PaymentModel | undefined> => {
     const { data } = await apolloClient.mutate<{ createPayment: PaymentModel }>({
       mutation: CREATE_PAYMENT,
