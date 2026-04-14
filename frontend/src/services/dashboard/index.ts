@@ -1,7 +1,6 @@
-import { IDateFilter } from '@/api/interfaces'
 import { apolloClient } from '@/api/apollo-client'
-import { IExpensePerformance } from '@/models/ExpenseModel'
-import { IPaymentPerformance } from '@/models/PaymentModel'
+import { IExpenseFilter, IExpensePerformance } from '@/models/ExpenseModel'
+import { IPaymentFilter, IPaymentPerformance } from '@/models/PaymentModel'
 import { GET_DASHBOARD_PERFORMANCE } from './graphql/GetDashboardStatsQuery'
 
 export interface IDashboardStatsResponse {
@@ -9,13 +8,18 @@ export interface IDashboardStatsResponse {
   expenses: IExpensePerformance[]
 }
 
+export interface IDashboardStatsResponseVariables {
+  paymentFilters: IPaymentFilter
+  expenseFilters: IExpenseFilter
+}
+
 export const dashboardService = {
-  getStats: async (filters: IDateFilter) => {
+  getStats: async ({ paymentFilters, expenseFilters }: IDashboardStatsResponseVariables) => {
     const { data } = await apolloClient.query<IDashboardStatsResponse | null>({
       query: GET_DASHBOARD_PERFORMANCE,
       variables: {
-        paymentFilters: filters,
-        expenseFilters: filters,
+        paymentFilters,
+        expenseFilters,
       },
     })
 
