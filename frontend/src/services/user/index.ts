@@ -34,6 +34,7 @@ export const userService = {
   getAll: async (filters: IUserFilter): Promise<IPageResponse<UserModel> | null> => {
     const { data } = await apolloClient.query<GetUsersResponseDto>({
       query: GET_USERS,
+      fetchPolicy: 'network-only',
       variables: {
         filters,
       },

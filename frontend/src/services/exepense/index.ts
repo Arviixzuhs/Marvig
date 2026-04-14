@@ -19,6 +19,7 @@ export const expenseService = {
     const { data } = await apolloClient.query<{ findExpenses: IPageResponse<ExpenseModel> }>({
       query: GET_EXPENSES,
       variables: { filters },
+      fetchPolicy: 'network-only',
     })
     return data?.findExpenses || null
   },

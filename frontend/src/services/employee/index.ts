@@ -22,6 +22,7 @@ export const employeeService = {
   getAll: async (filters: IEmployeeFilter): Promise<IPageResponse<EmployeeModel> | null> => {
     const { data } = await apolloClient.query<{ findEmployees: IPageResponse<EmployeeModel> }>({
       query: GET_EMPLOYEES,
+      fetchPolicy: 'network-only',
       variables: {
         filters,
       },
