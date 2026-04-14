@@ -53,6 +53,7 @@ export const AdminDashboardPage = () => {
     salesPerformanceData: IPaymentPerformance
     expensesPerformanceData: IExpensePerformance[]
   } | null>(null)
+  
   const loadData = async () => {
     const response = await dashboardService.getStats({})
     if (!response) return
@@ -130,7 +131,7 @@ export const AdminDashboardPage = () => {
           <CardBody className='p-6'>
             <div className='flex items-center justify-between mb-6'>
               <div>
-                <h2 className='text-lg font-bold text-foreground mb-4'>Estadisticas de Ventas</h2>
+                <h2 className='text-lg font-bold text-foreground mb-4'>Estadísticas de Ventas</h2>
                 <div className='flex gap-8'>
                   <div>
                     <p className='text-sm text-default-500'>Ventas Semanales</p>
