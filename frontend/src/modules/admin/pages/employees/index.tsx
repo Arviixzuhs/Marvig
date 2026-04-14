@@ -30,7 +30,15 @@ export const AdminEmployeePage = () => {
       })
       if (!response) return
 
-      dispatch(setTableData(response))
+      dispatch(
+        setTableData({
+          ...response,
+          content: response.content.map((item) => ({
+            ...item,
+            fullName: `${item.name} ${item.lastName}`,
+          })),
+        }),
+      )
     } catch (error) {
       console.log(error)
     }

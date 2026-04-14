@@ -30,7 +30,15 @@ export const AdminUserPage = () => {
       })
       if (!response) return
 
-      dispatch(setTableData(response))
+      dispatch(
+        setTableData({
+          ...response,
+          content: response.content.map((item) => ({
+            ...item,
+            fullName: `${item.name} ${item.lastName}`,
+          })),
+        }),
+      )
     } catch (error) {
       console.log(error)
     }
@@ -64,6 +72,10 @@ export const AdminUserPage = () => {
   }
 
   return (
-    <AppTable tableActions={tableActions} searchbarPlaceholder='Buscar usuario por nombre...' hiddeAdd />
+    <AppTable
+      tableActions={tableActions}
+      searchbarPlaceholder='Buscar usuario por nombre...'
+      hiddeAdd
+    />
   )
 }
