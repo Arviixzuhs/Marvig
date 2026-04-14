@@ -3,6 +3,11 @@ export interface IPaginationFilter {
   pageSize?: number
 }
 
+export interface IDateFilter {
+  startDate?: string
+  endDate?: string
+}
+
 export interface IPageResponse<T> {
   content: T[]
   totalItems: number

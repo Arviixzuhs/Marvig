@@ -34,3 +34,13 @@ export interface IExpenseFilter extends IPaginationFilter {
   fromDate?: string
   toDate?: string
 }
+
+export interface IExpensePerformance {
+  month: string
+  MAINTENANCE: number
+  UTILITIES: number
+  CLEANING: number
+  TAXES: number
+  SUPPLIES: number
+  OTHER: number
+}
