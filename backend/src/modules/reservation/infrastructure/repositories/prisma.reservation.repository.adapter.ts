@@ -56,17 +56,22 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return !!reservation
   }
 
-  async createReservation(data: ReservationDto, userId: number): Promise<ReservationModel> {
+  async createReservation(data: ReservationDto, userId?: number): Promise<ReservationModel> {
     const reservation = await this.prisma.reservation.create({
       data: {
         type: data.type,
-        status: ReservationStatus.PENDING,
+        status: data.status || ReservationStatus.PENDING,
         endDate: data.endDate,
         startDate: data.startDate,
         totalPrice: data.totalPrice,
-        user: {
-          connect: { id: userId },
-        },
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        clientPhone: data.clientPhone,
+        ...(userId && {
+          user: {
+            connect: { id: userId },
+          },
+        }),
         apartments: {
           connect: data.apartmentIds.map((id) => ({ id })),
         },

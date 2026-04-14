@@ -53,6 +53,9 @@ export class ReservationSpecificationBuilder {
       this.where.OR = [
         { user: { name: { contains: search, mode: 'insensitive' } } },
         { user: { lastName: { contains: search, mode: 'insensitive' } } },
+        { clientName: { contains: search, mode: 'insensitive' } },
+        { clientEmail: { contains: search, mode: 'insensitive' } },
+        { clientPhone: { contains: search, mode: 'insensitive' } },
       ]
     }
     return this
