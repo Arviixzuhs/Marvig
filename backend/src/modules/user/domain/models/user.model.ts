@@ -6,6 +6,8 @@ export class UserModel {
   lastName: string
   email?: string | null
   avatar?: string | null
+  googleId?: string | null
+  lastLoginAt?: Date | null
   createdAt?: Date | null
   updatedAt?: Date | null
   reservations: ReservationModel[]

@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 import { logOut } from '@/utils/logOut'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
@@ -7,9 +8,9 @@ import { Avatar, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Link } f
 export const NavbarUserOptions = () => {
   const user = useSelector((state: RootState) => state.user)
 
-  const token = localStorage.getItem('token')
+  const token = Cookies.get('isLoggedIn') || localStorage.getItem('token')
 
-  if (token && user !== null) {
+  if (token) {
     return (
       <Dropdown>
         <DropdownTrigger>
@@ -24,12 +25,12 @@ export const NavbarUserOptions = () => {
         <DropdownMenu aria-label='Profile Actions' variant='flat'>
           <DropdownItem key='profile' className='h-14 gap-2 default-text-color'>
             <p className='font-semibold'>Registrado como</p>
-            <p className='font-semibold'>{user?.email}</p>
+            <p className='font-semibold'>{user?.email || 'Usuario'}</p>
           </DropdownItem>
-          {user && (
+          {token && (
             <DropdownItem key='dashboard'>
-              <Link href='/dashboard' target='_blank' className='flex gap-2'>
-                Dasboard
+              <Link href='/admin/dashboard' target='_blank' className='flex gap-2'>
+                Dashboard
                 <ExternalLink size={15} />
               </Link>
             </DropdownItem>

@@ -1,50 +1,64 @@
-import { useEffect, useRef } from 'react'
+import toast from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-
-import Google from '@/assets/icons/google.svg'
+import { GoogleLogin } from '@react-oauth/google'
+import { authService } from '@/modules/auth/services'
+import { setMyUser } from '@/features/userSlice'
+import { setAuthCookie } from '@/utils/setAuthCookie'
 
 export const ContinueWithGoogle = () => {
-  const popupRef = useRef<Window | null>(null)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-  useEffect(() => {
-    const listener = (event: MessageEvent) => {
-      if (event.data === 'closePopup' && popupRef.current) {
-        popupRef.current.close()
-        navigate('/')
-      }
+  const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
+    const { credential } = credentialResponse
+
+    if (!credential) {
+      toast.error('No se recibió el token de Google.')
+      return
     }
 
-    window.addEventListener('message', listener)
+    try {
+      const response = await authService.googleAuth(credential)
+      const { user } = response.data
 
-    return () => window.removeEventListener('message', listener)
-  }, [])
+      // Actualiza el estado global de Redux con los datos del usuario
+      dispatch(setMyUser(user))
 
-  const handleLogin = () => {
-    const googleLoginUrl = import.meta.env['VITE_SERVER_API'] + '/oauth2/authorization/google'
-    const width = 500
-    const height = 600
-    const left = window.screenX + (window.innerWidth - width) / 2
-    const top = window.screenY + (window.innerHeight - height) / 2
+      toast.success(`¡Bienvenido, ${user.name}!`)
+      navigate('/')
+    } catch (error: unknown) {
+      const status = (error as { response?: { status?: number } })?.response?.status
+      if (status === 401) {
+        toast.error('Token de Google inválido o expirado.')
+      } else {
+        toast.error('Error al iniciar sesión con Google.')
+      }
+    }
+  }
 
-    popupRef.current = window.open(
-      googleLoginUrl,
-      'Google Login',
-      `width=${width},height=${height},left=${left},top=${top}`,
-    )
+  const handleGoogleError = () => {
+    toast.error('No se pudo conectar con Google. Intenta de nuevo.')
   }
 
   return (
-    <div className='flex items-center gap-5 justify-center w-full'>
-      <button
-        type='button'
-        onClick={handleLogin}
-        className='bg-white w-full rounded-lg h-11 flex items-center justify-center border border-gray-200'
-      >
-        <img src={Google} className='w-[20px] h-[20px]' />
-
-        <span className='ml-3 text-sm font-medium text-gray-700'>Continuar con Google</span>
-      </button>
+    <div className='flex items-center justify-center w-full' id='google-login-container'>
+      {/*
+        GoogleLogin renderiza el botón oficial de Google Identity Services.
+        El prop `useOneTap` habilita el flujo de "un solo clic" al cargar la página.
+        El prop `onSuccess` recibe directamente el credential (ID Token JWT firmado por Google).
+      */}
+      <GoogleLogin
+        onSuccess={handleGoogleSuccess}
+        onError={handleGoogleError}
+        useOneTap
+        width='100%'
+        text='continue_with'
+        locale='es'
+        shape='rectangular'
+        theme='outline'
+        logo_alignment='left'
+      />
     </div>
   )
 }
