@@ -87,6 +87,7 @@ export class AppModule implements NestModule {
       .exclude(
         'auth/login',
         'auth/register',
+        'auth/google',
         '/stripe/webhook',
         '/api',
         'graphql',

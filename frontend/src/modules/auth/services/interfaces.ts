@@ -9,7 +9,7 @@ export interface IAuthRegisterUser {
   email: string
   password: string
   lastName: string
-  firstName: string
+  name: string
   repeatPassword: string
 }
 

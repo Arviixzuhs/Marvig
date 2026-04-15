@@ -7,13 +7,19 @@ import { Request, Response, NextFunction } from 'express'
 export class AuthMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     try {
-      const authHeader = req.headers.authorization
+      let token = req.cookies?.accessToken
 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'No token provided or invalid format' })
+      // Fallback a Authorization header por compatibilidad
+      if (!token) {
+        const authHeader = req.headers.authorization
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          token = authHeader.split(' ')[1]
+        }
       }
 
-      const token = authHeader.split(' ')[1]
+      if (!token) {
+        return res.status(401).json({ message: 'No token provided' })
+      }
 
       jwt.verify(token, process.env.SECRET_KEY as string, (error, decoded) => {
         if (error) {
