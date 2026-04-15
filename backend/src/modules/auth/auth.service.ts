@@ -9,7 +9,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async findUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
@@ -59,11 +59,8 @@ export class AuthService {
 
   async googleAuth(dto: GoogleAuthDto) {
     const clientId = process.env.GOOGLE_CLIENT_ID
-
-    // Validación criptográfica: el backend verifica la firma, expiración y audience del token
     const client = new OAuth2Client(clientId)
 
-    let googleId: string
     let email: string | undefined
     let given_name: string | undefined
     let family_name: string | undefined
@@ -80,7 +77,6 @@ export class AuthService {
         throw new Error('Payload vacío')
       }
 
-      googleId = payload.sub
       email = payload.email
       given_name = payload.given_name
       family_name = payload.family_name
@@ -99,26 +95,21 @@ export class AuthService {
       )
     }
 
-    // Estrategia Upsert: busca por googleId o email, crea o actualiza
     const user = await this.prisma.user.upsert({
-      where: { googleId },
+      where: {
+        email
+      },
       create: {
-        googleId,
         email,
         name: given_name ?? 'Usuario',
         lastName: family_name ?? '',
         avatar: picture ?? '',
-        lastLoginAt: new Date(),
       },
       update: {
-        lastLoginAt: new Date(),
-        // Si un usuario existente con email se conecta por primera vez con Google, actualiza su googleId
-        googleId,
         ...(picture && { avatar: picture }),
       },
     })
 
-    // Emisión de JWT interno propio con el mismo formato que usa el sistema (coincide con AuthMiddleware)
     const accessToken = jwt.sign(
       { userId: user.id, username: user.name, email: user.email },
       process.env.SECRET_KEY,
