@@ -9,7 +9,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async findUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
@@ -82,10 +82,7 @@ export class AuthService {
       family_name = payload.family_name
       picture = payload.picture
     } catch {
-      throw new HttpException(
-        'Token de Google inválido o expirado.',
-        HttpStatus.UNAUTHORIZED,
-      )
+      throw new HttpException('Token de Google inválido o expirado.', HttpStatus.UNAUTHORIZED)
     }
 
     if (!email) {
@@ -97,7 +94,7 @@ export class AuthService {
 
     const user = await this.prisma.user.upsert({
       where: {
-        email
+        email,
       },
       create: {
         email,
