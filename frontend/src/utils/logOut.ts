@@ -1,4 +1,4 @@
-import { api, authApi } from '@/api/axios-client'
+import { authApi } from '@/api/axios-client'
 
 export const logOut = async () => {
   try {
