@@ -1,10 +1,9 @@
 import { config } from 'dotenv'
 import { AppModule } from './app.module'
 import { NestFactory } from '@nestjs/core'
+import cookieParser from 'cookie-parser'
 import ValidationPipe from './pipes/validation.pipe'
-
 import { NestExpressApplication } from '@nestjs/platform-express'
-import * as cookieParser from 'cookie-parser'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 config()
