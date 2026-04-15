@@ -7,6 +7,10 @@ export const tableColumns: TableColumnInterface[] = [
     style: 'user',
   },
   {
+    name: 'Email',
+    uid: 'email',
+  },
+  {
     name: 'Acciones',
     uid: 'actions',
   },
