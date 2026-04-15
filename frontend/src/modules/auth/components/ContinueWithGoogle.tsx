@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { authService } from '@/modules/auth/services'
 import { setMyUser } from '@/features/userSlice'
-import { setAuthCookie } from '@/utils/setAuthCookie'
 
 export const ContinueWithGoogle = () => {
   const navigate = useNavigate()
@@ -54,7 +53,7 @@ export const ContinueWithGoogle = () => {
         useOneTap
         width='100%'
         text='continue_with'
-        locale='es'
+   
         shape='rectangular'
         theme='outline'
         logo_alignment='left'
