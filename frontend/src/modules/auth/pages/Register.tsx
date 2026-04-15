@@ -18,7 +18,7 @@ export const RegisterPage = () => {
     email: '',
     password: '',
     lastName: '',
-    firstName: '',
+    name: '',
     repeatPassword: '',
   })
 
@@ -26,7 +26,7 @@ export const RegisterPage = () => {
     email: '',
     password: '',
     lastName: '',
-    firstName: '',
+    name: '',
     repeatPassword: '',
   })
 
@@ -82,7 +82,7 @@ export const RegisterPage = () => {
       username: '',
       password: '',
       repeatPassword: '',
-      firstName: '',
+      name: '',
       lastName: '',
     }
     if (!validateEmail(data.email)) {
@@ -130,9 +130,9 @@ export const RegisterPage = () => {
     },
     {
       label: 'Primer nombre',
-      name: 'firstName',
+      name: 'name',
       type: 'text',
-      value: data.firstName,
+      value: data.name,
       placeholder: 'Ingresa tu primer nombre',
     },
     {

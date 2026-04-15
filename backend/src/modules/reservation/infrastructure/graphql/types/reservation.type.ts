@@ -22,8 +22,17 @@ export class ReservationType {
   @Field(() => Float)
   totalPrice: number
 
-  @Field(() => Int)
-  userId: number
+  @Field(() => Int, { nullable: true })
+  userId?: number
+
+  @Field({ nullable: true })
+  clientName?: string
+
+  @Field({ nullable: true })
+  clientEmail?: string
+
+  @Field({ nullable: true })
+  clientPhone?: string
 
   @Field({ nullable: true })
   createdAt?: Date

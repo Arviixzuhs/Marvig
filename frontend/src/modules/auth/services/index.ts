@@ -5,4 +5,5 @@ import { type IAuthLoginUser, type IAuthRegisterUser } from './interfaces'
 export const authService = {
   login: (data: IAuthLoginUser) => authApi.post('/auth/login', data),
   register: (data: IAuthRegisterUser) => authApi.post('/auth/register', data),
+  googleAuth: (credential: string) => authApi.post('/auth/google', { credential }),
 }

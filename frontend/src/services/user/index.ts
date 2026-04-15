@@ -18,8 +18,15 @@ import {
   GetUserResponseDto,
   GetUsersResponseDto,
 } from '@/models/UserModel'
+import { GET_CURRENT_USER } from './graphql/getCurrentUserQuery'
 
 export const userService = {
+  findCurrent: async () => {
+    const { data } = await apolloClient.query<{ findCurrentUser: UserModel }>({
+      query: GET_CURRENT_USER,
+    })
+    return data?.findCurrentUser || null
+  },
   get: async (id: number): Promise<UserModel | null> => {
     const { data } = await apolloClient.mutate<GetUserResponseDto>({
       mutation: GET_USER,
@@ -34,6 +41,7 @@ export const userService = {
   getAll: async (filters: IUserFilter): Promise<IPageResponse<UserModel> | null> => {
     const { data } = await apolloClient.query<GetUsersResponseDto>({
       query: GET_USERS,
+      fetchPolicy: 'network-only',
       variables: {
         filters,
       },

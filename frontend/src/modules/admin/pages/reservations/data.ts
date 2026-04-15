@@ -3,6 +3,11 @@ import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
 
 export const tableColumns: TableColumnInterface[] = [
   {
+    name: 'Nombre del cliente',
+    uid: 'clientName',
+    style: 'user',
+  },
+  {
     name: 'Inicio',
     uid: 'startDate',
     style: 'date',
@@ -45,11 +50,25 @@ export const tableColumns: TableColumnInterface[] = [
 
 export const modalInputs: ModalInput[] = [
   {
-    name: 'userId',
-    label: 'ID del usuario',
-    type: 'number',
-    placeholder: 'Ingresar ID del usuario',
+    name: 'clientName',
+    label: 'Nombre del Cliente',
+    type: 'text',
+    placeholder: 'Nombre completo',
     required: true,
+  },
+  {
+    name: 'clientEmail',
+    label: 'Email del Cliente',
+    type: 'email',
+    placeholder: 'correo@ejemplo.com',
+    required: false,
+  },
+  {
+    name: 'clientPhone',
+    label: 'Teléfono del Cliente',
+    type: 'text',
+    placeholder: '+34 000 000 000',
+    required: false,
   },
   {
     name: 'startDate',
@@ -88,12 +107,5 @@ export const modalInputs: ModalInput[] = [
       { label: 'Cancelado', value: ReservationStatus.CANCELLED },
       { label: 'Completado', value: ReservationStatus.COMPLETED },
     ],
-  },
-  {
-    name: 'totalPrice',
-    label: 'Precio Total',
-    type: 'number',
-    placeholder: '0.00',
-    required: true,
   },
 ]

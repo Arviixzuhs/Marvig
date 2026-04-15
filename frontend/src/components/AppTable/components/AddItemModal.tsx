@@ -13,7 +13,9 @@ import {
   ModalContent,
   Select,
   SelectItem,
+  DatePicker,
 } from '@heroui/react'
+import { parseAbsoluteToLocal } from '@internationalized/date'
 
 export interface AddItemModalProps {
   action: () => void
@@ -26,6 +28,15 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
 }: AddItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
+
+  const parseDateTime = (value: any) => {
+    if (!value) return null
+    try {
+      return parseAbsoluteToLocal(value)
+    } catch {
+      return null
+    }
+  }
 
   React.useEffect(() => {
     if (table.isAddItemModalOpen) {
@@ -66,6 +77,20 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     dispatch(setFormData({ name, value }))
   }
 
+  const handleDateChange = (name: string, value: any) => {
+    if (!value) {
+      dispatch(setFormData({ name, value: null }))
+      return
+    }
+
+    dispatch(
+      setFormData({
+        name,
+        value: value.toDate().toISOString(),
+      }),
+    )
+  }
+
   const toggleModal = () => {
     dispatch(toggleAddItemModal(null))
   }
@@ -90,8 +115,8 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
           <ModalBody className='w-full'>
             <div className='w-full flex flex-col gap-4'>
               {table.modalInputs.map((item, index) => (
-                <div key={index} className='w-full mb-2'>
-                  {item.type === 'select' ? (
+                <div key={index} className='w-full'>
+                  {item.type === 'select' && (
                     <Select
                       label={item.label}
                       placeholder={item.placeholder}
@@ -108,10 +133,21 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
                         <SelectItem key={opt.value}>{opt.label}</SelectItem>
                       ))}
                     </Select>
-                  ) : (
+                  )}
+                  {item.type === 'date' && (
+                    <DatePicker
+                      label={item.label}
+                      granularity='minute'
+                      hourCycle={24}
+                      isRequired={item.required}
+                      value={parseDateTime(table.formData?.[item.name])}
+                      onChange={(value) => handleDateChange(item.name, value)}
+                    />
+                  )}
+                  {item.type !== 'select' && item.type !== 'date' && (
                     <Input
                       size='md'
-                      type={item.type === 'date' ? 'date' : 'text'}
+                      type='text'
                       name={item.name}
                       label={item.label}
                       placeholder={item.placeholder}

@@ -22,6 +22,7 @@ export const reservationService = {
     }>({
       query: GET_RESERVATIONS,
       variables: { filters },
+      fetchPolicy: 'network-only',
     })
     return data?.findReservations || null
   },

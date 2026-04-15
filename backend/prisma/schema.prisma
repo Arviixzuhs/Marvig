@@ -124,11 +124,15 @@ model Reservation {
   endDate   DateTime
   startDate DateTime
 
+  clientName  String? @db.VarChar(100)
+  clientPhone String? @db.VarChar(100)
+  clientEmail String? @db.VarChar(100)
+
   status     ReservationStatus @default(PENDING)
   totalPrice Decimal           @db.Decimal(10, 2)
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
 
   apartments Apartment[]
 

@@ -1,15 +1,17 @@
 import { logOut } from '@/utils/logOut'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
 import { Avatar, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Link } from '@heroui/react'
 
 export const NavbarUserOptions = () => {
   const user = useSelector((state: RootState) => state.user)
 
-  const token = localStorage.getItem('token')
+  const location = useLocation()
+  const isInAdmin = location.pathname.includes('/admin')
 
-  if (token && user !== null) {
+  if (user) {
     return (
       <Dropdown>
         <DropdownTrigger>
@@ -24,15 +26,19 @@ export const NavbarUserOptions = () => {
         <DropdownMenu aria-label='Profile Actions' variant='flat'>
           <DropdownItem key='profile' className='h-14 gap-2 default-text-color'>
             <p className='font-semibold'>Registrado como</p>
-            <p className='font-semibold'>{user?.email}</p>
+            <p className='font-semibold'>{user?.email || 'Usuario'}</p>
           </DropdownItem>
-          {user && (
-            <DropdownItem key='dashboard'>
-              <Link href='/dashboard' target='_blank' className='flex gap-2'>
-                Dasboard
-                <ExternalLink size={15} />
-              </Link>
-            </DropdownItem>
+          {user && !isInAdmin ? (
+            <>
+              <DropdownItem key='dashboard'>
+                <Link href='/admin/dashboard' target='_blank' className='flex gap-2'>
+                  Dashboard
+                  <ExternalLink size={15} />
+                </Link>
+              </DropdownItem>
+            </>
+          ) : (
+            <></>
           )}
           <DropdownItem
             key='logout'

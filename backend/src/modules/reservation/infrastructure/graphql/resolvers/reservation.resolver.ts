@@ -32,7 +32,7 @@ export class ReservationResolver {
     @Args('data') data: ReservationDto,
     @CurrentUser() user: User,
   ): Promise<ReservationType> {
-    return this.createReservationUseCase.execute(data, user.userId)
+    return this.createReservationUseCase.execute(data, user?.userId)
   }
 
   @Query(() => ReservationType, { description: 'Obtiene los detalles de una reserva' })

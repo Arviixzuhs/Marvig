@@ -8,13 +8,15 @@ import { AuthHeader } from '@/modules/auth/components/AuthHeader'
 import { AuthSubmit } from '@/modules/auth/components/AuthSubmit'
 import { useNavigate } from 'react-router-dom'
 import { authService } from '@/modules/auth/services'
-import { setAuthCookie } from '@/utils/setAuthCookie'
 import { AuthLoginOptions } from '@/modules/auth/components/AuthLoginOptions'
 import { ContinueWithGoogle } from '@/modules/auth/components/ContinueWithGoogle'
 import type { IAuthLoginUser } from '@/modules/auth/services/interfaces'
+import { useDispatch } from 'react-redux'
+import { setMyUser } from '@/features/userSlice'
 
 export const LoginPage = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [data, setData] = React.useState<IAuthLoginUser>({
     email: '',
     password: '',
@@ -87,8 +89,8 @@ export const LoginPage = () => {
 
     try {
       const response = await authService.login(data)
-      setAuthCookie('accessToken', response.data.accessToken)
-      setAuthCookie('refreshToken', response.data.refreshToken)
+      const { user } = response.data
+      dispatch(setMyUser(user))
       navigate('/')
     } catch (error) {
       toast.error('Usuario o contraseña incorrecto.')

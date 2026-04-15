@@ -27,6 +27,7 @@ export const paymentService = {
     const { data } = await apolloClient.query<{ getPaymentsPerformance: IPaymentPerformance }>({
       query: GET_PAYMENTS_PERFORMANCE,
       variables: { filters },
+      fetchPolicy: 'network-only',
     })
     return data?.getPaymentsPerformance || null
   },

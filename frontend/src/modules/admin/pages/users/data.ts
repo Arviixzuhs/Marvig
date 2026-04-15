@@ -2,13 +2,13 @@ import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
 
 export const tableColumns: TableColumnInterface[] = [
   {
-    name: 'Nombre',
-    uid: 'name',
+    name: 'Nombre Completo',
+    uid: 'fullName',
     style: 'user',
   },
   {
-    name: 'Apellido',
-    uid: 'lastName',
+    name: 'Email',
+    uid: 'email',
   },
   {
     name: 'Acciones',

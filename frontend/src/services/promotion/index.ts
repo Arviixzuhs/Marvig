@@ -19,6 +19,7 @@ export const promotionService = {
     const { data } = await apolloClient.query<{ findPromotions: IPageResponse<PromotionModel> }>({
       query: FIND_PROMOTIONS,
       variables: { filters },
+      fetchPolicy: 'network-only',
     })
     return data?.findPromotions || null
   },

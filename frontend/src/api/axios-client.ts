@@ -4,6 +4,7 @@ import qs from 'qs'
 
 export const authApi = axios.create({
   baseURL: ENV['VITE_SERVER_API'],
+  withCredentials: true,
 })
 
 export const api = axios.create({
