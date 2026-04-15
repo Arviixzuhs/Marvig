@@ -6,10 +6,13 @@ export class ReservationModel {
   id: number
   type: RentalType
   status: ReservationStatus
-  userId: number
+  userId?: number
   endDate: Date
   startDate: Date
   createdAt?: Date
+  clientName?: string
+  clientEmail?: string
+  clientPhone?: string
   updatedAt?: Date
   totalPrice: number
   apartments?: ApartmentModel[]

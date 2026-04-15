@@ -6,7 +6,8 @@ import { appConfig } from '@/config'
 import { ApartmentModel } from '@/models/ApartmentModel'
 import { apartmentService } from '@/services/apartment'
 import { formatCurrency } from '@/utils/formatCurrency'
-
+import Cookies from 'js-cookie'
+import { NavbarUserOptions } from '@/components/UserOptions'
 export const LandingPage = () => {
   const [apartments, setApartments] = React.useState<ApartmentModel[]>([])
   const loadData = async () => {
@@ -43,11 +44,15 @@ export const LandingPage = () => {
             </a>
           </nav>
 
-          <Link to='/login'>
-            <Button color='primary' radius='sm' href='/login'>
-              Iniciar sesión
-            </Button>
-          </Link>
+          {Cookies.get('isLoggedIn') || localStorage.getItem('token') ? (
+            <NavbarUserOptions />
+          ) : (
+            <Link to='/login'>
+              <Button color='primary' radius='sm'>
+                Iniciar sesión
+              </Button>
+            </Link>
+          )}
         </div>
       </header>
 

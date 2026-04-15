@@ -3,6 +3,11 @@ import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
 
 export const tableColumns: TableColumnInterface[] = [
   {
+    name: 'Precio por Día',
+    uid: 'pricePerDay',
+    style: 'currency',
+  },
+  {
     name: 'Piso',
     uid: 'floor',
   },
@@ -21,11 +26,6 @@ export const tableColumns: TableColumnInterface[] = [
   {
     name: 'M² Totales',
     uid: 'squareMeters',
-  },
-  {
-    name: 'Precio por Día',
-    uid: 'pricePerDay',
-    style: 'currency',
   },
   {
     name: 'Estado',

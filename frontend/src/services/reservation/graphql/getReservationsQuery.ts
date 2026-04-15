@@ -5,6 +5,9 @@ export const GET_RESERVATIONS = gql`
     findReservations(filters: $filters) {
       content {
         id
+        clientName
+        clientPhone
+        clientEmail
         startDate
         endDate
         type

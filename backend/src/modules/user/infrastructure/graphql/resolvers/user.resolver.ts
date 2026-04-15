@@ -1,5 +1,7 @@
+import { User } from '@/interfaces/user.interface'
 import { UserDto } from '@/modules/user/application/dto/user.dto'
 import { UserType } from '@/modules/user/infrastructure/graphql/types/user.type'
+import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { UserPageType } from '@/modules/user/infrastructure/graphql/types/user-page.type'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
 import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
@@ -33,6 +35,11 @@ export class UserResolver {
   @Query(() => UserType, { name: 'user' })
   findOne(@Args('id') id: number): Promise<UserType> {
     return this.findUserUseCase.execute(id)
+  }
+
+  @Query(() => UserType)
+  findCurrentUser(@CurrentUser() user: User): Promise<UserType> {
+    return this.findUserUseCase.execute(user.userId)
   }
 
   @Mutation(() => Boolean)

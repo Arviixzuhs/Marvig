@@ -14,7 +14,7 @@ export class CreateReservationUseCase {
     private readonly apartmentRepository: ApartmentRepositoryPort,
   ) {}
 
-  async execute(data: CreateReservationDto, userId: number): Promise<ReservationModel> {
+  async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
     const start = new Date(data.startDate)
     const end = new Date(data.endDate)
 
@@ -50,7 +50,6 @@ export class CreateReservationUseCase {
       if (apartment.promotion) {
         const promoValue = Number(apartment.promotion.value)
 
-        console.log(apartment.promotion)
         if (apartment.promotion.type === 'PERCENTAGE') {
           discount = (pricePerDay * promoValue) / 100
         } else {

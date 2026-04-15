@@ -1,7 +1,18 @@
 import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
-import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum' // Importación del nuevo enum
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { Field, Float, InputType, Int } from '@nestjs/graphql'
-import { IsArray, IsDateString, IsEnum, IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator'
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+} from 'class-validator'
 
 @InputType()
 export class CreateReservationDto {
@@ -36,4 +47,22 @@ export class CreateReservationDto {
   @IsNotEmpty({ message: 'El estado de la reserva es obligatorio' })
   @IsEnum(ReservationStatus, { message: 'Estado de reserva no válido' })
   status: ReservationStatus
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString({ message: 'El nombre del cliente debe ser una cadena de texto' })
+  @MaxLength(100, { message: 'El nombre del cliente no puede exceder los 100 caracteres' })
+  clientName?: string
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString({ message: 'El email del cliente debe ser una cadena de texto' })
+  @MaxLength(100, { message: 'El email del cliente no puede exceder los 100 caracteres' })
+  clientEmail?: string
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString({ message: 'El teléfono del cliente debe ser una cadena de texto' })
+  @MaxLength(100, { message: 'El teléfono del cliente no puede exceder los 100 caracteres' })
+  clientPhone?: string
 }

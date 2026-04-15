@@ -1,4 +1,5 @@
 import { IPaginationFilter } from '@/api/interfaces'
+import { PromotionModel } from './PromotionModel'
 
 export interface ApartmentModel {
   id: number
@@ -9,6 +10,7 @@ export interface ApartmentModel {
   bathrooms: number
   pricePerDay: number
   squareMeters?: number | null
+  promotion: PromotionModel
   images?: IApartmentImage[] | null
   createdAt?: Date | null
   updatedAt?: Date | null
@@ -32,6 +34,7 @@ export interface IApartmentFilter extends IPaginationFilter {
   search?: string
   number?: string
   floor?: number
+  ids?: number[]
   status?: ApartmentStatus
   bedrooms?: number
   bathrooms?: number

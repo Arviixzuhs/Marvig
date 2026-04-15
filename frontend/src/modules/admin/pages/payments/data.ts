@@ -45,13 +45,6 @@ export const tableColumns: TableColumnInterface[] = [
 
 export const modalInputs: ModalInput[] = [
   {
-    name: 'reservationId',
-    label: 'Reserva (ID)',
-    type: 'number',
-    placeholder: 'ID de la reserva',
-    required: true,
-  },
-  {
     name: 'amount',
     label: 'Monto del Pago',
     type: 'float',

@@ -22,13 +22,16 @@ export interface ReservationModel {
   status: ReservationStatus
   totalPrice: number
   userId: number
-  apartmentId: number
+  apartmentIds: number[]
   isDeleted?: boolean | null
   deletedAt?: Date | null
+  clientName?: string | null
+  clientEmail?: string | null
+  clientPhone?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
   user?: UserModel
-  apartment?: ApartmentModel
+  apartments?: ApartmentModel[]
 }
 
 export interface IReservationFilter extends IPaginationFilter {
