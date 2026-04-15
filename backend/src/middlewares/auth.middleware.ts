@@ -9,7 +9,6 @@ export class AuthMiddleware implements NestMiddleware {
     try {
       let token = req.cookies?.accessToken
 
-      // Fallback a Authorization header por compatibilidad
       if (!token) {
         const authHeader = req.headers.authorization
         if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -22,13 +21,9 @@ export class AuthMiddleware implements NestMiddleware {
       }
 
       jwt.verify(token, process.env.SECRET_KEY as string, (error, decoded) => {
-        if (error) {
-          return res.status(401).json({ message: 'Invalid token' })
+        if (!error) {
+          req.user = decoded as User
         }
-
-        const user = decoded as User
-        req.user = user
-
         next()
       })
     } catch (error) {
