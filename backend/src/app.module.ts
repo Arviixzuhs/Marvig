@@ -90,7 +90,6 @@ export class AppModule implements NestModule {
         'auth/google',
         '/stripe/webhook',
         '/api',
-        'graphql',
         'file/upload',
         'file/uploads',
         '/uploads/(.*)',
