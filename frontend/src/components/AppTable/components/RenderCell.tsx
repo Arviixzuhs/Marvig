@@ -13,6 +13,8 @@ export interface RenderCellProps {
   dropdownItems?: DropdownItemInteface[]
 }
 
+const NotContent = () => <span className='text-sm text-gray-500'>Sin contenido</span>
+
 export const RenderCell = (props: RenderCellProps) => {
   if (props.column && props.column.style) {
     switch (props.column.style) {
@@ -36,11 +38,11 @@ export const RenderCell = (props: RenderCellProps) => {
               radius='sm'
               variant='flat'
               style={{
-                background: props.column.chipConfig[props.value]?.color,
+                background: props.column.chipConfig[props.value]?.color || '#6B7280',
                 color: 'white',
               }}
             >
-              {props.column.chipConfig[props.value]?.label}
+              {props.column.chipConfig[props.value]?.label || 'Sin contenido'}
             </Chip>
           )
         } else {
@@ -55,16 +57,20 @@ export const RenderCell = (props: RenderCellProps) => {
       case 'date':
         return (
           <>
-            {getFormattedDateTime({
-              value: props.value,
-              format: {
-                day: '2-digit',
-                year: 'numeric',
-                hour: 'numeric',
-                month: '2-digit',
-                minute: 'numeric',
-              },
-            })}
+            {props.value ? (
+              getFormattedDateTime({
+                value: props.value,
+                format: {
+                  day: '2-digit',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  month: '2-digit',
+                  minute: 'numeric',
+                },
+              })
+            ) : (
+              <NotContent />
+            )}
           </>
         )
     }
@@ -85,6 +91,6 @@ export const RenderCell = (props: RenderCellProps) => {
     }
 
     default:
-      return <>{String(props.value).length === 0 || !props.value ? <span className='text-sm text-gray-500'>Sin contenido</span> : props.value}</>
+      return <>{String(props.value).length === 0 || !props.value ? <NotContent /> : props.value}</>
   }
 }

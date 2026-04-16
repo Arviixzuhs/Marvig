@@ -1,6 +1,7 @@
 import { ExpenseDto } from '@/modules/expense/application/dto/expense.dto'
 import { ExpenseType } from '@/modules/expense/infrastructure/graphql/types/expense.type'
 import { ExpensePageType } from '@/modules/expense/infrastructure/graphql/types/expense-page.type'
+import { ExpenseImageDto } from '@/modules/expense/application/dto/expense-image.dto'
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { UpdateExpenseDto } from '@/modules/expense/application/dto/update-expense.dto'
 import { FindExpenseUseCase } from '@/modules/expense/application/usecases/find-expense.usecase'
@@ -9,6 +10,7 @@ import { CreateExpenseUseCase } from '@/modules/expense/application/usecases/cre
 import { DeleteExpenseUseCase } from '@/modules/expense/application/usecases/delete-expense.usecase'
 import { UpdateExpenseUseCase } from '@/modules/expense/application/usecases/update-expense.usecase'
 import { ExpensePerformanceType } from '@/modules/expense/infrastructure/graphql/types/expense-performance.type'
+import { UpdateExpenseImagesUseCase } from '@/modules/expense/application/usecases/update-expense-image.usecase'
 import { GetExpensesPerformanceUseCase } from '@/modules/expense/application/usecases/get-expense-performance-by-category.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
@@ -20,6 +22,7 @@ export class ExpenseResolver {
     private readonly updateExpenseUseCase: UpdateExpenseUseCase,
     private readonly deleteExpenseUseCase: DeleteExpenseUseCase,
     private readonly createExpenseUseCase: CreateExpenseUseCase,
+    private readonly updateExpenseImagesUseCase: UpdateExpenseImagesUseCase,
     private readonly getExpensesPerformanceUseCase: GetExpensesPerformanceUseCase,
   ) {}
 
@@ -50,6 +53,11 @@ export class ExpenseResolver {
     @Args('data') data: UpdateExpenseDto,
   ): Promise<ExpenseType> {
     return this.updateExpenseUseCase.execute(id, data)
+  }
+
+  @Mutation(() => ExpenseType)
+  async updateExpenseImages(@Args('data') data: ExpenseImageDto): Promise<ExpenseType> {
+    return this.updateExpenseImagesUseCase.execute(data)
   }
 
   @Query(() => [ExpensePerformanceType])

@@ -44,3 +44,9 @@ export interface IExpensePerformance {
   SUPPLIES: number
   OTHER: number
 }
+
+export interface IExpenseImage {
+  id: number
+  url: string
+  expenseId: number
+}
