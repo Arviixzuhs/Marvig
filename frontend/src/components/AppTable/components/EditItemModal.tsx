@@ -21,6 +21,7 @@ import {
   DatePicker,
 } from '@heroui/react'
 import { parseAbsoluteToLocal } from '@internationalized/date'
+import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 
 export interface EditItemModalProps {
   action: () => void
@@ -33,7 +34,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
-
+  const { resetFormData, setImages } = useImageUpload()
   const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
 
   const parseDateTime = (value: any) => {
@@ -91,6 +92,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   }
 
   const toggleModal = () => {
+    resetFormData()
+    setImages([])
     dispatch(toggleEditItemModal(null))
   }
 
