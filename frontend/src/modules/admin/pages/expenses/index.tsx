@@ -1,24 +1,24 @@
 import React from 'react'
 import toast from 'react-hot-toast'
+import { Divider } from '@heroui/react'
 import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
+import { fileService } from '@/services/file'
+import { ImageUploader } from '@/components/ImageUploader'
 import { expenseService } from '@/services/exepense'
+import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import {
-  addItem,
-  updateItem,
-  deleteItem,
-  setTableData,
-  setModalInputs,
-  setTableColumns,
-} from '@/features/appTableSlice'
+import { ExpenseModel, IExpenseImage } from '@/models/ExpenseModel'
+import { deleteItem, setTableData, setModalInputs, setTableColumns } from '@/features/appTableSlice'
 
-export const AdminExepensePage = () => {
+export const AdminExpensePage = () => {
   const table = useSelector((state: RootState) => state.appTable)
+  const id = table.currentItemToUpdate
   const dispatch = useDispatch()
+  const { formData, resetFormData, setImages, images } = useImageUpload()
   const [debounceValue] = useDebounce(table.filterValue, 100)
 
   const loadData = async () => {
@@ -29,10 +29,9 @@ export const AdminExepensePage = () => {
         pageSize: table.rowsPerPage,
       })
       if (!response) return
-
       dispatch(setTableData(response))
     } catch (error) {
-      console.log(error)
+      console.error('Error loading expenses:', error)
     }
   }
 
@@ -45,25 +44,91 @@ export const AdminExepensePage = () => {
     dispatch(setTableColumns(tableColumns))
   }, [])
 
+  React.useEffect(() => {
+    if (!table.currentItemToUpdate) {
+      resetFormData()
+      return
+    }
+
+    const itemToUpdate = table.data.find(
+      (item: ExpenseModel) => item.id === table.currentItemToUpdate,
+    )
+
+    if (itemToUpdate?.images) {
+      setImages(
+        itemToUpdate.images.map((img: IExpenseImage) => ({
+          id: String(img.id),
+          imageURL: img.url,
+        })),
+      )
+    }
+  }, [table.currentItemToUpdate, table.data])
+
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await expenseService.create(table.formData)
-      dispatch(addItem(response))
-      toast.success('Gasto creado correctamente')
-    },
-    delete: async () => {
-      await expenseService.delete(table.currentItemToDelete)
-      dispatch(deleteItem(table.currentItemToDelete))
-      toast.success('Gasto eliminado correctamente')
+      try {
+        const newExpense = await expenseService.create(table.formData)
+
+        if (images.length > 0 && newExpense) {
+          const uploadRes = await fileService.uploadFiles(formData)
+          await expenseService.updateImages(newExpense.id, uploadRes.fileUrls)
+        }
+
+        resetFormData()
+        await loadData()
+        toast.success('Gasto registrado correctamente')
+      } catch (error) {
+        console.error(error)
+        toast.error('Error al registrar el gasto')
+      }
     },
     update: async () => {
-      await expenseService.update(table.currentItemToUpdate, table.formData)
-      dispatch(updateItem({ id: table.currentItemToUpdate, newData: table.formData }))
-      toast.success('Gasto actualizado correctamente')
+      try {
+        await expenseService.update(id, table.formData)
+
+        const existingURLs = images
+          .filter((img) => img.imageURL && !img.file)
+          .map((img) => img.imageURL)
+
+        let finalURLs = [...existingURLs]
+
+        const containsNewFiles = images.some((img) => img.file)
+        if (containsNewFiles) {
+          const uploadRes = await fileService.uploadFiles(formData)
+          finalURLs = [...finalURLs, ...uploadRes.fileUrls]
+        }
+
+        await expenseService.updateImages(id, finalURLs)
+
+        resetFormData()
+        await loadData()
+        toast.success('Gasto actualizado correctamente')
+      } catch (error) {
+        console.error(error)
+        toast.error('Error al actualizar el gasto')
+      }
+    },
+    delete: async () => {
+      try {
+        await expenseService.delete(table.currentItemToDelete)
+        dispatch(deleteItem(table.currentItemToDelete))
+        toast.success('Gasto eliminado correctamente')
+      } catch (error) {
+        toast.error('Error al eliminar')
+      }
     },
   }
 
   return (
-    <AppTable tableActions={tableActions} searchbarPlaceholder='Buscar gasto por descripción...' />
+    <AppTable
+      modalExtension={
+        <>
+          <Divider />
+          <ImageUploader />
+        </>
+      }
+      tableActions={tableActions}
+      searchbarPlaceholder='Buscar gastos...'
+    />
   )
 }

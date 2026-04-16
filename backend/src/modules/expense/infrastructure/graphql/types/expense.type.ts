@@ -2,6 +2,8 @@ import { EmployeeType } from '@/modules/employee/infrastructure/graphql/types/em
 import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
 import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql'
+import { ExpenseImageType } from './expense-image.type'
+import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
 
 @ObjectType()
 export class ExpenseType {
@@ -16,6 +18,15 @@ export class ExpenseType {
 
   @Field(() => ExpenseCategory)
   category: ExpenseCategory
+
+  @Field({ nullable: true })
+  date?: Date | null
+
+  @Field(() => PaymentMethod, { nullable: true })
+  paymentMethod: PaymentMethod | null
+
+  @Field(() => [ExpenseImageType], { nullable: 'itemsAndList' })
+  images?: ExpenseImageType[] | null
 
   @Field(() => Int)
   apartmentId: number

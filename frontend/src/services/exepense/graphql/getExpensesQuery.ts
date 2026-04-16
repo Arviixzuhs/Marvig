@@ -6,6 +6,12 @@ export const GET_EXPENSES = gql`
       content {
         id
         amount
+        date
+        paymentMethod
+        images {
+          id
+          url
+        }
         category
         description
         createdAt

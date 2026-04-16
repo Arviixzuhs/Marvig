@@ -5,6 +5,7 @@ import { IPageResponse } from '@/api/interfaces'
 import { DELETE_EXPENSE } from './graphql/deleteExpenseMutation'
 import { CREATE_EXPENSE } from './graphql/createExpenseMutation'
 import { UPDATE_EXPENSE } from './graphql/updateExpenseMutation'
+import { UPDATE_EXPENSE_IMAGES } from './graphql/updateExpenseImageSMutation'
 import { ExpenseModel, IExpenseFilter } from '@/models/ExpenseModel'
 
 export const expenseService = {
@@ -41,6 +42,18 @@ export const expenseService = {
       },
     })
     return data?.updateExpense
+  },
+  updateImages: async (id: number, imageUrls: string[]) => {
+    const { data } = await apolloClient.mutate<{ updateExpenseImages: ExpenseModel }>({
+      mutation: UPDATE_EXPENSE_IMAGES,
+      variables: {
+        data: {
+          id,
+          imageUrls,
+        },
+      },
+    })
+    return data?.updateExpenseImages
   },
   delete: async (id: number): Promise<boolean> => {
     const { data } = await apolloClient.mutate<{ deleteExpense: boolean }>({

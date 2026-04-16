@@ -48,6 +48,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
         include: {
           apartment: true,
           employee: true,
+          images: true,
         },
       }),
       this.prisma.expense.count({
