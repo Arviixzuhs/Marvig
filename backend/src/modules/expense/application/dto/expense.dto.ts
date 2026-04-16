@@ -1,7 +1,17 @@
 import { Type } from 'class-transformer'
-import { ExpenseCategory } from 'generated/prisma/enums'
+import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
+import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
 import { InputType, Field, Int, Float } from '@nestjs/graphql'
-import { Min, IsInt, IsEnum, IsNumber, IsString, MaxLength, IsOptional } from 'class-validator'
+import {
+  Min,
+  IsInt,
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsString,
+  MaxLength,
+  IsOptional,
+} from 'class-validator'
 
 @InputType()
 export class ExpenseDto {
@@ -34,4 +44,17 @@ export class ExpenseDto {
   @IsInt({ message: 'El ID del empleado debe ser un número entero' })
   @IsOptional()
   employeeId?: number
+
+  @Field(() => Date, { nullable: true })
+  @Type(() => Date)
+  @IsDate({ message: 'La fecha proporcionada no es válida' })
+  @IsOptional()
+  date?: Date
+
+  @Field(() => String, { nullable: true })
+  @IsEnum(PaymentMethod, {
+    message: 'El método de pago seleccionado no es válido',
+  })
+  @IsOptional()
+  paymentMethod?: PaymentMethod
 }
