@@ -73,6 +73,13 @@ model ApartmentImage {
   apartmentId Int
 }
 
+model ExpenseImage {
+  id        Int     @id @default(autoincrement())
+  url       String
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  expenseId Int
+}
+
 model Expense {
   id          Int             @id @default(autoincrement())
   amount      Decimal         @db.Decimal(10, 2)
@@ -85,10 +92,14 @@ model Expense {
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId Int?
 
+  date          DateTime       @default(now())
+  paymentMethod PaymentMethod?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  isDeleted Boolean?  @default(false)
+  images    ExpenseImage[]
+  isDeleted Boolean?       @default(false)
   deletedAt DateTime?
 
   @@index([apartmentId])
