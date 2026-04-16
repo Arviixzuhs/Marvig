@@ -12,6 +12,7 @@ import {
   Receipt,
   Wallet,
   Tag,
+  Info,
   CreditCard,
 } from 'lucide-react'
 
@@ -37,7 +38,7 @@ const menuItems = [
     href: '/admin/expenses',
   },
   {
-    label: 'Apartmentos',
+    label: 'Apartamentos',
     icon: Home,
     href: '/admin/apartments',
   },
@@ -56,6 +57,11 @@ const menuItems = [
     icon: Briefcase,
     href: '/admin/employees',
   },
+  {
+    label: 'Reportes',
+    icon: Info,
+    href: '/admin/reports',
+  }
 ]
 
 export function AdminSidebar() {
