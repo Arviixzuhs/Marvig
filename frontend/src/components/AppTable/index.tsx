@@ -11,7 +11,7 @@ import { ConfirmDeleteModal } from './components/ConfirmDeleteModal'
 import { DropdownItemInteface } from './components/DropdownAction'
 import type { AppTableActions } from './interfaces/appTable'
 import { useDispatch, useSelector } from 'react-redux'
-import { setFilterValue, type TableColumnInterface } from '@/features/appTableSlice'
+import { setFilterValue, setTableData, type TableColumnInterface } from '@/features/appTableSlice'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react'
 
 export interface AppTableProps {
@@ -40,6 +40,14 @@ export const AppTable = ({
   const table = useSelector((state: RootState) => state.appTable)
 
   React.useEffect(() => {
+    dispatch(
+      setTableData({
+        content: [],
+        totalPages: 0,
+        currentPage: 0,
+        rowsPerPage: 10,
+      }),
+    )
     dispatch(setFilterValue(''))
   }, [location])
 
@@ -63,7 +71,6 @@ export const AppTable = ({
         }
         bottomContent={<TablePagination />}
         topContentPlacement='outside'
-   
         classNames={{
           base: 'h-full',
           tbody: 'h-full',
