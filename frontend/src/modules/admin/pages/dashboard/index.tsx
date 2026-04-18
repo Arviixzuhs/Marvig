@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Card, CardBody, Chip, Select, SelectItem, Tab, Tabs } from '@heroui/react'
-import { Download, MoreVertical, TrendingUp } from 'lucide-react'
+import { Download, TrendingUp } from 'lucide-react'
 import {
   Bar,
   BarChart,
@@ -239,12 +239,7 @@ export const AdminDashboardPage = () => {
         </Card>
         <Card shadow='none'>
           <CardBody className='p-6'>
-            <div className='flex items-center justify-between mb-6'>
-              <h2 className='text-lg font-bold text-foreground'>Gastos por Categoría</h2>
-              <Button isIconOnly variant='light' radius='full' size='sm'>
-                <MoreVertical className='w-5 h-5 text-default-500' />
-              </Button>
-            </div>
+            <h2 className='text-lg mb-6 font-bold text-foreground'>Gastos por Categoría</h2>
             <div className='flex flex-wrap gap-4 mb-6'>
               {Object.entries(categoryConfig).map(([key, config]) => (
                 <div key={key} className='flex items-center gap-2'>
