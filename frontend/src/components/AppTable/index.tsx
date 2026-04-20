@@ -49,7 +49,7 @@ export const AppTable = ({
       }),
     )
     dispatch(setFilterValue(''))
-  }, [location])
+  }, [location.pathname])
 
   return (
     <>
