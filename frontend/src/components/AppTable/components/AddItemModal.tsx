@@ -14,6 +14,7 @@ import {
   Select,
   SelectItem,
   DatePicker,
+  Textarea,
 } from '@heroui/react'
 import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
@@ -147,8 +148,24 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
                       onChange={(value) => handleDateChange(item.name, value)}
                     />
                   )}
-                  {item.type !== 'select' && item.type !== 'date' && (
+                  {(item.type === 'text' ||
+                    item.type === 'number' ||
+                    item.type === 'float' ||
+                    item.type === 'email' ||
+                    item.type === 'password') && (
                     <Input
+                      size='md'
+                      type='text'
+                      name={item.name}
+                      label={item.label}
+                      placeholder={item.placeholder}
+                      isRequired={item.required}
+                      value={String(table.formData?.[item.name] || '')}
+                      onChange={(e) => handleChange(e, item.type)}
+                    />
+                  )}
+                  {item.type == 'textarea' && (
+                    <Textarea
                       size='md'
                       type='text'
                       name={item.name}

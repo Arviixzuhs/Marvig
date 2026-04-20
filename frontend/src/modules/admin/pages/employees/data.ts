@@ -56,7 +56,7 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'address',
     label: 'Dirección',
-    type: 'text',
+    type: 'textarea',
     placeholder: 'Ingresa la dirección',
     required: false,
   },
