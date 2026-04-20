@@ -59,13 +59,6 @@ export const modalInputs: ModalInput[] = [
     required: true,
   },
   {
-    name: 'description',
-    label: 'Descripción',
-    type: 'text',
-    placeholder: 'Motivo del gasto...',
-    required: false,
-  },
-  {
     name: 'date',
     label: 'Fecha',
     type: 'date',
@@ -99,5 +92,12 @@ export const modalInputs: ModalInput[] = [
       { label: 'Suministros', value: ExpenseCategory.SUPPLIES },
       { label: 'Otros', value: ExpenseCategory.OTHER },
     ],
+  },
+  {
+    name: 'description',
+    label: 'Descripción',
+    type: 'textarea',
+    placeholder: 'Motivo del gasto...',
+    required: false,
   },
 ]
