@@ -83,8 +83,8 @@ export const AdminDashboardPage = () => {
     expensesPerformanceData: IExpensePerformance[]
   } | null>(null)
 
-  const [selectedRange, setSelectedRange] = React.useState('2weeks')
-  const [filters, setFilters] = React.useState(getRangeDates('2weeks'))
+  const [selectedRange, setSelectedRange] = React.useState('year')
+  const [filters, setFilters] = React.useState(getRangeDates('year'))
 
   const loadData = async () => {
     try {
