@@ -87,19 +87,23 @@ export const ChatbotModal = () => {
 
   return (
     <>
-      <button onClick={onOpen} className='hover:scale-110 transition-transform cursor-pointer'>
+      <button
+        onClick={onOpen}
+        className='hover:scale-110 transition-transform cursor-pointer ml-12 md:ml-0'
+      >
         <img src={GeminiLogo} alt='Abrir Chat' className='h-8 w-8' />
       </button>
       <Modal
         size='5xl'
-        backdrop='transparent'
         isOpen={isOpen}
+        backdrop='blur'
         scrollBehavior='inside'
         onOpenChange={onOpenChange}
         hideCloseButton
         classNames={{
           body: 'p-0',
-          base: 'rounded-3xl shadow-2xl bg-white/50 dark:bg-black/20 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-2xl overflow-hidden',
+          backdrop: 'bg-white/20 dark:bg-black/20 backdrop-blur-sm',
+          base: 'rounded-3xl shadow-2xl bg-white/20 dark:bg-black/10 backdrop-blur-sm border border-white/40 dark:border-white/10 shadow-2xl overflow-hidden',
         }}
       >
         <ModalContent>
