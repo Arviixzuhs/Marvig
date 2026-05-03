@@ -18,6 +18,7 @@ import { ThrottlerModule } from '@nestjs/throttler'
 import { PromotionModule } from '@/modules/promotion/promotion.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
+import { ChatbotModule } from '@/modules/chatbot/chatbot.module'
 import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
@@ -34,6 +35,7 @@ config()
     PromotionModule,
     ApartmentModule,
     ReservationModule,
+    ChatbotModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {

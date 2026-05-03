@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
 import GeminiLogo from '@/assets/icons/gemini_logo.png'
 import { useEffect, useRef, useState } from 'react'
-import { MessageSquare, MoreVertical, Plus, Send, X } from 'lucide-react'
+import { Plus, X, Send, Bot, User, Trash2, Maximize2, Minimize2, MessageSquare, MoreVertical } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import axios from 'axios';
 import {
   cn,
   Modal,
@@ -55,8 +58,12 @@ export const ChatbotModal = () => {
     scrollToBottom()
   }, [selectedChat?.messages])
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim() || !selectedChat) return
+    
+    const currentInput = input;
+    setInput('')
+    
     setChats((prev) =>
       prev.map((chat) =>
         chat.id === selectedChatId
@@ -64,14 +71,52 @@ export const ChatbotModal = () => {
               ...chat,
               messages: [
                 ...chat.messages,
-                { role: 'user', content: input },
-                { role: 'assistant', content: 'Procesando tu solicitud...' },
+                { role: 'user', content: currentInput },
+                { role: 'assistant', content: 'Pensando...' }, // Temporary loading message
               ],
             }
           : chat,
       ),
     )
-    setInput('')
+
+    try {
+      const { api } = await import('@/api/axios-client')
+      const historyToSend = selectedChat.messages.map(m => ({ role: m.role, content: m.content }));
+      
+      const response = await api.post('/chatbot/message', {
+        message: currentInput,
+        history: historyToSend
+      });
+
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === selectedChatId
+            ? {
+                ...chat,
+                messages: [
+                  // Quitamos el "Pensando..." y agregamos la real
+                  ...chat.messages.slice(0, -1),
+                  { role: 'assistant', content: response.data.message }
+                ],
+              }
+            : chat,
+        ),
+      )
+    } catch (error) {
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === selectedChatId
+            ? {
+                ...chat,
+                messages: [
+                  ...chat.messages.slice(0, -1),
+                  { role: 'assistant', content: 'Error: No se pudo conectar con el servidor.' }
+                ],
+              }
+            : chat,
+        ),
+      )
+    }
   }
 
   const handleNewChat = () => {
@@ -169,15 +214,26 @@ export const ChatbotModal = () => {
                           animate={{ opacity: 1, scale: 1 }}
                           className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div
-                            className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${
-                              msg.role === 'user'
-                                ? 'bg-blue-600 text-white shadow-md'
-                                : 'bg-white/50 dark:bg-white/10 border border-white/20 dark:border-white/5 text-default-800 dark:text-white shadow-sm'
-                            }`}
-                          >
-                            {msg.content}
-                          </div>
+                            <div
+                              className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${
+                                msg.role === 'user'
+                                  ? 'bg-blue-600 text-white shadow-md'
+                                  : 'bg-white/50 dark:bg-white/10 border border-white/20 dark:border-white/5 text-default-800 dark:text-white shadow-sm'
+                              }`}
+                            >
+                              <ReactMarkdown 
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                  ul: ({ ...props }) => <ul className="list-disc ml-4 my-2" {...props} />,
+                                  ol: ({ ...props }) => <ol className="list-decimal ml-4 my-2" {...props} />,
+                                  li: ({ ...props }) => <li className="mb-1" {...props} />,
+                                  p: ({ ...props }) => <p className="leading-relaxed" {...props} />,
+                                  strong: ({ ...props }) => <strong className="font-bold" {...props} />,
+                                }}
+                              >
+                                {msg.content}
+                              </ReactMarkdown>
+                            </div>
                         </motion.div>
                       ))}
                       <div ref={messagesEndRef} />

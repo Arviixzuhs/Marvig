@@ -8,5 +8,6 @@ import { ApartmentInfrastructureModule } from '@/modules/apartment/infrastructur
   imports: [ApartmentDomainModule, ApartmentApplicationModule, ApartmentInfrastructureModule],
   controllers: [],
   providers: [ApartmentResolver],
+  exports: [ApartmentApplicationModule],
 })
 export class ApartmentModule {}
