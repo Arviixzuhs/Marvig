@@ -3,7 +3,6 @@ import toast from 'react-hot-toast'
 import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
-import { PromotionType } from '@/models/PromotionModel'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { promotionService } from '@/services/promotion'
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,11 +47,7 @@ export const AdminPromotionPage = () => {
 
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await promotionService.create({
-        ...table.formData,
-        value: Number(table.formData.value),
-        type: PromotionType.FIXED,
-      })
+      const response = await promotionService.create(table.formData)
       dispatch(addItem(response))
       toast.success('Promoción creada correctamente')
     },

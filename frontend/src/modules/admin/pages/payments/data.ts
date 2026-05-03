@@ -96,7 +96,7 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'description',
     label: 'Descripción',
-    type: 'text',
+    type: 'textarea',
     placeholder: 'Notas adicionales...',
     required: false,
   },

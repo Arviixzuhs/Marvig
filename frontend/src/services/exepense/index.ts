@@ -5,7 +5,7 @@ import { IPageResponse } from '@/api/interfaces'
 import { DELETE_EXPENSE } from './graphql/deleteExpenseMutation'
 import { CREATE_EXPENSE } from './graphql/createExpenseMutation'
 import { UPDATE_EXPENSE } from './graphql/updateExpenseMutation'
-import { UPDATE_EXPENSE_IMAGES } from './graphql/updateExpenseImageSMutation'
+import { UPDATE_EXPENSE_IMAGES } from './graphql/updateExpenseImagesMutation'
 import { ExpenseModel, IExpenseFilter } from '@/models/ExpenseModel'
 
 export const expenseService = {
