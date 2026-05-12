@@ -1,4 +1,6 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { EmployeeDto } from '@/modules/employee/application/dto/employee.dto'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { EmployeeType } from '@/modules/employee/infrastructure/graphql/types/employee.type'
 import { EmployeePageType } from '@/modules/employee/infrastructure/graphql/types/employee-page.type'
 import { EmployeeFilterDto } from '@/modules/employee/application/dto/employee-filter.dto'
@@ -18,30 +20,35 @@ export class EmployeeResolver {
     private readonly updateEmployeeUseCase: UpdateEmployeeUseCase,
     private readonly deleteEmployeeUseCase: DeleteEmployeeUseCase,
     private readonly createEmployeeUseCase: CreateEmployeeUseCase,
-  ) {}
+  ) { }
 
   @Mutation(() => EmployeeType)
+  @RequiredRole(UserRole.ADMIN)
   createEmployee(@Args('data') data: EmployeeDto): Promise<EmployeeType> {
     return this.createEmployeeUseCase.execute(data)
   }
 
   @Query(() => EmployeePageType)
+  @RequiredRole(UserRole.ADMIN)
   findEmployees(@Args('filters') filters: EmployeeFilterDto): Promise<EmployeePageType> {
     return this.findEmployeesUseCase.execute(filters)
   }
 
   @Query(() => EmployeeType)
+  @RequiredRole(UserRole.ADMIN)
   findEmployeeById(@Args('id', { type: () => Int }) id: number): Promise<EmployeeType> {
     return this.findEmployeeUseCase.execute(id)
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deleteEmployee(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteEmployeeUseCase.execute(id)
     return true
   }
 
   @Mutation(() => EmployeeType)
+  @RequiredRole(UserRole.ADMIN)
   updateEmployee(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateEmployeeDto,
