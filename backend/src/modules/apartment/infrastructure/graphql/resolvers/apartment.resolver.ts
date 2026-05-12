@@ -26,7 +26,7 @@ export class ApartmentResolver {
     private readonly deleteApartmentUseCase: DeleteApartmentUseCase,
     private readonly updateApartmentImageUseCase: UpdateApartmentImagesUseCase,
     private readonly updateApartmentStatusUseCase: UpdateApartmentStatusUseCase,
-  ) { }
+  ) {}
 
   @Mutation(() => ApartmentType)
   @RequiredRole(UserRole.ADMIN)

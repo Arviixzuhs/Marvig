@@ -20,7 +20,7 @@ export class EmployeeResolver {
     private readonly updateEmployeeUseCase: UpdateEmployeeUseCase,
     private readonly deleteEmployeeUseCase: DeleteEmployeeUseCase,
     private readonly createEmployeeUseCase: CreateEmployeeUseCase,
-  ) { }
+  ) {}
 
   @Mutation(() => EmployeeType)
   @RequiredRole(UserRole.ADMIN)
