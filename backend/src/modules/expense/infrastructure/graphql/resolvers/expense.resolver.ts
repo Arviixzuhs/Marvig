@@ -1,5 +1,7 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { ExpenseDto } from '@/modules/expense/application/dto/expense.dto'
 import { ExpenseType } from '@/modules/expense/infrastructure/graphql/types/expense.type'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { ExpensePageType } from '@/modules/expense/infrastructure/graphql/types/expense-page.type'
 import { ExpenseImageDto } from '@/modules/expense/application/dto/expense-image.dto'
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
@@ -27,27 +29,32 @@ export class ExpenseResolver {
   ) {}
 
   @Mutation(() => ExpenseType)
+  @RequiredRole(UserRole.ADMIN)
   createExpense(@Args('data') data: ExpenseDto): Promise<ExpenseType> {
     return this.createExpenseUseCase.execute(data)
   }
 
   @Query(() => ExpensePageType)
+  @RequiredRole(UserRole.ADMIN)
   findExpenses(@Args('filters') filters: ExpenseFilterDto): Promise<ExpensePageType> {
     return this.findExpensesUseCase.execute(filters)
   }
 
   @Query(() => ExpenseType)
+  @RequiredRole(UserRole.ADMIN)
   findExpenseById(@Args('id', { type: () => Int }) id: number): Promise<ExpenseType> {
     return this.findExpenseUseCase.execute(id)
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deleteExpense(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteExpenseUseCase.execute(id)
     return true
   }
 
   @Mutation(() => ExpenseType)
+  @RequiredRole(UserRole.ADMIN)
   updateExpense(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateExpenseDto,
@@ -56,11 +63,13 @@ export class ExpenseResolver {
   }
 
   @Mutation(() => ExpenseType)
+  @RequiredRole(UserRole.ADMIN)
   async updateExpenseImages(@Args('data') data: ExpenseImageDto): Promise<ExpenseType> {
     return this.updateExpenseImagesUseCase.execute(data)
   }
 
   @Query(() => [ExpensePerformanceType])
+  @RequiredRole(UserRole.ADMIN)
   async getExpensesPerformance(
     @Args('filters') filters: ExpenseFilterDto,
   ): Promise<ExpensePerformanceType[]> {

@@ -12,10 +12,17 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id           Int           @id @default(autoincrement())
   name         String        @db.VarChar(50)
-  email        String?       @unique @db.VarChar(100)
+  email        String?       @unique @db.VarChar(250)
+  role         UserRole      @default(USER)
+  phone        String?       @db.VarChar(50)
   avatar       String?       @default("") @db.VarChar(200)
   lastName     String        @db.VarChar(50)
   password     String?       @db.VarChar(200)
