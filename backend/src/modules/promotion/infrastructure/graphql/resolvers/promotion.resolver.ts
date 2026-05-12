@@ -1,4 +1,6 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { PromotionDto } from '@/modules/promotion/application/dto/promotion.dto'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { PromotionType } from '@/modules/promotion/infrastructure/graphql/types/promotion.type'
 import { PromotionPageType } from '@/modules/promotion/infrastructure/graphql/types/promotion-page.type'
 import { PromotionFilterDto } from '@/modules/promotion/application/dto/promotion-filter.dto'
@@ -21,6 +23,7 @@ export class PromotionResolver {
   ) {}
 
   @Mutation(() => PromotionType)
+  @RequiredRole(UserRole.ADMIN)
   createPromotion(@Args('data') data: PromotionDto): Promise<PromotionType> {
     return this.createPromotionUseCase.execute(data)
   }
@@ -36,12 +39,14 @@ export class PromotionResolver {
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deletePromotion(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deletePromotionUseCase.execute(id)
     return true
   }
 
   @Mutation(() => PromotionType)
+  @RequiredRole(UserRole.ADMIN)
   updatePromotion(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdatePromotionDto,

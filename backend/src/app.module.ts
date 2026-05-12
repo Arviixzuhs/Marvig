@@ -16,6 +16,7 @@ import { AuthMiddleware } from '@/middlewares/auth.middleware'
 import { ApartmentModule } from '@/modules/apartment/apartment.module'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { PromotionModule } from '@/modules/promotion/promotion.module'
+import { PermissionGuard } from '@/common/guards/permission.guard'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
@@ -77,6 +78,10 @@ config()
     {
       provide: APP_GUARD,
       useClass: GqlThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
   ],
 })
