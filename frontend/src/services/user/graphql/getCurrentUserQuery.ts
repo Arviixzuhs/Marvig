@@ -6,6 +6,7 @@ export const GET_CURRENT_USER = gql`
       id
       name
       lastName
+      role
       email
       createdAt
     }
