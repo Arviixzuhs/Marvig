@@ -2,18 +2,22 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '@heroui/react'
+import { RootState } from '@/store'
 import { appConfig } from '@/config'
+import { useSelector } from 'react-redux'
 import { ApartmentModel } from '@/models/ApartmentModel'
-import { apartmentService } from '@/services/apartment'
 import { formatCurrency } from '@/utils/formatCurrency'
-import Cookies from 'js-cookie'
+import { apartmentService } from '@/services/apartment'
 import { NavbarUserOptions } from '@/components/UserOptions'
+
 export const LandingPage = () => {
   const [apartments, setApartments] = React.useState<ApartmentModel[]>([])
+  const user = useSelector((state: RootState) => state.user)
+
   const loadData = async () => {
     const response = await apartmentService.getAll({
       page: 0,
-      pageSize: 4,
+      pageSize: 20,
     })
     if (response) {
       setApartments(response.content)
@@ -31,7 +35,6 @@ export const LandingPage = () => {
           <h1 className='text-xl font-semibold tracking-tight'>
             Posada<span className='text-blue-600'>{appConfig.company}</span>
           </h1>
-
           <nav className='hidden md:flex items-center gap-8 text-sm'>
             <a href='#apartments' className='hover:text-blue-600 transition'>
               Apartamentos
@@ -43,8 +46,7 @@ export const LandingPage = () => {
               Contacto
             </a>
           </nav>
-
-          {Cookies.get('isLoggedIn') || localStorage.getItem('token') ? (
+          {user ? (
             <NavbarUserOptions />
           ) : (
             <Link to='/login'>
@@ -126,7 +128,9 @@ export const LandingPage = () => {
                   <div className='flex items-start justify-between'>
                     <h4 className='text-lg font-semibold'>Apartamento #{apartment.number}</h4>
 
-                    <span className='text-blue-600 font-medium'>{formatCurrency(apartment.pricePerDay)}</span>
+                    <span className='text-blue-600 font-medium'>
+                      {formatCurrency(apartment.pricePerDay)}
+                    </span>
                   </div>
 
                   <div className='pt-3 mt-auto'>
