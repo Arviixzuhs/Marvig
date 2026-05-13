@@ -1,4 +1,5 @@
 import { logOut } from '@/utils/logOut'
+import { UserRole } from '@/models/UserModel'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
@@ -7,7 +8,6 @@ import { Avatar, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Link } f
 
 export const NavbarUserOptions = () => {
   const user = useSelector((state: RootState) => state.user)
-
   const location = useLocation()
   const isInAdmin = location.pathname.includes('/admin')
 
@@ -22,7 +22,7 @@ export const NavbarUserOptions = () => {
             <p className='font-semibold'>Registrado como</p>
             <p className='font-semibold'>{user?.email || 'Usuario'}</p>
           </DropdownItem>
-          {user && !isInAdmin ? (
+          {user.role === UserRole.ADMIN && !isInAdmin ? (
             <>
               <DropdownItem key='dashboard'>
                 <Link href='/admin/dashboard' target='_blank' className='flex gap-2'>
