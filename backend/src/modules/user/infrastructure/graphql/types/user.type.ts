@@ -1,3 +1,4 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { ObjectType, Field, Int } from '@nestjs/graphql'
 
 @ObjectType()
@@ -22,4 +23,7 @@ export class UserType {
 
   @Field({ nullable: true })
   updatedAt?: Date | null
+
+  @Field()
+  role: UserRole
 }

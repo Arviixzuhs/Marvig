@@ -1,11 +1,13 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 
 export class UserModel {
   id: number
   name: string
-  lastName: string
+  role: UserRole
   email?: string | null
   avatar?: string | null
+  lastName: string
   createdAt?: Date | null
   updatedAt?: Date | null
   reservations: ReservationModel[]

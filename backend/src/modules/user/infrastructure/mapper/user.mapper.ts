@@ -1,3 +1,4 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { BaseMapper } from '@/common/mappers/base.mapper'
 import { ReservationMapper } from '@/modules/reservation/infrastructure/mappers/reservation.mapper'
@@ -14,6 +15,7 @@ export class UserMapper extends BaseMapper<PrismaUserWithRelations, UserModel> {
     return {
       id: model.id,
       name: model.name,
+      role: model.role as UserRole,
       lastName: model.lastName,
       email: model.email,
       avatar: model.avatar,
