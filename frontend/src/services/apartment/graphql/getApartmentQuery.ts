@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const GET_APARTMENT = gql`
-  query GetApartment($id: Int!) {
-    apartment(id: $id) {
+  query FindApartmentById($id: Int!) {
+    findApartmentById(id: $id) {
       id
       floor
       number
