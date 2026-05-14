@@ -72,11 +72,12 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     return !!user
   }
 
-  async findUser(userId: number): Promise<UserModel> {
+  async findUser(userId: number): Promise<UserModel | null> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     })
 
+    if (!user) return null
     return this.userMapper.modelToDomain(user)
   }
 }

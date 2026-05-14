@@ -26,16 +26,16 @@ export class ExpenseMapper extends BaseMapper<PrismaExpenseWithRelations, Expens
       id: model.id,
       date: model.date,
       amount: Number(model.amount),
+      images: model.images,
       category: model.category as unknown as ExpenseCategory,
+      employee: model.employee ? this.employeeMapper.modelToDomain(model.employee) : undefined,
+      updatedAt: model.updatedAt,
+      createdAt: model.createdAt,
+      apartment: model.apartment ? this.apartmentMapper.modelToDomain(model.apartment) : undefined,
+      employeeId: model.employeeId,
       description: model.description,
       apartmentId: model.apartmentId,
-      employeeId: model.employeeId,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
       paymentMethod: model.paymentMethod as PaymentMethod,
-      images: model.images,
-      apartment: model.apartment ? this.apartmentMapper.modelToDomain(model.apartment) : undefined,
-      employee: model.employee ? this.employeeMapper.modelToDomain(model.employee) : undefined,
     }
   }
 }
