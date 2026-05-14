@@ -10,15 +10,13 @@ import { ApartmentModel, IApartmentFilter } from '@/models/ApartmentModel'
 
 export const apartmentService = {
   get: async (id: number): Promise<ApartmentModel | null> => {
-    const { data } = await apolloClient.mutate<{ apartment: ApartmentModel }>({
-      mutation: GET_APARTMENT,
+    const { data } = await apolloClient.query<{ findApartmentById: ApartmentModel }>({
+      query: GET_APARTMENT,
       variables: {
-        data: {
-          id,
-        },
+        id,
       },
     })
-    return data?.apartment || null
+    return data?.findApartmentById || null
   },
   getAll: async (filters: IApartmentFilter): Promise<IPageResponse<ApartmentModel> | null> => {
     const { data } = await apolloClient.query<{ findApartments: IPageResponse<ApartmentModel> }>({
