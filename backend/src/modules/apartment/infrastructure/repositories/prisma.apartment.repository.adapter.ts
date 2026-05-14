@@ -65,7 +65,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
         images: true,
       },
     })
-
+    if (!apartment) return null
     return this.apartmentMapper.modelToDomain(apartment)
   }
 

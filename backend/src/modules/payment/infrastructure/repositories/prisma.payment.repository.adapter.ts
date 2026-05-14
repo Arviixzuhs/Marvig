@@ -68,6 +68,7 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
       where: { id: paymentId },
     })
 
+    if (!payment) return null
     return this.paymentMapper.modelToDomain(payment)
   }
 }
