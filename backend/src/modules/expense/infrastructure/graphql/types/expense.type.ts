@@ -28,8 +28,8 @@ export class ExpenseType {
   @Field(() => [ExpenseImageType], { nullable: 'itemsAndList' })
   images?: ExpenseImageType[] | null
 
-  @Field(() => Int)
-  apartmentId: number
+  @Field(() => Int, { nullable: true })
+  apartmentId?: number | null
 
   @Field(() => Int, { nullable: true })
   employeeId?: number | null

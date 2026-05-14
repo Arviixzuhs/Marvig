@@ -78,11 +78,12 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
     return !!promotion
   }
 
-  async findPromotion(promotionId: number): Promise<PromotionModel> {
+  async findPromotion(promotionId: number): Promise<PromotionModel | null> {
     const promotion = await this.prisma.promotion.findUnique({
       where: { id: promotionId },
     })
 
+    if (!promotion) return null
     return this.promotionMapper.modelToDomain(promotion)
   }
 }

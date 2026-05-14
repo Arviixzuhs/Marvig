@@ -77,7 +77,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
     return this.expenseMapper.modelsToDomain(expenses)
   }
 
-  async findExpense(expenseId: number): Promise<ExpenseModel> {
+  async findExpense(expenseId: number): Promise<ExpenseModel | null> {
     const expense = await this.prisma.expense.findUnique({
       where: {
         id: expenseId,
@@ -89,6 +89,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
       },
     })
 
+    if (!expense) return null
     return this.expenseMapper.modelToDomain(expense)
   }
 

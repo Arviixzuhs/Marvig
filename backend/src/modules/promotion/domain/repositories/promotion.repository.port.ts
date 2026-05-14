@@ -5,7 +5,7 @@ import { PromotionFilterDto } from '@/modules/promotion/application/dto/promotio
 import { UpdatePromotionDto } from '@/modules/promotion/application/dto/update-promotion.dto'
 
 export interface PromotionRepositoryPort {
-  findPromotion(promotionId: number): Promise<PromotionModel>
+  findPromotion(promotionId: number): Promise<PromotionModel | null>
   findPromotions(filters: PromotionFilterDto): Promise<PromotionPage>
   createPromotion(promotion: PromotionDto): Promise<PromotionModel>
   deletePromotion(promotionId: number): Promise<void>

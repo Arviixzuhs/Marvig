@@ -89,7 +89,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return this.reservationMapper.modelToDomain(reservation)
   }
 
-  async findReservationById(id: number): Promise<ReservationModel> {
+  async findReservationById(id: number): Promise<ReservationModel | null> {
     const reservation = await this.prisma.reservation.findFirst({
       where: {
         id,
@@ -97,6 +97,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       },
     })
 
+    if (!reservation) return null
     return this.reservationMapper.modelToDomain(reservation)
   }
 
