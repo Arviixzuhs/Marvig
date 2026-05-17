@@ -84,7 +84,9 @@ export const AdminApartmentPage = () => {
     },
     update: async () => {
       try {
-        await apartmentService.update(id, table.formData)
+        if (Object.keys(table.formData).length > 0) {
+          await apartmentService.update(id, table.formData)
+        }
 
         const existingURLs = images
           .filter((img) => img.imageURL && !img.file)
