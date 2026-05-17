@@ -1,18 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '@heroui/react'
-import { RootState } from '@/store'
 import { appConfig } from '@/config'
-import { useSelector } from 'react-redux'
+import { ApartmentCard } from '@/modules/apartments/components/ApartmentCard'
 import { ApartmentModel } from '@/models/ApartmentModel'
-import { formatCurrency } from '@/utils/formatCurrency'
 import { apartmentService } from '@/services/apartment'
-import { NavbarUserOptions } from '@/components/UserOptions'
 
 export const LandingPage = () => {
   const [apartments, setApartments] = React.useState<ApartmentModel[]>([])
-  const user = useSelector((state: RootState) => state.user)
 
   const loadData = async () => {
     const response = await apartmentService.getAll({
@@ -30,34 +25,6 @@ export const LandingPage = () => {
 
   return (
     <div className='min-h-screen bg-gray-50 text-gray-900'>
-      <header className='sticky top-0 z-50 bg-white/80 backdrop-blur border-b'>
-        <div className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
-          <h1 className='text-xl font-semibold tracking-tight'>
-            Posada<span className='text-blue-600'>{appConfig.company}</span>
-          </h1>
-          <nav className='hidden md:flex items-center gap-8 text-sm'>
-            <a href='#apartments' className='hover:text-blue-600 transition'>
-              Apartamentos
-            </a>
-            <a href='#about' className='hover:text-blue-600 transition'>
-              Nosotros
-            </a>
-            <a href='#contact' className='hover:text-blue-600 transition'>
-              Contacto
-            </a>
-          </nav>
-          {user ? (
-            <NavbarUserOptions />
-          ) : (
-            <Link to='/login'>
-              <Button color='primary' radius='sm'>
-                Iniciar sesión
-              </Button>
-            </Link>
-          )}
-        </div>
-      </header>
-
       <section className='relative overflow-hidden'>
         <div className='max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center'>
           <motion.div
@@ -109,37 +76,7 @@ export const LandingPage = () => {
 
           <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-8'>
             {apartments.map((apartment, index) => (
-              <motion.div
-                key={apartment.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className='bg-white rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden group'
-              >
-                <div className='overflow-hidden'>
-                  <img
-                    src={apartment?.images?.[0]?.url}
-                    className='w-full h-56 object-cover group-hover:scale-105 transition duration-300'
-                  />
-                </div>
-
-                <div className='p-6 flex flex-col gap-3'>
-                  <div className='flex items-start justify-between'>
-                    <h4 className='text-lg font-semibold'>Apartamento #{apartment.number}</h4>
-
-                    <span className='text-blue-600 font-medium'>
-                      {formatCurrency(apartment.pricePerDay)}
-                    </span>
-                  </div>
-
-                  <div className='pt-3 mt-auto'>
-                    <Button className='w-full' color='primary'>
-                      Reservar ahora
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
+              <ApartmentCard apartment={apartment} index={index} key={index} />
             ))}
           </div>
         </div>

@@ -180,7 +180,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                       placeholder={item.placeholder}
                       isRequired={item.required}
                       defaultValue={currentItemToEdit?.[item.name]}
-                      value={String(table.formData?.[item.name] || '')}
                       onChange={(e) => handleChange(e, item.type)}
                     />
                   )}
@@ -192,7 +191,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                       label={item.label}
                       placeholder={item.placeholder}
                       isRequired={item.required}
-                      value={String(table.formData?.[item.name] || '')}
                       defaultValue={currentItemToEdit?.[item.name]}
                       onChange={(e) => handleChange(e, item.type)}
                     />
