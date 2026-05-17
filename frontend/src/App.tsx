@@ -1,9 +1,13 @@
 import { LoginPage } from '@/modules/auth/pages/Login'
+import { UserLayout } from '@/layout'
+import { ConfigPage } from '@/modules/config'
 import { LandingPage } from '@/modules/landing'
 import { AdminLayout } from '@/modules/admin/layout'
 import { RegisterPage } from '@/modules/auth/pages/Register'
 import { AdminUserPage } from '@/modules/admin/pages/users'
 import { Route, Routes } from 'react-router-dom'
+import { ApartmentPage } from '@/modules/apartments/pages/apartment'
+import { ApartmentsPage } from '@/modules/apartments/pages/apartments'
 import { AdminReportsPage } from '@/modules/admin/pages/reports'
 import { AdminPaymentPage } from '@/modules/admin/pages/payments'
 import { AdminExpensePage } from '@/modules/admin/pages/expenses'
@@ -12,7 +16,7 @@ import { AdminPromotionPage } from '@/modules/admin/pages/promotion'
 import { AdminApartmentPage } from '@/modules/admin/pages/apartments'
 import { AdminDashboardPage } from '@/modules/admin/pages/dashboard'
 import { AdminReservationPage } from '@/modules/admin/pages/reservations'
-import { LoadCurrentUserMiddleware } from './middlewares/LoadCurrentUserMiddleware'
+import { LoadCurrentUserMiddleware } from '@/middlewares/LoadCurrentUserMiddleware'
 
 function App() {
   return (
@@ -20,7 +24,12 @@ function App() {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route element={<LoadCurrentUserMiddleware />}>
-        <Route path='/' element={<LandingPage />} />
+        <Route element={<UserLayout />}>
+          <Route element={<ConfigPage />} path='/config' />
+          <Route element={<LandingPage />} path='/' />
+          <Route element={<ApartmentPage />} path='/apartment/:apartmentId' />
+          <Route element={<ApartmentsPage />} path='/apartments' />
+        </Route>
         <Route element={<AdminLayout />} path='/admin'>
           <Route element={<AdminUserPage />} path='users' />
           <Route element={<AdminReportsPage />} path='reports' />
