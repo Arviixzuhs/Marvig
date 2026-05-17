@@ -9,6 +9,13 @@ export const GET_APARTMENT = gql`
       bedrooms
       bathrooms
       squareMeters
+      pricePerDay
+      status
+      images {
+        id
+        url
+        isPrimary
+      }
     }
   }
 `
