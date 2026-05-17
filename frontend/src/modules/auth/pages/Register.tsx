@@ -5,15 +5,12 @@ import { AuthBody } from '@/modules/auth/components/AuthBody'
 import { AuthFooter } from '@/modules/auth/components/AuthFooter'
 import { AuthHeader } from '@/modules/auth/components/AuthHeader'
 import { AuthSubmit } from '@/modules/auth/components/AuthSubmit'
-import { useNavigate } from 'react-router-dom'
 import { authService } from '@/modules/auth/services'
 import { validatePassword } from '@/utils/validatePassword'
 import { ContinueWithGoogle } from '@/modules/auth/components/ContinueWithGoogle'
 import type { IAuthRegisterUser } from '@/modules/auth/services/interfaces'
 
 export const RegisterPage = () => {
-  const navigate = useNavigate()
-
   const [data, setData] = React.useState<IAuthRegisterUser>({
     email: '',
     password: '',
@@ -109,7 +106,7 @@ export const RegisterPage = () => {
     try {
       await authService.register(data)
 
-      navigate('/login')
+      window.location.href = '/'
     } catch (error) {
       console.log(error)
     }

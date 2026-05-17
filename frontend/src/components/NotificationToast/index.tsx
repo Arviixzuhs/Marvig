@@ -5,7 +5,7 @@ export const NotificationToast = () => {
     <Toaster
       toastOptions={{
         className: '',
-        position: 'bottom-right',
+        position: 'top-center',
         success: {
           iconTheme: {
             primary: 'rgb(73, 158, 73)',
