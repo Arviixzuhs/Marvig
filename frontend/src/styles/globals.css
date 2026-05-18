@@ -149,15 +149,30 @@
   }
 }
 
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-bg);
+}
+
 @layer components {
-    @keyframes marqueeScroll {
-        0% {
-            transform: translateX(0%);
-        }
-        100% {
-            transform: translateX(-50%);
-        }
+  @keyframes marqueeScroll {
+    0% {
+      transform: translateX(0%);
     }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 @config "../../tailwind.config.js";
