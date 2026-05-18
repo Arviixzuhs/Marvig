@@ -9,7 +9,6 @@ import { Avatar, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@
 export const NavbarUserOptions = () => {
   const user = useSelector((state: RootState) => state.user)
   const location = useLocation()
-  const isInAdmin = location.pathname.includes('/admin')
   const navigate = useNavigate()
 
   if (user) {
@@ -23,7 +22,7 @@ export const NavbarUserOptions = () => {
             <p className='font-semibold'>Registrado como</p>
             <p className='font-semibold'>{user?.email || 'Usuario'}</p>
           </DropdownItem>
-          {user.role === UserRole.ADMIN && !isInAdmin ? (
+          {user.role === UserRole.ADMIN && !location.pathname.includes('/admin') ? (
             <>
               <DropdownItem
                 key='dashboard'
@@ -36,13 +35,19 @@ export const NavbarUserOptions = () => {
           ) : (
             <></>
           )}
-          <DropdownItem
-            key='dashboard'
-            startContent={<Cog size={15} />}
-            onPress={() => navigate('/config')}
-          >
-            Confuguración
-          </DropdownItem>
+          {!location.pathname.includes('/config') ? (
+            <>
+              <DropdownItem
+                key='dashboard'
+                startContent={<Cog size={15} />}
+                onPress={() => navigate('/config')}
+              >
+                Confuguración
+              </DropdownItem>
+            </>
+          ) : (
+            <></>
+          )}
           <DropdownItem
             key='logout'
             className='text-danger'

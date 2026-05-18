@@ -59,14 +59,6 @@ export const ApartmentPage = () => {
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='border-b border-border bg-card px-6 py-3'>
-        <Link
-          to={'/'}
-          className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors'
-        >
-          <ChevronLeft size={15} /> Volver al inicio
-        </Link>
-      </div>
       <div className='max-w-6xl mx-auto px-6 py-8'>
         <h1 className='text-3xl font-extrabold mb-2 tracking-tight'>
           Apartamento #{apartment.number}
@@ -138,7 +130,9 @@ export const ApartmentPage = () => {
           <div>
             <div className='bg-card border border-border rounded-2xl p-5 sticky top-20'>
               <div className='flex items-baseline gap-1 mb-5'>
-                <span className='text-2xl font-extrabold'>{formatCurrency(apartment.pricePerDay)}</span>
+                <span className='text-2xl font-extrabold'>
+                  {formatCurrency(apartment.pricePerDay)}
+                </span>
                 <span className='text-muted-foreground text-sm'>/día</span>
               </div>
               <div className='mb-4'>
