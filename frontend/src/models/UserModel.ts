@@ -21,9 +21,9 @@ export interface GetUserResponseDto {
 }
 
 export interface CreateUserInput
-  extends Pick<UserModel, 'name' | 'lastName' | 'email' | 'password'> { }
+  extends Pick<UserModel, 'name' | 'lastName' | 'email' | 'password'> {}
 
-export interface UpdateUserInput extends Partial<Omit<CreateUserInput, 'password'>> { }
+export interface UpdateUserInput extends Partial<Omit<CreateUserInput, 'password'>> {}
 
 export interface CreateUserResponse {
   createUser: Pick<UserModel, 'id' | 'name' | 'lastName' | 'email'>
@@ -47,5 +47,5 @@ export interface IUserFilter extends IPaginationFilter {
 
 export enum UserRole {
   ADMIN = 'ADMIN',
-  USER = 'USER'
+  USER = 'USER',
 }
