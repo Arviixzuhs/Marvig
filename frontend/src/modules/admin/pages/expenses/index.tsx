@@ -11,14 +11,13 @@ import { useImageUpload } from '@/components/ImageUploader/providers/ImageUpload
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import { ExpenseModel, IExpenseImage } from '@/models/ExpenseModel'
 import { deleteItem, setTableData, setModalInputs, setTableColumns } from '@/features/appTableSlice'
 
 export const AdminExpensePage = () => {
   const table = useSelector((state: RootState) => state.appTable)
   const id = table.currentItemToUpdate
   const dispatch = useDispatch()
-  const { formData, resetFormData, setImages, images } = useImageUpload()
+  const { formData, images } = useImageUpload()
   const [debounceValue] = useDebounce(table.filterValue, 100)
 
   const loadData = async () => {
@@ -44,26 +43,6 @@ export const AdminExpensePage = () => {
     dispatch(setTableColumns(tableColumns))
   }, [])
 
-  React.useEffect(() => {
-    if (!table.currentItemToUpdate) {
-      resetFormData()
-      return
-    }
-
-    const itemToUpdate = table.data.find(
-      (item: ExpenseModel) => item.id === table.currentItemToUpdate,
-    )
-
-    if (itemToUpdate?.images) {
-      setImages(
-        itemToUpdate.images.map((img: IExpenseImage) => ({
-          id: String(img.id),
-          imageURL: img.url,
-        })),
-      )
-    }
-  }, [table.currentItemToUpdate, table.data])
-
   const tableActions: AppTableActions = {
     create: async () => {
       try {
@@ -74,7 +53,6 @@ export const AdminExpensePage = () => {
           await expenseService.updateImages(newExpense.id, uploadRes.fileUrls)
         }
 
-        resetFormData()
         await loadData()
         toast.success('Gasto registrado correctamente')
       } catch (error) {
@@ -99,8 +77,6 @@ export const AdminExpensePage = () => {
         }
 
         await expenseService.updateImages(id, finalURLs)
-
-        resetFormData()
         await loadData()
         toast.success('Gasto actualizado correctamente')
       } catch (error) {
