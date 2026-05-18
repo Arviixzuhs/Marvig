@@ -1,5 +1,6 @@
 import React from 'react'
 import { RootState } from '@/store'
+import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   setFormData,
@@ -11,18 +12,16 @@ import {
   Form,
   Modal,
   Input,
+  Select,
   Button,
+  Textarea,
   ModalBody,
+  DatePicker,
+  SelectItem,
   ModalHeader,
   ModalFooter,
   ModalContent,
-  Select,
-  SelectItem,
-  DatePicker,
-  Textarea,
 } from '@heroui/react'
-import { parseAbsoluteToLocal } from '@internationalized/date'
-import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 
 export interface EditItemModalProps {
   action: () => void
@@ -35,7 +34,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
-  const { resetFormData, setImages } = useImageUpload()
   const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
 
   const parseDateTime = (value: any) => {
@@ -93,8 +91,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   }
 
   const toggleModal = () => {
-    resetFormData()
-    setImages([])
     dispatch(toggleEditItemModal(null))
   }
 
