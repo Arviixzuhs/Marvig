@@ -28,8 +28,6 @@ export const ContinueWithGoogle = () => {
 
       dispatch(setMyUser(user))
 
-      toast.success(`¡Bienvenido, ${user.name}!`)
-
       navigate('/')
     } catch (error: any) {
       console.error(error)
