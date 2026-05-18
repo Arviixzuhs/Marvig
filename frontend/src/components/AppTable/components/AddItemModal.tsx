@@ -1,5 +1,6 @@
 import React from 'react'
 import { RootState } from '@/store'
+import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFormData, clearFormData, toggleAddItemModal } from '@/features/appTableSlice'
 import {
@@ -7,17 +8,15 @@ import {
   Modal,
   Input,
   Button,
+  Select,
+  Textarea,
   ModalBody,
+  SelectItem,
+  DatePicker,
   ModalHeader,
   ModalFooter,
   ModalContent,
-  Select,
-  SelectItem,
-  DatePicker,
-  Textarea,
 } from '@heroui/react'
-import { parseAbsoluteToLocal } from '@internationalized/date'
-import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 
 export interface AddItemModalProps {
   action: () => void
@@ -30,7 +29,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
 }: AddItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
-  const { resetFormData, setImages } = useImageUpload()
+
   const parseDateTime = (value: any) => {
     if (!value) return null
     try {
@@ -94,8 +93,6 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   }
 
   const toggleModal = () => {
-    resetFormData()
-    setImages([])
     dispatch(toggleAddItemModal(null))
   }
 

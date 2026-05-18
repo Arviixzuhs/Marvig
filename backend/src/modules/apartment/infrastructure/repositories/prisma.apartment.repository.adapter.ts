@@ -97,6 +97,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     const apartment = await this.prisma.apartment.findFirst({
       where: {
         number,
+        isDeleted: false,
       },
     })
     return !!apartment

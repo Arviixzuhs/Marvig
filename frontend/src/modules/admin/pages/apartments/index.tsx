@@ -11,14 +11,13 @@ import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { apartmentService } from '@/services/apartment'
 import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import { ApartmentModel, IApartmentImage } from '@/models/ApartmentModel'
 import { deleteItem, setTableData, setModalInputs, setTableColumns } from '@/features/appTableSlice'
 
 export const AdminApartmentPage = () => {
   const table = useSelector((state: RootState) => state.appTable)
   const id = table.currentItemToUpdate
   const dispatch = useDispatch()
-  const { formData, resetFormData, setImages, images } = useImageUpload()
+  const { formData, images } = useImageUpload()
   const [debounceValue] = useDebounce(table.filterValue, 100)
 
   const loadData = async () => {
@@ -44,26 +43,6 @@ export const AdminApartmentPage = () => {
     dispatch(setTableColumns(tableColumns))
   }, [])
 
-  React.useEffect(() => {
-    if (!table.currentItemToUpdate) {
-      resetFormData()
-      return
-    }
-
-    const itemToUpdate = table.data.find(
-      (item: ApartmentModel) => item.id === table.currentItemToUpdate,
-    )
-
-    if (itemToUpdate?.images) {
-      setImages(
-        itemToUpdate.images.map((img: IApartmentImage) => ({
-          id: String(img.id),
-          imageURL: img.url,
-        })),
-      )
-    }
-  }, [table.currentItemToUpdate, table.data])
-
   const tableActions: AppTableActions = {
     create: async () => {
       try {
@@ -74,7 +53,6 @@ export const AdminApartmentPage = () => {
           await apartmentService.updateImages(newApartment.id, uploadRes.fileUrls)
         }
 
-        resetFormData()
         await loadData()
         toast.success('Apartamento creado correctamente')
       } catch (error) {
@@ -100,8 +78,6 @@ export const AdminApartmentPage = () => {
         }
 
         await apartmentService.updateImages(id, finalURLs)
-
-        resetFormData()
         await loadData()
         toast.success('Apartamento actualizado correctamente')
       } catch (error) {
