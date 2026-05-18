@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { AddItemModal } from './components/AddItemModal'
 import { EmptyContent } from './components/EmptyContent'
 import { EditItemModal } from './components/EditItemModal'
+import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 import { TablePagination } from './components/Pagination'
 import { ConfirmDeleteModal } from './components/ConfirmDeleteModal'
 import { DropdownItemInteface } from './components/DropdownAction'
@@ -38,6 +39,7 @@ export const AppTable = ({
   const location = useLocation()
   const dispatch = useDispatch()
   const table = useSelector((state: RootState) => state.appTable)
+  const { resetFormData, setImages } = useImageUpload()
 
   React.useEffect(() => {
     dispatch(
@@ -50,6 +52,24 @@ export const AppTable = ({
     )
     dispatch(setFilterValue(''))
   }, [location.pathname])
+
+  React.useEffect(() => {
+    if (table.currentItemToUpdate === -1 && table.isAddItemModalOpen) {
+      resetFormData()
+      return
+    }
+
+    const itemToUpdate = table.data.find((item) => item.id === table.currentItemToUpdate)
+
+    if (itemToUpdate?.images) {
+      setImages(
+        itemToUpdate.images.map((img: { id: number; url: string }) => ({
+          id: String(img.id),
+          imageURL: img.url,
+        })),
+      )
+    }
+  }, [table.currentItemToUpdate, table.data, table.isAddItemModalOpen])
 
   return (
     <>
