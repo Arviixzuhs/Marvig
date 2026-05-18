@@ -1,106 +1,169 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { Button } from '@heroui/react'
-import { appConfig } from '@/config'
-import { ApartmentCard } from '@/modules/apartments/components/ApartmentCard'
-import { ApartmentModel } from '@/models/ApartmentModel'
-import { apartmentService } from '@/services/apartment'
+import { useState } from 'react'
+import { ApartmentsGrid } from './components/Apartments'
+import { ArrowRight, Bot, Calendar, MessageCircle, Search, Send, X } from 'lucide-react'
+
+interface ChatMessage {
+  from: string
+  text: string
+}
 
 export const LandingPage = () => {
-  const [apartments, setApartments] = React.useState<ApartmentModel[]>([])
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatMsg, setChatMsg] = useState('')
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      from: 'bot',
+      text: '¡Hola! Soy tu asistente virtual. ¿Estás buscando un apartamento para alquilar o tienes alguna duda?',
+    },
+  ])
 
-  const loadData = async () => {
-    const response = await apartmentService.getAll({
-      page: 0,
-      pageSize: 20,
-    })
-    if (response) {
-      setApartments(response.content)
-    }
+  const sendMsg = () => {
+    if (!chatMsg.trim()) return
+    setMessages((m) => [
+      ...m,
+      { from: 'user', text: chatMsg },
+      {
+        from: 'bot',
+        text: 'Entendido. Tenemos apartamentos disponibles en Bogotá, Medellín y Cali desde $1.2M/mes. ¿Cuántas habitaciones necesitas?',
+      },
+    ])
+    setChatMsg('')
   }
 
-  React.useEffect(() => {
-    loadData()
-  }, [])
-
   return (
-    <div className='min-h-screen bg-gray-50 text-gray-900'>
-      <section className='relative overflow-hidden'>
-        <div className='max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className='text-4xl md:text-5xl font-semibold leading-tight mb-6'>
-              Encuentra el
-              <span className='text-blue-600'> apartamento perfecto</span>
-            </h2>
-
-            <p className='text-gray-600 text-lg mb-8 max-w-lg'>
-              Descubre apartamentos modernos y cómodos para tu próximo viaje. Reserva fácilmente y
-              disfruta de una experiencia vacacional sin complicaciones.
-            </p>
-
-            <div className='flex gap-4'>
-              <Button>Explorar apartamentos</Button>
-              <Button variant='flat'>Saber más</Button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className='relative'
-          >
-            <img
-              src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1600&auto=format&fit=crop'
-              alt='Apartamento vacacional'
-              className='rounded-3xl shadow-xl object-cover w-full h-[420px]'
-            />
-          </motion.div>
+    <div className='min-h-screen bg-background'>
+      <section className='relative bg-[#000000] text-white h-screen px-6 overflow-hidden'>
+        <div className='absolute inset-0'>
+          <img
+            src='https://wallpapers.com/images/hd/sunset-with-palm-tree-silhouette-ona9bfv5lepgjwse.jpg'
+            alt='Atardecer playa en Margarita'
+            className='w-full h-full object-cover'
+          />
         </div>
-      </section>
+        <div className='absolute inset-0 bg-gradient-to-b from-[#000000]/60 to-[#000000]/80' />
+        <div className='relative h-full flex flex-col items-center justify-center text-center max-w-7xl mx-auto'>
+          <h1 className='text-5xl md:text-7xl font-extrabold mb-5 leading-none tracking-tight'>
+            Tu lugar vacacional
+            <br />
+            <span>sin complicaciones.</span>
+          </h1>
 
-      <section id='apartments' className='py-20'>
-        <div className='max-w-7xl mx-auto px-6'>
-          <div className='mb-12 text-center'>
-            <h3 className='text-3xl md:text-4xl font-semibold mb-4'>Apartamentos disponibles</h3>
-
-            <p className='text-gray-600 max-w-2xl mx-auto'>
-              Elige entre una selección de apartamentos vacacionales diseñados para ofrecer
-              comodidad, estilo y conveniencia.
-            </p>
-          </div>
-
-          <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {apartments.map((apartment, index) => (
-              <ApartmentCard apartment={apartment} index={index} key={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <footer className='border-t bg-white mt-20'>
-        <div className='max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4'>
-          <p className='text-sm text-gray-500'>
-            © {new Date().getFullYear()} {appConfig.company}. Todos los derechos reservados.
+          <p className='text-white/60 text-lg mb-12 max-w-xl mx-auto leading-relaxed'>
+            Encuentra, reserva y gestiona tu apartamento en minutos. Transparencia total, sin
+            intermediarios.
           </p>
-
-          <div className='flex gap-6 text-sm text-gray-500'>
-            <a href='#' className='hover:text-blue-600 transition'>
-              Privacidad
-            </a>
-            <a href='#' className='hover:text-blue-600 transition'>
-              Términos
-            </a>
-            <a href='#' className='hover:text-blue-600 transition'>
-              Soporte
-            </a>
+          <div className='flex flex-col md:flex-row gap-2'>
+            <div className='flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-muted min-w-[130px]'>
+              <Calendar size={15} className='text-muted-foreground shrink-0' />
+              <span className='text-sm text-muted-foreground'>Fecha entrada</span>
+            </div>
+            <div className='flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-muted min-w-[130px]'>
+              <Calendar size={15} className='text-muted-foreground shrink-0' />
+              <span className='text-sm text-muted-foreground'>Fecha salida</span>
+            </div>
+            <Button color='primary'>
+              <Search size={15} /> Buscar
+            </Button>
           </div>
         </div>
-      </footer>
+      </section>
+
+      <section className='max-w-6xl mx-auto px-6 py-16'>
+        <div className='flex items-end justify-between mb-8'>
+          <div>
+            <h2 className='text-2xl font-bold'>Destacados esta semana</h2>
+            <p className='text-muted-foreground text-sm mt-1'>Los más buscados en la plataforma</p>
+          </div>
+          <Link
+            to={'/apartments'}
+            className='text-sm flex items-center gap-1 font-medium hover:underline transition-all'
+            style={{ color: '#2B4FFF' }}
+          >
+            Ver todos <ArrowRight size={14} />
+          </Link>
+        </div>
+        <ApartmentsGrid />
+      </section>
+
+      <div className='fixed bottom-6 right-6 z-50 max-w-2xs'>
+        {chatOpen && (
+          <div className='rounded-3xl max-w-2xl dark:bg-black/10 bg-white overflow-hidden'>
+            <div className='bg-white flex items-center justify-between px-4 py-3 border-b border-border'>
+              <div className='flex items-center gap-2'>
+                <div className='w-7 h-7 rounded-lg flex items-center justify-center'>
+                  <Bot size={14} className='text-black' />
+                </div>
+                <div>
+                  <div className='text-xs font-semibold text-black'>Asistente Marvig</div>
+                  <div className='flex items-center gap-1 text-black/50 text-[10px]'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-green-400 inline-block' />
+                    En línea
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setChatOpen(false)} className='text-black/50 hover:text-black'>
+                <X size={15} />
+              </button>
+            </div>
+            <div className='h-52 overflow-y-auto p-3 space-y-2'>
+              {messages.map((m, i) => (
+                <div
+                  key={i}
+                  className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`text-xs px-3 py-2 rounded-xl max-w-[85%] leading-relaxed ${m.from === 'user' ? 'bg-foreground text-white rounded-br-sm' : 'bg-card border border-border rounded-bl-sm'}`}
+                  >
+                    {m.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className='px-3 pt-2 pb-1 flex flex-wrap gap-1.5'>
+              {['Ver apartamentos', 'Reservar ahora', 'Consultar precios'].map((q) => (
+                <button
+                  key={q}
+                  onClick={() =>
+                    setMessages((m) => [
+                      ...m,
+                      { from: 'user', text: q },
+                      {
+                        from: 'bot',
+                        text: 'Claro, cuéntame tu preferencia de ciudad y presupuesto para ayudarte mejor.',
+                      },
+                    ])
+                  }
+                  className='text-[11px] border border-border rounded-full px-2.5 py-1 hover:bg-muted transition bg-card'
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+            <div className='px-3 pb-3 pt-2 flex gap-2'>
+              <input
+                value={chatMsg}
+                onChange={(e) => setChatMsg(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && sendMsg()}
+                className='flex-1 text-xs border border-border rounded-xl px-3 py-2 bg-muted/40 outline-none'
+                placeholder='Escribe un mensaje...'
+              />
+              <button onClick={sendMsg} className='text-white rounded-xl p-2.5 bg-black'>
+                <Send size={13} />
+              </button>
+            </div>
+          </div>
+        )}
+        {!chatOpen && (
+          <button
+            onClick={() => setChatOpen((o) => !o)}
+            className='w-14 h-14 bg-black rounded-full flex items-center justify-center shadow-lg text-white transition-transform hover:scale-105 active:scale-95'
+          >
+            <MessageCircle size={22} />
+          </button>
+        )}
+      </div>
     </div>
   )
 }
