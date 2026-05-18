@@ -7,6 +7,7 @@ import { FileModule } from '@/modules/file/file.module'
 import { AppResolver } from '@/app.resolver'
 import { PrismaModule } from '@/prisma/prisma.module'
 import { ApolloDriver } from '@nestjs/apollo'
+import { GqlAuthGuard } from '@/common/guards/gql-auth.guard'
 import { AppController } from '@/app.controller'
 import { ExpenseModule } from '@/modules/expense/expense.module'
 import { PaymentModule } from '@/modules/payment/payment.module'
@@ -77,6 +78,10 @@ config()
     AppResolver,
     {
       provide: APP_GUARD,
+      useClass: GqlAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
       useClass: GqlThrottlerGuard,
     },
     {
@@ -90,13 +95,12 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
-        'auth/login',
-        'auth/register',
-        'auth/google',
+        '/auth/login',
+        '/auth/register',
+        '/auth/google',
         '/stripe/webhook',
         '/api',
-        'file/upload',
-        'file/uploads',
+        '/graphql',
         '/uploads/(.*)',
       )
       .forRoutes('*')

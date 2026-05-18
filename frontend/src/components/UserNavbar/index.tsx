@@ -82,18 +82,30 @@ export const UserNavbar = () => {
           {user ? (
             <NavbarUserOptions />
           ) : (
-            <Link to='/login'>
-              <Button
-                color={isLanding && !isScrolled ? 'default' : 'primary'}
-                variant={isLanding && !isScrolled ? 'flat' : 'solid'}
-                radius='sm'
-                className={
-                  isLanding && !isScrolled ? 'bg-white/20 text-white backdrop-blur-sm' : ''
-                }
-              >
-                Iniciar sesión
-              </Button>
-            </Link>
+            <div className='flex items-center gap-2'>
+              <Link to='/login'>
+                <Button
+                  color={isLanding && !isScrolled ? 'default' : 'primary'}
+                  variant='light'
+                  radius='sm'
+                  className={isLanding && !isScrolled ? 'text-white' : ''}
+                >
+                  Iniciar sesión
+                </Button>
+              </Link>
+              <Link to='/register'>
+                <Button
+                  color={isLanding && !isScrolled ? 'default' : 'primary'}
+                  variant={isLanding && !isScrolled ? 'flat' : 'solid'}
+                  radius='sm'
+                  className={
+                    isLanding && !isScrolled ? 'bg-white/20 text-white backdrop-blur-sm' : ''
+                  }
+                >
+                  Registrarme
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       </header>
