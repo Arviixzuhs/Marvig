@@ -19,14 +19,14 @@ export class ApartmentMapper extends BaseMapper<PrismaApartmentWithRelations, Ap
       id: model.id,
       floor: model.floor,
       number: model.number,
+      status: model.status as ApartmentStatusEnum,
       bedrooms: model.bedrooms,
       bathrooms: model.bathrooms,
-      squareMeters: model.squareMeters,
-      status: model.status as ApartmentStatusEnum,
+      updatedAt: model.updatedAt,
       pricePerDay: Number(model.pricePerDay),
       promotionId: model.promotionId,
+      squareMeters: model.squareMeters,
       createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
       images: model.images ? this.imageMapper.modelsToDomain(model.images) : [],
     }
   }

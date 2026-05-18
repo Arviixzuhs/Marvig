@@ -5,7 +5,7 @@ import { UpdateExpenseDto } from '@/modules/expense/application/dto/update-expen
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 
 export interface ExpenseRepositoryPort {
-  findExpense(expenseId: number): Promise<ExpenseModel>
+  findExpense(expenseId: number): Promise<ExpenseModel | null>
   findExpenses(filters: ExpenseFilterDto): Promise<ExpensePage>
   createExpense(expense: ExpenseDto): Promise<ExpenseModel>
   deleteExpense(expenseId: number): Promise<void>

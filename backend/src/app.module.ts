@@ -7,6 +7,7 @@ import { FileModule } from '@/modules/file/file.module'
 import { AppResolver } from '@/app.resolver'
 import { PrismaModule } from '@/prisma/prisma.module'
 import { ApolloDriver } from '@nestjs/apollo'
+import { GqlAuthGuard } from '@/common/guards/gql-auth.guard'
 import { AppController } from '@/app.controller'
 import { ExpenseModule } from '@/modules/expense/expense.module'
 import { PaymentModule } from '@/modules/payment/payment.module'
@@ -16,6 +17,7 @@ import { AuthMiddleware } from '@/middlewares/auth.middleware'
 import { ApartmentModule } from '@/modules/apartment/apartment.module'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { PromotionModule } from '@/modules/promotion/promotion.module'
+import { PermissionGuard } from '@/common/guards/permission.guard'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
@@ -76,7 +78,15 @@ config()
     AppResolver,
     {
       provide: APP_GUARD,
+      useClass: GqlAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
       useClass: GqlThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
   ],
 })
@@ -85,13 +95,12 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
-        'auth/login',
-        'auth/register',
-        'auth/google',
+        '/auth/login',
+        '/auth/register',
+        '/auth/google',
         '/stripe/webhook',
         '/api',
-        'file/upload',
-        'file/uploads',
+        '/graphql',
         '/uploads/(.*)',
       )
       .forRoutes('*')

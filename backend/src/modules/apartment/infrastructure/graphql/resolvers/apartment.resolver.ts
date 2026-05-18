@@ -1,5 +1,8 @@
+import { Public } from '@/common/decorators/public.decorator'
+import { UserRole } from '@/common/enums/user-role.enum'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
-import { ApartmentType } from '../types/apartment.type'
+import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
 import { ApartmentPageType } from '@/modules/apartment/infrastructure/graphql/types/apartment-page.type'
 import { ApartmentImageDto } from '@/modules/apartment/application/dto/apartment-image.dto'
 import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
@@ -27,21 +30,25 @@ export class ApartmentResolver {
   ) {}
 
   @Mutation(() => ApartmentType)
+  @RequiredRole(UserRole.ADMIN)
   createApartment(@Args('data') data: ApartmentDto): Promise<ApartmentType> {
     return this.createApartmentUseCase.execute(data)
   }
 
+  @Public()
   @Query(() => ApartmentPageType)
   findApartments(@Args('filters') filters: ApartmentFilterDto): Promise<ApartmentPageType> {
     return this.findApartmentsUseCase.execute(filters)
   }
 
+  @Public()
   @Query(() => ApartmentType)
   findApartmentById(@Args('id', { type: () => Int }) id: number): Promise<ApartmentType> {
     return this.findApartmentUseCase.execute(id)
   }
 
   @Mutation(() => ApartmentType)
+  @RequiredRole(UserRole.ADMIN)
   updateApartment(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateApartmentDto,
@@ -50,6 +57,7 @@ export class ApartmentResolver {
   }
 
   @Mutation(() => ApartmentType)
+  @RequiredRole(UserRole.ADMIN)
   updateApartmentStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('status') status: ApartmentStatusEnum,
@@ -58,11 +66,13 @@ export class ApartmentResolver {
   }
 
   @Mutation(() => ApartmentType)
+  @RequiredRole(UserRole.ADMIN)
   updateApartmentImages(@Args('data') data: ApartmentImageDto): Promise<ApartmentType> {
     return this.updateApartmentImageUseCase.execute(data)
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deleteApartment(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteApartmentUseCase.execute(id)
     return true

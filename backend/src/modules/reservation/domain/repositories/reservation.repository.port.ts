@@ -12,5 +12,5 @@ export interface ReservationRepositoryPort {
   updateReservation(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel>
   deleteReservation(id: number): Promise<void>
   checkAvailability(apartmentIds: number[], startDate: Date, endDate: Date): Promise<boolean>
-  findReservationById(id: number): Promise<ReservationModel>
+  findReservationById(id: number): Promise<ReservationModel | null>
 }
