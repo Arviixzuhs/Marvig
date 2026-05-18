@@ -1,8 +1,9 @@
 import React from 'react'
 import { useState } from 'react'
+import { formatCurrency } from '@/utils/formatCurrency'
 import { ApartmentModel } from '@/models/ApartmentModel'
 import { apartmentService } from '@/services/apartment'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   Bed,
   Car,
@@ -18,7 +19,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
-import { formatCurrency } from '@/utils/formatCurrency'
 
 export const ApartmentPage = () => {
   const params = useParams<{ apartmentId: string }>()

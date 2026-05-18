@@ -1,3 +1,4 @@
+import { Public } from '@/common/decorators/public.decorator'
 import { UserRole } from '@/common/enums/user-role.enum'
 import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
@@ -34,11 +35,13 @@ export class ApartmentResolver {
     return this.createApartmentUseCase.execute(data)
   }
 
+  @Public()
   @Query(() => ApartmentPageType)
   findApartments(@Args('filters') filters: ApartmentFilterDto): Promise<ApartmentPageType> {
     return this.findApartmentsUseCase.execute(filters)
   }
 
+  @Public()
   @Query(() => ApartmentType)
   findApartmentById(@Args('id', { type: () => Int }) id: number): Promise<ApartmentType> {
     return this.findApartmentUseCase.execute(id)
