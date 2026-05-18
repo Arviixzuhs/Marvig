@@ -5,7 +5,7 @@ import { IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-valida
 @InputType()
 export class ApartmentDto {
   @Field(() => Number)
-  @IsInt({ message: 'El piso debe ser un número entero' })
+  @IsInt()
   @Min(0)
   floor: number
 
@@ -13,19 +13,19 @@ export class ApartmentDto {
   @IsString()
   number: string
 
-  @Field(() => ApartmentStatusEnum, { defaultValue: ApartmentStatusEnum.AVAILABLE })
-  @IsEnum(ApartmentStatusEnum, { message: 'El estado no es válido' })
+  @Field(() => ApartmentStatusEnum)
+  @IsEnum(ApartmentStatusEnum)
   status: ApartmentStatusEnum
 
-  @Field(() => Number, { defaultValue: 1 })
+  @Field(() => Number)
   @IsInt()
   bedrooms: number
 
-  @Field(() => Number, { defaultValue: 1 })
+  @Field(() => Number)
   @IsInt()
   pricePerDay: number
 
-  @Field(() => Number, { defaultValue: 1 })
+  @Field(() => Number, { nullable: true })
   @IsInt()
   bathrooms?: number
 
