@@ -34,7 +34,7 @@ export const ApartmentCalendarRange = () => {
         <CardHeader className='flex gap-3'>
           <div className='flex items-baseline gap-1'>
             <span className='text-2xl font-extrabold'>{formatCurrency(apartment.pricePerDay)}</span>
-            <span className='text-muted-foreground text-sm'>/día</span>
+            <span className='text-muted-foreground text-sm'>/noche</span>
           </div>
         </CardHeader>
         <Divider />
@@ -52,7 +52,7 @@ export const ApartmentCalendarRange = () => {
         </CardBody>
         <CardFooter className='flex flex-col gap-2'>
           <div className='flex flex-col gap-2 w-full'>
-            <span className='text-muted-foreground text-sm'>{totalDays} días seleccionados</span>
+            <span className='text-muted-foreground text-sm'>{totalDays} noches seleccionadas</span>
             <Divider />
             <div className='flex justify-between font-bold'>
               <span>Total</span>
