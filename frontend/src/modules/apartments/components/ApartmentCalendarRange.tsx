@@ -1,9 +1,11 @@
 import React from 'react'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { I18nProvider } from '@react-aria/i18n'
 import { formatCurrency } from '@/utils/formatCurrency'
-import { today, getLocalTimeZone } from '@internationalized/date'
+import { reservationService } from '@/services/reservation'
+import { today, getLocalTimeZone, CalendarDate, DateValue } from '@internationalized/date' // Importamos CalendarDate
 import {
   Card,
   Button,
@@ -15,18 +17,45 @@ import {
 } from '@heroui/react'
 
 export const ApartmentCalendarRange = () => {
+  const navigate = useNavigate()
   const apartment = useSelector((state: RootState) => state.apartment)
-  const [value, setValue] = React.useState({
-    start: today(getLocalTimeZone()),
-    end: today(getLocalTimeZone()),
-  })
+  const [invalidDates, setInvalidDates] = React.useState<CalendarDate[]>([])
+  const [value, setValue] = React.useState<{
+    start: DateValue
+    end: DateValue
+  } | null>(null)
 
-  const startMs = value.start.toDate(getLocalTimeZone()).getTime()
-  const endMs = value.end.toDate(getLocalTimeZone()).getTime()
+  const startMs = value?.start.toDate(getLocalTimeZone()).getTime() ?? 0
+  const endMs = value?.end.toDate(getLocalTimeZone()).getTime() ?? 0
+  const totalDays = value ? Math.round((endMs - startMs) / (1000 * 60 * 60 * 24)) : 0
 
-  const totalDays = Math.round((endMs - startMs) / (1000 * 60 * 60 * 24))
+  React.useEffect(() => {
+    if (!apartment?.id) return
 
-  if (!apartment) return
+    const loadData = async () => {
+      try {
+        const response = await reservationService.getInvalidDates(apartment.id)
+        if (!response) return
+
+        const formattedDates = response.map(
+          (d) => new CalendarDate(parseInt(d.year), parseInt(d.month), parseInt(d.day)),
+        )
+
+        setInvalidDates(formattedDates)
+      } catch (error) {
+        console.error('Error cargando fechas no disponibles:', error)
+      }
+    }
+
+    loadData()
+  }, [apartment?.id])
+
+  if (!apartment) return null
+
+  const isDateUnavailable = (date: DateValue) => {
+    if (date.compare(today(getLocalTimeZone())) < 0) return true
+    return invalidDates.some((invalidDate) => date.compare(invalidDate) === 0)
+  }
 
   return (
     <div>
@@ -41,9 +70,11 @@ export const ApartmentCalendarRange = () => {
         <CardBody>
           <I18nProvider locale='es'>
             <RangeCalendar
-              aria-label='Date (Controlled)'
               value={value}
+              aria-label='Date (Controlled)'
               onChange={setValue}
+              errorMessage='Selecciona una fecha disponible'
+              isDateUnavailable={isDateUnavailable}
               classNames={{
                 base: 'shadow-none',
               }}
@@ -56,10 +87,15 @@ export const ApartmentCalendarRange = () => {
             <Divider />
             <div className='flex justify-between font-bold'>
               <span>Total</span>
-              <span>{formatCurrency(Math.round(apartment?.pricePerDay * totalDays))}</span>
+              <span>{formatCurrency(Math.round(apartment.pricePerDay * totalDays))}</span>
             </div>
           </div>
-          <Button className='w-full' color='primary' isDisabled={totalDays === 0}>
+          <Button
+            color='primary'
+            className='w-full'
+            isDisabled={totalDays === 0}
+            onPress={() => navigate('/checkout/national')}
+          >
             {totalDays === 0 ? 'Selecciona una fecha' : 'Reservar'}
           </Button>
         </CardFooter>

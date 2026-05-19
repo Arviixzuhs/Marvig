@@ -89,6 +89,26 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return this.reservationMapper.modelToDomain(reservation)
   }
 
+  async findByApartmentId(apartmentId: number): Promise<ReservationModel[]> {
+    const reservations = await this.prisma.reservation.findMany({
+      where: {
+        apartments: {
+          some: {
+            id: apartmentId,
+            isDeleted: false,
+          },
+        },
+        isDeleted: false,
+      },
+      include: {
+        apartments: true,
+        user: true,
+      },
+    })
+
+    return this.reservationMapper.modelsToDomain(reservations)
+  }
+
   async findReservationById(id: number): Promise<ReservationModel | null> {
     const reservation = await this.prisma.reservation.findFirst({
       where: {
