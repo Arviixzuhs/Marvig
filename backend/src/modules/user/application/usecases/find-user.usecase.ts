@@ -4,7 +4,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 @Injectable()
 export class FindUserUseCase {
-  constructor(@Inject('UserRepository') private userRepository: UserRepositoryPort) {}
+  constructor(
+    @Inject('UserRepository')
+    private userRepository: UserRepositoryPort,
+  ) {}
 
   async execute(id: number): Promise<UserModel> {
     const user = await this.userRepository.findUser(id)

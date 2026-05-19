@@ -6,7 +6,8 @@ import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories
 @Injectable()
 export class FindApartmentsUseCase {
   constructor(
-    @Inject('ApartmentRepository') private readonly apartmentRepository: ApartmentRepositoryPort,
+    @Inject('ApartmentRepository')
+    private readonly apartmentRepository: ApartmentRepositoryPort,
   ) {}
 
   async execute(filters: ApartmentFilterDto): Promise<ApartmentPage> {
