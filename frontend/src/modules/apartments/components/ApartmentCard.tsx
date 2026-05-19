@@ -15,10 +15,10 @@ export const ApartmentCard = ({ apartment, index }: IApartmentCard) => {
       <motion.div
         key={apartment.id}
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: index * 0.05 }}
         viewport={{ once: true }}
         className='bg-white rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden group'
+        transition={{ duration: 0.4, delay: index * 0.05 }}
+        whileInView={{ opacity: 1, y: 0 }}
       >
         <div className='bg-card rounded-lg border border-border overflow-hidden cursor-pointer hover:shadow-md transition-shadow group'>
           <div className='relative h-44 bg-muted overflow-hidden'>

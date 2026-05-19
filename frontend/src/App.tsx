@@ -12,13 +12,14 @@ import { AdminReportsPage } from '@/modules/admin/pages/reports'
 import { AdminPaymentPage } from '@/modules/admin/pages/payments'
 import { AdminExpensePage } from '@/modules/admin/pages/expenses'
 import { AdminEmployeePage } from '@/modules/admin/pages/employees'
-import { IsAdminMiddleware } from './modules/admin/middlewares/IsAdminMiddleware'
+import { IsAdminMiddleware } from '@/modules/admin/middlewares/IsAdminMiddleware'
 import { AdminPromotionPage } from '@/modules/admin/pages/promotion'
 import { AdminApartmentPage } from '@/modules/admin/pages/apartments'
 import { AdminDashboardPage } from '@/modules/admin/pages/dashboard'
 import { AdminReservationPage } from '@/modules/admin/pages/reservations'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { LoadCurrentUserMiddleware } from '@/middlewares/LoadCurrentUserMiddleware'
+import { NationalCheckoutPage } from '@/modules/checkout/pages/national'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route element={<LoadCurrentUserMiddleware />}>
+        <Route element={<NationalCheckoutPage />} path='/checkout/national' />
         <Route element={<UserLayout />}>
           <Route element={<AuthMiddleware />}>
             <Route element={<ConfigPage />} path='/config' />
@@ -36,6 +38,7 @@ function App() {
           <Route element={<ApartmentsPage />} path='/apartments' />
         </Route>
       </Route>
+
       <Route element={<IsAdminMiddleware />}>
         <Route element={<AdminLayout />} path='/admin'>
           <Route element={<AdminUserPage />} path='users' />
