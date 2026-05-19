@@ -45,3 +45,9 @@ export interface IReservationFilter extends IPaginationFilter {
   minPrice?: number
   maxPrice?: number
 }
+
+export interface InvalidDate {
+  year: string
+  month: string
+  day: string
+}
