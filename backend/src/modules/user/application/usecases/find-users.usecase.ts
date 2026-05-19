@@ -5,7 +5,10 @@ import { Inject, Injectable } from '@nestjs/common'
 
 @Injectable()
 export class FindUsersUseCase {
-  constructor(@Inject('UserRepository') private userRepository: UserRepositoryPort) {}
+  constructor(
+    @Inject('UserRepository')
+    private userRepository: UserRepositoryPort,
+  ) {}
 
   async execute(filters: UserFilterDto): Promise<UserPageDto> {
     const users = await this.userRepository.findUsers(filters)

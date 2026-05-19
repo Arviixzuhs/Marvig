@@ -6,7 +6,8 @@ import { EmployeeRepositoryPort } from '@/modules/employee/domain/repositories/e
 @Injectable()
 export class FindEmployeesUseCase {
   constructor(
-    @Inject('EmployeeRepository') private readonly employeeRepository: EmployeeRepositoryPort,
+    @Inject('EmployeeRepository')
+    private readonly employeeRepository: EmployeeRepositoryPort,
   ) {}
 
   async execute(filters: EmployeeFilterDto): Promise<EmployeePage> {

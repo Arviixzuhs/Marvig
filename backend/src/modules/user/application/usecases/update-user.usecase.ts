@@ -5,7 +5,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 @Injectable()
 export class UpdateUserUseCase {
-  constructor(@Inject('UserRepository') private userRepository: UserRepositoryPort) {}
+  constructor(
+    @Inject('UserRepository')
+    private userRepository: UserRepositoryPort,
+  ) {}
 
   async execute(userId: number, newData: UpdateUserDto): Promise<UserModel> {
     const user = await this.userRepository.existsById(userId)
