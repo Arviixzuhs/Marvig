@@ -1,12 +1,12 @@
 import { User } from '@/interfaces/user.interface'
-import { UserDto } from '@/modules/user/application/dto/user.dto'
 import { UserRole } from '@/common/enums/user-role.enum'
 import { UserType } from '@/modules/user/infrastructure/graphql/types/user.type'
 import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { UserPageType } from '@/modules/user/infrastructure/graphql/types/user-page.type'
-import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
-import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
+import { UserFilterInput } from '@/modules/user/infrastructure/graphql/inputs/user-filter.input'
+import { UpdateUserInput } from '@/modules/user/infrastructure/graphql/inputs/update-user.input'
+import { CreateUserInput } from '@/modules/user/infrastructure/graphql/inputs/create-user.input'
 import { FindUserUseCase } from '@/modules/user/application/usecases/find-user.usecase'
 import { FindUsersUseCase } from '@/modules/user/application/usecases/find-users.usecase'
 import { DeleteUserUseCase } from '@/modules/user/application/usecases/delete-user.usecase'
@@ -25,13 +25,13 @@ export class UserResolver {
   ) {}
 
   @Mutation(() => UserType)
-  createUser(@Args('data') data: UserDto): Promise<UserType> {
+  createUser(@Args('data') data: CreateUserInput): Promise<UserType> {
     return this.createUserUseCase.execute(data)
   }
 
   @Query(() => UserPageType, { name: 'users' })
   @RequiredRole(UserRole.ADMIN)
-  findUsers(@Args('filters') filters: UserFilterDto): Promise<UserPageType> {
+  findUsers(@Args('filters') filters: UserFilterInput): Promise<UserPageType> {
     return this.findUsersUseCase.execute(filters)
   }
 
@@ -57,7 +57,7 @@ export class UserResolver {
   @RequiredRole(UserRole.ADMIN)
   updateUser(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: UpdateUserDto,
+    @Args('data') data: UpdateUserInput,
   ): Promise<UserType> {
     return this.updateUserUseCase.execute(id, data)
   }

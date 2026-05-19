@@ -1,5 +1,7 @@
-import { InputType, PartialType } from '@nestjs/graphql'
-import { EmployeeDto } from './employee.dto'
-
-@InputType()
-export class UpdateEmployeeDto extends PartialType(EmployeeDto) {}
+export class UpdateEmployeeDto {
+  name?: string
+  email?: string
+  phone?: string
+  address?: string
+  lastName?: string
+}

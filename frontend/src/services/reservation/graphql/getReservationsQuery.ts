@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GET_RESERVATIONS = gql`
-  query FindReservations($filters: ReservationFilterDto!) {
+  query FindReservations($filters: ReservationFilterInput!) {
     findReservations(filters: $filters) {
       content {
         id

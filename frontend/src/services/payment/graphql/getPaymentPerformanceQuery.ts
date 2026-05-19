@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GET_PAYMENTS_PERFORMANCE = gql`
-  query GetPaymentsPerformance($filters: PaymentFilterDto!) {
+  query GetPaymentsPerformance($filters: PaymentFilterInput!) {
     getPaymentsPerformance(filters: $filters) {
       salesPerformanceData {
         name

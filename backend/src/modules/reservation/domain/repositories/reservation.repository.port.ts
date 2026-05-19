@@ -1,13 +1,13 @@
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
-import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 
 export interface ReservationRepositoryPort {
   existsById(id: number): Promise<boolean>
   updateStatus(id: number, status: ReservationStatus): Promise<ReservationModel>
-  findReservations(filters: ReservationFilterDto): Promise<ReservationPage>
+  findReservations(filters: ReservationFilterDto): Promise<ReservationPageDto>
   findByApartmentId(apartmentId: number): Promise<ReservationModel[]>
   createReservation(reservation: ReservationDto, userId?: number): Promise<ReservationModel>
   updateReservation(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel>

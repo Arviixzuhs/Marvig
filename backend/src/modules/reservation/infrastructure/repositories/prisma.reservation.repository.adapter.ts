@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
-import { ReservationPage } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ReservationMapper } from '@/modules/reservation/infrastructure/mappers/reservation.mapper'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
+import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { ReservationSpecificationBuilder } from './prisma.reservation.specificationBuilder'
 
@@ -15,7 +16,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
 
   private readonly reservationMapper = new ReservationMapper()
 
-  async findReservations(filters: ReservationFilterDto): Promise<ReservationPage> {
+  async findReservations(filters: ReservationFilterDto): Promise<ReservationPageDto> {
     const query = new ReservationSpecificationBuilder()
       .withUserId(filters.userId)
       .withApartmentId(filters.apartmentId)
@@ -56,7 +57,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     return !!reservation
   }
 
-  async createReservation(data: ReservationDto, userId?: number): Promise<ReservationModel> {
+  async createReservation(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
     const reservation = await this.prisma.reservation.create({
       data: {
         type: data.type,

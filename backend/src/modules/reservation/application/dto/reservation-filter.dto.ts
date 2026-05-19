@@ -1,53 +1,15 @@
 import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { PaginationFilterDto } from '@/common/dto/pagination-filter.dto'
-import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsOptional, IsString, IsInt, IsEnum, IsNumber } from 'class-validator'
 
-@InputType()
 export class ReservationFilterDto extends PaginationFilterDto {
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  userId?: number
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  apartmentId?: number
-
-  @Field(() => ReservationStatus, { nullable: true })
-  @IsOptional()
-  @IsEnum(ReservationStatus)
-  status?: ReservationStatus
-
-  @Field(() => RentalType, { nullable: true })
-  @IsOptional()
-  @IsEnum(RentalType)
   type?: RentalType
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
+  userId?: number
   search?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  startDate?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
+  status?: ReservationStatus
   endDate?: string
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsNumber()
-  minPrice?: number
-
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsNumber()
   maxPrice?: number
+  minPrice?: number
+  startDate?: string
+  apartmentId?: number
 }

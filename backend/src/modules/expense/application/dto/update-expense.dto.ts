@@ -1,5 +1,12 @@
-import { ExpenseDto } from './expense.dto'
-import { InputType, PartialType } from '@nestjs/graphql'
+import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
+import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
 
-@InputType()
-export class UpdateExpenseDto extends PartialType(ExpenseDto) {}
+export class UpdateExpenseDto {
+  date?: Date
+  amount?: number
+  category?: ExpenseCategory
+  employeeId?: number
+  description?: string
+  apartmentId?: number
+  paymentMethod?: PaymentMethod
+}

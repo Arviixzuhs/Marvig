@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GET_EMPLOYEES = gql`
-  query FindEmployees($filters: EmployeeFilterDto!) {
+  query FindEmployees($filters: EmployeeFilterInput!) {
     findEmployees(filters: $filters) {
       content {
         id

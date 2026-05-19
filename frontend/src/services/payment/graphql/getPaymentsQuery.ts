@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const FIND_PAYMENTS = gql`
-  query FindPayments($filters: PaymentFilterDto!) {
+  query FindPayments($filters: PaymentFilterInput!) {
     findPayments(filters: $filters) {
       content {
         id

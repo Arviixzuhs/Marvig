@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CREATE_EXPENSE = gql`
-  mutation CreateExpense($data: ExpenseDto!) {
+  mutation CreateExpense($data: ExpenseInput!) {
     createExpense(data: $data) {
       id
       amount
