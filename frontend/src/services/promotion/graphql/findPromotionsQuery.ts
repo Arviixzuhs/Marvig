@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const FIND_PROMOTIONS = gql`
-  query FindPromotions($filters: PromotionFilterDto!) {
+  query FindPromotions($filters: PromotionFilterInput!) {
     findPromotions(filters: $filters) {
       content {
         id

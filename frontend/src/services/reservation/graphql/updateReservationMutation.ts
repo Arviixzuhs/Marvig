@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_RESERVATION = gql`
-  mutation UpdateReservation($id: Int!, $data: UpdateReservationDto!) {
+  mutation UpdateReservation($id: Int!, $data: UpdateReservationInput!) {
     updateReservation(id: $id, data: $data) {
       id
       clientName
