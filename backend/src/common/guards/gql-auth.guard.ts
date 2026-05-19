@@ -13,7 +13,7 @@ import {
 
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     if (context.getType<string>() !== 'graphql') {
