@@ -2,11 +2,12 @@ import { apolloClient } from '@/api/apollo-client'
 import { IPageResponse } from '@/api/interfaces'
 import { GET_RESERVATION } from './graphql/getReservationQuery'
 import { GET_RESERVATIONS } from './graphql/getReservationsQuery'
+import { GET_INVALID_DATES } from './graphql/getInvalidDatesQuery'
 import { CREATE_RESERVATION } from './graphql/createReservationMutation'
 import { UPDATE_RESERVATION } from './graphql/updateReservationMutation'
 import { DELETE_RESERVATION } from './graphql/deleteReservationMutation'
 import { UPDATE_RESERVATION_STATUS } from './graphql/updateReservationStatusMutation'
-import { ReservationModel, IReservationFilter, ReservationStatus } from '@/models/ReservationModel'
+import { ReservationModel, IReservationFilter, ReservationStatus, InvalidDate } from '@/models/ReservationModel'
 
 export const reservationService = {
   get: async (id: number): Promise<ReservationModel | null> => {
@@ -68,4 +69,13 @@ export const reservationService = {
     })
     return !!data?.deleteReservation
   },
+  getInvalidDates: async (apartmentId: number): Promise<InvalidDate[] | null> => {
+    const { data } = await apolloClient.query<{ getInvalidDates: InvalidDate[] }>({
+      query: GET_INVALID_DATES,
+      variables: {
+        apartmentId
+      },
+    })
+    return data?.getInvalidDates || null
+  }
 }
