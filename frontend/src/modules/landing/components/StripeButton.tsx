@@ -10,8 +10,8 @@ export const StripeButton = () => {
       const { data } = await api.post('/stripe/create-session', {
         endDate: '2026-04-10T14:00:00.000Z',
         startDate: '2026-04-05T12:00:00.000Z',
-        apartmentIds: [1],
-        totalPrice: 360,
+        apartmentIds: [16],
+        totalPrice: 264,
         type: 'DAILY',
       })
 
