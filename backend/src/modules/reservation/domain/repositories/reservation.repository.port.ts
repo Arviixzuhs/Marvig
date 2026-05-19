@@ -8,6 +8,7 @@ export interface ReservationRepositoryPort {
   existsById(id: number): Promise<boolean>
   updateStatus(id: number, status: ReservationStatus): Promise<ReservationModel>
   findReservations(filters: ReservationFilterDto): Promise<ReservationPage>
+  findByApartmentId(apartmentId: number): Promise<ReservationModel[]>
   createReservation(reservation: ReservationDto, userId?: number): Promise<ReservationModel>
   updateReservation(id: number, newData: Partial<ReservationDto>): Promise<ReservationModel>
   deleteReservation(id: number): Promise<void>
