@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_PROMOTION = gql`
-  mutation UpdatePromotion($id: Int!, $data: UpdatePromotionDto!) {
+  mutation UpdatePromotion($id: Int!, $data: UpdatePromotionInput!) {
     updatePromotion(id: $id, data: $data) {
       id
       name

@@ -1,5 +1,8 @@
-import { InputType, PartialType } from '@nestjs/graphql'
-import { PromotionDto } from './promotion.dto'
+import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
 
-@InputType()
-export class UpdatePromotionDto extends PartialType(PromotionDto) {}
+export class UpdatePromotionDto {
+  name?: string
+  type?: PromotionTypeEnum
+  value?: number
+  description?: string
+}

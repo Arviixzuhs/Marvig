@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GET_APARTMENTS = gql`
-  query FindApartments($filters: ApartmentFilterDto!) {
+  query FindApartments($filters: ApartmentFilterInput!) {
     findApartments(filters: $filters) {
       content {
         id

@@ -7,7 +7,12 @@ import { CREATE_RESERVATION } from './graphql/createReservationMutation'
 import { UPDATE_RESERVATION } from './graphql/updateReservationMutation'
 import { DELETE_RESERVATION } from './graphql/deleteReservationMutation'
 import { UPDATE_RESERVATION_STATUS } from './graphql/updateReservationStatusMutation'
-import { ReservationModel, IReservationFilter, ReservationStatus, InvalidDate } from '@/models/ReservationModel'
+import {
+  ReservationModel,
+  IReservationFilter,
+  ReservationStatus,
+  InvalidDate,
+} from '@/models/ReservationModel'
 
 export const reservationService = {
   get: async (id: number): Promise<ReservationModel | null> => {
@@ -73,9 +78,9 @@ export const reservationService = {
     const { data } = await apolloClient.query<{ getInvalidDates: InvalidDate[] }>({
       query: GET_INVALID_DATES,
       variables: {
-        apartmentId
+        apartmentId,
       },
     })
     return data?.getInvalidDates || null
-  }
+  },
 }

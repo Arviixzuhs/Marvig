@@ -2,8 +2,8 @@ import { UserRole } from '@/common/enums/user-role.enum'
 import { PaymentType } from '@/modules/payment/infrastructure/graphql/types/payment.type'
 import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { PaymentPageType } from '@/modules/payment/infrastructure/graphql/types/payment-page.type'
-import { CreatePaymentDto } from '@/modules/payment/application/dto/create-payment.dto'
-import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
+import { CreatePaymentInput } from '@/modules/payment/infrastructure/graphql/inputs/create-payment.input'
+import { PaymentFilterInput } from '@/modules/payment/infrastructure/graphql/inputs/payment-filter.input'
 import { FindPaymentUseCase } from '@/modules/payment/application/usecases/find-payment.usecase'
 import { FindPaymentsUseCase } from '@/modules/payment/application/usecases/find-payments.usecase'
 import { CreatePaymentUseCase } from '@/modules/payment/application/usecases/create-payment.usecase'
@@ -22,13 +22,13 @@ export class PaymentResolver {
 
   @Mutation(() => PaymentType)
   @RequiredRole(UserRole.ADMIN)
-  createPayment(@Args('data') data: CreatePaymentDto): Promise<PaymentType> {
+  createPayment(@Args('data') data: CreatePaymentInput): Promise<PaymentType> {
     return this.createPaymentUseCase.execute(data)
   }
 
   @Query(() => PaymentPageType)
   @RequiredRole(UserRole.ADMIN)
-  findPayments(@Args('filters') filters: PaymentFilterDto): Promise<PaymentPageType> {
+  findPayments(@Args('filters') filters: PaymentFilterInput): Promise<PaymentPageType> {
     return this.findPaymentsUseCase.execute(filters)
   }
 
@@ -41,7 +41,7 @@ export class PaymentResolver {
   @Query(() => PaymentPerformanceType)
   @RequiredRole(UserRole.ADMIN)
   getPaymentsPerformance(
-    @Args('filters') filters: PaymentFilterDto,
+    @Args('filters') filters: PaymentFilterInput,
   ): Promise<PaymentPerformanceType> {
     return this.getPaymentsPerformanceUseCase.execute(filters)
   }

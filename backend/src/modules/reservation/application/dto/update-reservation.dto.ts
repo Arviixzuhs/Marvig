@@ -1,5 +1,14 @@
-import { CreateReservationDto } from './create-reservation.dto'
-import { InputType, PartialType } from '@nestjs/graphql'
+import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 
-@InputType()
-export class UpdateReservationDto extends PartialType(CreateReservationDto) {}
+export class UpdateReservationDto {
+  type?: RentalType
+  status?: ReservationStatus
+  endDate?: string
+  startDate?: string
+  totalPrice?: number
+  clientName?: string
+  clientEmail?: string
+  clientPhone?: string
+  apartmentIds?: number[]
+}

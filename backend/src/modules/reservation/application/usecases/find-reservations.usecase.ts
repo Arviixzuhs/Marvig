@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ReservationPageType } from '@/modules/reservation/infrastructure/graphql/types/reservation-page.type'
+import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 
@@ -10,7 +10,7 @@ export class FindReservationsUseCase {
     private readonly reservationRepository: ReservationRepositoryPort,
   ) {}
 
-  async execute(filters: ReservationFilterDto): Promise<ReservationPageType> {
+  async execute(filters: ReservationFilterDto): Promise<ReservationPageDto> {
     return await this.reservationRepository.findReservations(filters)
   }
 }

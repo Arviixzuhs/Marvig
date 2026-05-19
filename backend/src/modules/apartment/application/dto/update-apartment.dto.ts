@@ -1,5 +1,11 @@
-import { ApartmentDto } from './apartment.dto'
-import { InputType, PartialType } from '@nestjs/graphql'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 
-@InputType()
-export class UpdateApartmentDto extends PartialType(ApartmentDto) {}
+export class UpdateApartmentDto {
+  floor?: number
+  number?: string
+  status?: ApartmentStatusEnum
+  bedrooms?: number
+  pricePerDay?: number
+  bathrooms?: number
+  squareMeters?: number
+}
