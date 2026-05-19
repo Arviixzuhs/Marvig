@@ -5,7 +5,10 @@ import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repo
 
 @Injectable()
 export class CreateUserUseCase {
-  constructor(@Inject('UserRepository') private userRepository: UserRepositoryPort) {}
+  constructor(
+    @Inject('UserRepository')
+    private userRepository: UserRepositoryPort,
+  ) {}
 
   async execute(data: UserDto): Promise<UserModel> {
     const createdAuthor = await this.userRepository.createUser(data)

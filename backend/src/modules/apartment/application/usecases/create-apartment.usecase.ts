@@ -6,7 +6,8 @@ import { ConflictException, Inject, Injectable } from '@nestjs/common'
 @Injectable()
 export class CreateApartmentUseCase {
   constructor(
-    @Inject('ApartmentRepository') private readonly apartmentRepository: ApartmentRepositoryPort,
+    @Inject('ApartmentRepository')
+    private readonly apartmentRepository: ApartmentRepositoryPort,
   ) {}
 
   async execute(data: ApartmentDto): Promise<ApartmentModel> {

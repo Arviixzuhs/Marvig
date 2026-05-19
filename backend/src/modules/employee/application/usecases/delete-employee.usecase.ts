@@ -4,7 +4,8 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 @Injectable()
 export class DeleteEmployeeUseCase {
   constructor(
-    @Inject('EmployeeRepository') private readonly employeeRepository: EmployeeRepositoryPort,
+    @Inject('EmployeeRepository')
+    private readonly employeeRepository: EmployeeRepositoryPort,
   ) {}
 
   async execute(id: number): Promise<void> {
