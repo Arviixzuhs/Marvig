@@ -102,6 +102,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         isDeleted: false,
       },
       include: {
+        payments: true,
         apartments: true,
         user: true,
       },

@@ -13,6 +13,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator'
+import { ReservationPaymentDto } from './reservation-payment.input'
 
 @InputType()
 export class CreateReservationInput {
@@ -65,4 +66,7 @@ export class CreateReservationInput {
   @IsString({ message: 'El teléfono del cliente debe ser una cadena de texto' })
   @MaxLength(100, { message: 'El teléfono del cliente no puede exceder los 100 caracteres' })
   clientPhone?: string
+
+  @Field()
+  payment: ReservationPaymentDto
 }
