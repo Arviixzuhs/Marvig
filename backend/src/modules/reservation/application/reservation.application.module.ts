@@ -41,7 +41,7 @@ config()
     {
       provide: 'PaymentRepository',
       useClass: PrismaPaymentRepositoryAdapter,
-    }
+    },
   ],
   exports: [
     GetInvalidDatesUseCase,

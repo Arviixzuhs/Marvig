@@ -52,7 +52,7 @@ export const tableColumns: TableColumnInterface[] = [
 export const modalInputs: ModalInput[] = [
   {
     divider: {
-      title: "Información del cliente"
+      title: 'Información del cliente',
     },
   },
   {
@@ -78,7 +78,7 @@ export const modalInputs: ModalInput[] = [
   },
   {
     divider: {
-      title: "Información de la reserva"
+      title: 'Información de la reserva',
     },
   },
   {
@@ -94,6 +94,13 @@ export const modalInputs: ModalInput[] = [
     type: 'date',
     placeholder: 'Selecciona fecha de fin',
     required: true,
+  },
+  {
+    name: 'persons',
+    label: 'Número de Personas',
+    type: 'number',
+    required: false,
+    placeholder: 'Número de personas',
   },
   {
     name: 'type',
@@ -122,7 +129,7 @@ export const modalInputs: ModalInput[] = [
   {
     showOnEdit: false,
     divider: {
-      title: "Información del pago"
+      title: 'Información del pago',
     },
   },
   {

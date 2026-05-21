@@ -11,6 +11,7 @@ export class ReservationModel {
   endDate: Date
   startDate: Date
   createdAt?: Date
+  persons?: number
   clientName?: string
   clientEmail?: string
   clientPhone?: string

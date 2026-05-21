@@ -44,12 +44,12 @@ export class GetPaymentsPerformanceUseCase {
       salesPerformanceData,
       metrics: {
         weeklySales: {
-          amount: (currentIncome / 4),
+          amount: currentIncome / 4,
           percentage: this.getDiff(currentIncome / 4, previousIncome / 4),
           isPositive: currentIncome / 4 >= previousIncome / 4,
         },
         dailySales: {
-          amount: (currentIncome / 30),
+          amount: currentIncome / 30,
           percentage: this.getDiff(currentIncome / 30, previousIncome / 30),
           isPositive: currentIncome / 30 >= previousIncome / 30,
         },

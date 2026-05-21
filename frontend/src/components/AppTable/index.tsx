@@ -128,9 +128,15 @@ export const AppTable = ({
           )}
         </TableBody>
       </Table>
-      <AddItemModal action={() => tableActions?.create?.()}>{modalExtension}</AddItemModal>
-      <EditItemModal action={() => tableActions?.update?.()}>{modalExtension}</EditItemModal>
-      <ConfirmDeleteModal handleDelete={() => tableActions?.delete?.()} />
+      {tableActions?.create && (
+        <AddItemModal action={tableActions.create}>{modalExtension}</AddItemModal>
+      )}
+
+      {tableActions?.update && (
+        <EditItemModal action={tableActions.update}>{modalExtension}</EditItemModal>
+      )}
+
+      {tableActions?.delete && <ConfirmDeleteModal handleDelete={tableActions.delete} />}
     </>
   )
 }

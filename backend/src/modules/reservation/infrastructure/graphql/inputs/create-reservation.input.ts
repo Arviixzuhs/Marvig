@@ -1,5 +1,6 @@
 import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { ReservationPaymentDto } from './reservation-payment.input'
 import { Field, Float, InputType, Int } from '@nestjs/graphql'
 import {
   IsArray,
@@ -13,7 +14,6 @@ import {
   MaxLength,
   Min,
 } from 'class-validator'
-import { ReservationPaymentDto } from './reservation-payment.input'
 
 @InputType()
 export class CreateReservationInput {
@@ -69,4 +69,10 @@ export class CreateReservationInput {
 
   @Field()
   payment: ReservationPaymentDto
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt({ message: 'El número de personas debe ser un número entero' })
+  @Min(1, { message: 'El número de personas debe ser mayor a 0' })
+  persons?: number
 }
