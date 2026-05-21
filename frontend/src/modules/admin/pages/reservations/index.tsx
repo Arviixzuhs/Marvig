@@ -49,11 +49,24 @@ export const AdminReservationPage = () => {
   }, [dispatch])
 
   const getPayload = () => {
-    const { apartments, ...rest } = table.formData
+    const {
+      apartments,
+      paymentDate,
+      paymentDescription,
+      paymentMethod,
+      paymentReference,
+      ...rest
+    } = table.formData
     return {
       ...rest,
       apartmentIds: (apartments as AutocompleteChip[])?.map((item) => item.id) || [],
       totalPrice: totalCalculated,
+      payment: {
+        date: paymentDate,
+        method: paymentMethod,
+        reference: paymentReference,
+        description: paymentDescription,
+      },
     }
   }
 
