@@ -1,5 +1,7 @@
+import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
+import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { Inject, Injectable, ConflictException, BadRequestException } from '@nestjs/common'
@@ -12,7 +14,10 @@ export class CreateReservationUseCase {
 
     @Inject('ApartmentRepository')
     private readonly apartmentRepository: ApartmentRepositoryPort,
-  ) {}
+
+    @Inject('PaymentRepository')
+    private readonly paymentRepository: PaymentRepositoryPort,
+  ) { }
 
   async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
     const start = new Date(data.startDate)
@@ -69,12 +74,25 @@ export class CreateReservationUseCase {
       )
     }
 
-    return await this.reservationRepository.createReservation(
+    const createdReservation = await this.reservationRepository.createReservation(
       {
         ...data,
         totalPrice: finalTotal,
       },
       userId,
     )
+
+    await this.paymentRepository.createPayment({
+      date: new Date(),
+      amount: finalTotal,
+      status: PaymentStatus.CONFIRMED,
+      method: data.payment.method,
+      reference: data.payment.reference,
+      description: data.payment.description,
+      reservationId: createdReservation.id,
+    })
+
+    const reservation = await this.reservationRepository.findReservationById(createdReservation.id)
+    return reservation
   }
 }
