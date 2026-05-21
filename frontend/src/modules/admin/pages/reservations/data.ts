@@ -52,7 +52,7 @@ export const tableColumns: TableColumnInterface[] = [
 export const modalInputs: ModalInput[] = [
   {
     divider: {
-      title: "Información del cliente"
+      title: 'Información del cliente',
     },
   },
   {
@@ -78,7 +78,7 @@ export const modalInputs: ModalInput[] = [
   },
   {
     divider: {
-      title: "Información de la reserva"
+      title: 'Información de la reserva',
     },
   },
   {
@@ -129,7 +129,7 @@ export const modalInputs: ModalInput[] = [
   {
     showOnEdit: false,
     divider: {
-      title: "Información del pago"
+      title: 'Información del pago',
     },
   },
   {
