@@ -96,6 +96,13 @@ export const modalInputs: ModalInput[] = [
     required: true,
   },
   {
+    name: 'persons',
+    label: 'Número de Personas',
+    type: 'number',
+    required: false,
+    placeholder: 'Número de personas',
+  },
+  {
     name: 'type',
     label: 'Tipo de Renta',
     type: 'select',
