@@ -1,5 +1,6 @@
 import { RentalType, ReservationStatus } from '@/models/ReservationModel'
 import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
+import { PaymentMethod } from '@/models/PaymentModel'
 
 export const tableColumns: TableColumnInterface[] = [
   {
@@ -107,5 +108,46 @@ export const modalInputs: ModalInput[] = [
       { label: 'Cancelado', value: ReservationStatus.CANCELLED },
       { label: 'Completado', value: ReservationStatus.COMPLETED },
     ],
+  },
+  {
+    name: 'paymentReference',
+    label: 'Referencia / Confirmación del pago',
+    type: 'text',
+    placeholder: 'Número de operación',
+    required: true,
+    editable: false,
+  },
+  {
+    name: 'paymentDate',
+    label: 'Fecha del pago',
+    type: 'date',
+    placeholder: 'Selecciona fecha del pago',
+    required: true,
+    editable: false,
+  },
+  {
+    name: 'paymentMethod',
+    label: 'Método de Pago',
+    type: 'select',
+    placeholder: 'Selecciona un método',
+    required: true,
+    editable: false,
+    options: [
+      { label: 'Efectivo', value: PaymentMethod.CASH },
+      { label: 'PayPal', value: PaymentMethod.PAYPAL },
+      { label: 'Stripe', value: PaymentMethod.STRIPE },
+      { label: 'Pago Móvil', value: PaymentMethod.PAGO_MOVIL },
+      { label: 'Tarjeta de Débito', value: PaymentMethod.DEBIT_CARD },
+      { label: 'Tarjeta de Crédito', value: PaymentMethod.CREDID_CARD },
+      { label: 'Transferencia Bancaria', value: PaymentMethod.BANK_TRANSFER },
+    ],
+  },
+  {
+    name: 'paymentDescription',
+    label: 'Descripción',
+    type: 'textarea',
+    placeholder: 'Notas adicionales...',
+    required: false,
+    editable: false,
   },
 ]

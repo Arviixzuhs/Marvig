@@ -114,6 +114,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     )
   }
 
+  const filteredInputs = table.modalInputs.filter((input) => input.editable !== false)
+
   return (
     <Modal
       size='4xl'
@@ -129,7 +131,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
         <Form onSubmit={onSubmit} className='overflow-auto'>
           <ModalBody className='w-full'>
             <div className='w-full flex flex-col gap-4'>
-              {table.modalInputs.map((item, index) => (
+              {filteredInputs.map((item, index) => (
                 <div key={index} className='w-full'>
                   {item.type === 'select' && (
                     <Select

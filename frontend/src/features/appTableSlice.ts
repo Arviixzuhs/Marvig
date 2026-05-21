@@ -59,6 +59,7 @@ export interface ModalInput {
   type?: InputType
   placeholder?: string
   required?: boolean
+  editable?: boolean
   options?: SelectOption[]
 }
 
