@@ -17,7 +17,7 @@ export class CreateReservationUseCase {
 
     @Inject('PaymentRepository')
     private readonly paymentRepository: PaymentRepositoryPort,
-  ) { }
+  ) {}
 
   async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
     const start = new Date(data.startDate)

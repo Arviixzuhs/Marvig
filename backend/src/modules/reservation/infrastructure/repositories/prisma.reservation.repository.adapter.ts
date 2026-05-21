@@ -62,6 +62,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       data: {
         type: data.type,
         status: data.status || ReservationStatus.PENDING,
+        persons: data.persons,
         endDate: data.endDate,
         startDate: data.startDate,
         totalPrice: data.totalPrice,

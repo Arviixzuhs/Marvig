@@ -11,6 +11,7 @@ export const GET_RESERVATIONS = gql`
         startDate
         endDate
         type
+        persons
         status
         totalPrice
         userId

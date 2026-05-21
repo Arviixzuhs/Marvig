@@ -12,6 +12,7 @@ export class ReservationMapper extends BaseMapper<PrismaReservation, Reservation
       userId: model?.userId,
       status: model.status as ReservationStatus,
       endDate: model.endDate,
+      persons: model?.persons,
       startDate: model.startDate,
       clientEmail: model.clientEmail,
       clientName: model.clientName,

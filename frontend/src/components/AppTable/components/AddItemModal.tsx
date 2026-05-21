@@ -19,9 +19,10 @@ import {
   Divider,
 } from '@heroui/react'
 import { I18nProvider } from '@react-aria/i18n'
+import toast from 'react-hot-toast'
 
 export interface AddItemModalProps {
-  action: () => void
+  action: () => Promise<void>
   children: React.ReactNode
 }
 
@@ -98,10 +99,14 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     dispatch(toggleAddItemModal(null))
   }
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    action()
-    /* toggleModal() */
+    try {
+      await action()
+      toggleModal()
+    } catch (error) {
+      toast.error('Error al guardar el registro')
+    }
   }
 
   return (

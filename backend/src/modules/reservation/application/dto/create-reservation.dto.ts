@@ -7,6 +7,7 @@ export class CreateReservationDto {
   status: ReservationStatus
   payment: ReservationPaymentDto
   endDate: string
+  persons?: number
   startDate: string
   totalPrice: number
   clientName?: string

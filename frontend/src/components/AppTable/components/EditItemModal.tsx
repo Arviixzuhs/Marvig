@@ -1,4 +1,5 @@
 import React from 'react'
+import toast from 'react-hot-toast'
 import { RootState } from '@/store'
 import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,7 +26,7 @@ import {
 } from '@heroui/react'
 
 export interface EditItemModalProps {
-  action: () => void
+  action: () => Promise<void>
   children: React.ReactNode
 }
 
@@ -95,10 +96,14 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     dispatch(toggleEditItemModal(null))
   }
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    action()
-    toggleModal()
+    try {
+      await action()
+      toggleModal()
+    } catch (error) {
+      toast.error('Error al guardar el registro')
+    }
   }
 
   const handleDateChange = (name: string, value: any) => {
