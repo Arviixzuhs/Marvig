@@ -51,6 +51,11 @@ export const tableColumns: TableColumnInterface[] = [
 
 export const modalInputs: ModalInput[] = [
   {
+    divider: {
+      title: "Información del cliente"
+    },
+  },
+  {
     name: 'clientName',
     label: 'Nombre del Cliente',
     type: 'text',
@@ -70,6 +75,11 @@ export const modalInputs: ModalInput[] = [
     type: 'text',
     placeholder: '+34 000 000 000',
     required: false,
+  },
+  {
+    divider: {
+      title: "Información de la reserva"
+    },
   },
   {
     name: 'startDate',
@@ -110,12 +120,18 @@ export const modalInputs: ModalInput[] = [
     ],
   },
   {
+    showOnEdit: false,
+    divider: {
+      title: "Información del pago"
+    },
+  },
+  {
     name: 'paymentReference',
     label: 'Referencia / Confirmación del pago',
     type: 'text',
     placeholder: 'Número de operación',
     required: true,
-    editable: false,
+    showOnEdit: false,
   },
   {
     name: 'paymentDate',
@@ -123,7 +139,7 @@ export const modalInputs: ModalInput[] = [
     type: 'date',
     placeholder: 'Selecciona fecha del pago',
     required: true,
-    editable: false,
+    showOnEdit: false,
   },
   {
     name: 'paymentMethod',
@@ -131,7 +147,7 @@ export const modalInputs: ModalInput[] = [
     type: 'select',
     placeholder: 'Selecciona un método',
     required: true,
-    editable: false,
+    showOnEdit: false,
     options: [
       { label: 'Efectivo', value: PaymentMethod.CASH },
       { label: 'PayPal', value: PaymentMethod.PAYPAL },
@@ -148,6 +164,6 @@ export const modalInputs: ModalInput[] = [
     type: 'textarea',
     placeholder: 'Notas adicionales...',
     required: false,
-    editable: false,
+    showOnEdit: false,
   },
 ]

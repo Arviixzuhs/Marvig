@@ -44,12 +44,12 @@ export class GetPaymentsPerformanceUseCase {
       salesPerformanceData,
       metrics: {
         weeklySales: {
-          amount: (currentIncome / 4).toLocaleString(),
+          amount: (currentIncome / 4),
           percentage: this.getDiff(currentIncome / 4, previousIncome / 4),
           isPositive: currentIncome / 4 >= previousIncome / 4,
         },
         dailySales: {
-          amount: (currentIncome / 30).toLocaleString(),
+          amount: (currentIncome / 30),
           percentage: this.getDiff(currentIncome / 30, previousIncome / 30),
           isPositive: currentIncome / 30 >= previousIncome / 30,
         },
@@ -59,7 +59,7 @@ export class GetPaymentsPerformanceUseCase {
           isPositive: currentPayments.length >= previousPayments.length,
         },
         profit: {
-          amount: currentProfit.toLocaleString(),
+          amount: currentProfit,
           percentage: this.getDiff(currentProfit, previousProfit),
           isPositive: currentProfit >= previousProfit && previousProfit > 0,
         },

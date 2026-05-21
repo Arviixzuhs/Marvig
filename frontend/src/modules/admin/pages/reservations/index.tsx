@@ -129,33 +129,36 @@ export const AdminReservationPage = () => {
       tableActions={tableActions}
       searchbarPlaceholder='Buscar reservación...'
       modalExtension={
-        <div className='flex flex-col gap-4'>
-          <div className='p-4 bg-primary-50 rounded-lg border border-primary-100'>
-            <h3 className='text-lg font-semibold text-primary-700'>
-              Total Estimado: <span className='text-xl'>${totalCalculated.toFixed(2)}</span>
-            </h3>
-          </div>
-
-          <Autocomplete
-            chips
-            label='Apartamentos'
-            formDataKey='apartments'
-            placeholder='Buscar apartamentos...'
-            fetchItems={async (search) => {
-              const res = await apartmentService.getAll({
-                search,
-                page: 0,
-                pageSize: 10,
-              })
-              return (
-                res?.content.map((item) => ({
-                  id: item.id,
-                  name: `Apto. ${item.number} - $${item.pricePerDay}/día`,
-                })) || []
-              )
-            }}
-          />
-        </div>
+        <>
+          {table.currentItemToUpdate === -1 && (
+            <div className='flex flex-col gap-4'>
+              <div className='p-4 bg-primary-50 rounded-lg border border-primary-100'>
+                <h3 className='text-lg font-semibold text-primary-700'>
+                  Total Estimado: <span className='text-xl'>${totalCalculated.toFixed(2)}</span>
+                </h3>
+              </div>
+              <Autocomplete
+                chips
+                label='Apartamentos'
+                formDataKey='apartments'
+                placeholder='Buscar apartamentos...'
+                fetchItems={async (search) => {
+                  const res = await apartmentService.getAll({
+                    search,
+                    page: 0,
+                    pageSize: 10,
+                  })
+                  return (
+                    res?.content.map((item) => ({
+                      id: item.id,
+                      name: `Apto. ${item.number} - $${item.pricePerDay}/día`,
+                    })) || []
+                  )
+                }}
+              />
+            </div>
+          )}
+        </>
       }
     />
   )
