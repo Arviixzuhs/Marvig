@@ -1,5 +1,5 @@
 export interface AppTableActions {
-  create?: () => void
-  delete?: () => void
-  update?: () => void
+  create?: () => Promise<void>
+  delete?: () => Promise<void>
+  update?: () => Promise<void>
 }
