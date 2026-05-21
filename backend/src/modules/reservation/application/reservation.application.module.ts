@@ -9,6 +9,7 @@ import { UpdateReservationUseCase } from './usecases/update-reservation.usecase'
 import { CreateReservationUseCase } from './usecases/create-reservation.usecase'
 import { DeleteReservationUseCase } from './usecases/delete-reservation.usecase'
 import { UpdateReservationStatusUseCase } from './usecases/update-reservation-status.usecase'
+import { PrismaPaymentRepositoryAdapter } from '@/modules/payment/infrastructure/repositories/prisma.payment.repository.adapter'
 import { PrismaApartmentRepositoryAdapter } from '@/modules/apartment/infrastructure/repositories/prisma.apartment.repository.adapter'
 import { PrismaReservationRepositoryAdapter } from '@/modules/reservation/infrastructure/repositories/prisma.reservation.repository.adapter'
 
@@ -37,6 +38,10 @@ config()
       provide: 'ApartmentRepository',
       useClass: PrismaApartmentRepositoryAdapter,
     },
+    {
+      provide: 'PaymentRepository',
+      useClass: PrismaPaymentRepositoryAdapter,
+    }
   ],
   exports: [
     GetInvalidDatesUseCase,
