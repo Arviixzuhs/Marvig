@@ -38,6 +38,7 @@ export interface DateFilter {
   end: string
   start: string
 }
+
 export type InputType =
   | 'text'
   | 'number'
@@ -53,15 +54,31 @@ export interface SelectOption {
   value: string | number
 }
 
-export interface ModalInput {
-  name: string
-  label: string
-  type?: InputType
-  placeholder?: string
-  required?: boolean
-  editable?: boolean
-  options?: SelectOption[]
+export interface IDivider {
+  title?: string;
 }
+
+export interface IDivider {
+  title?: string;
+}
+
+interface SharedProps {
+  showOnEdit?: boolean;
+}
+
+interface StandardFields {
+  name: string;
+  label: string;
+  type?: InputType;
+  placeholder?: string;
+  required?: boolean;
+  options?: SelectOption[];
+}
+
+export type ModalInput = SharedProps & (
+  | (StandardFields & { divider?: never })
+  | ({ divider: IDivider } & { [K in keyof StandardFields]?: never })
+);
 
 export interface AppTableInterface<T> {
   data: T[]

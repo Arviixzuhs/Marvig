@@ -16,7 +16,9 @@ import {
   ModalHeader,
   ModalFooter,
   ModalContent,
+  Divider,
 } from '@heroui/react'
+import { I18nProvider } from '@react-aria/i18n'
 
 export interface AddItemModalProps {
   action: () => void
@@ -99,7 +101,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     action()
-    toggleModal()
+    /* toggleModal() */
   }
 
   return (
@@ -115,66 +117,83 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
         <Form onSubmit={onSubmit} className='overflow-auto'>
           <ModalBody className='w-full'>
             <div className='w-full flex flex-col gap-4'>
-              {table.modalInputs.map((item, index) => (
-                <div key={index} className='w-full'>
-                  {item.type === 'select' && (
-                    <Select
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      name={item.name}
-                      isRequired={item.required}
-                      selectedKeys={
-                        table.formData?.[item.name] ? [String(table.formData[item.name])] : []
-                      }
-                      onSelectionChange={(keys) =>
-                        handleSelectChange(item.name, Array.from(keys)[0] as string)
-                      }
-                    >
-                      {(item.options || []).map((opt) => (
-                        <SelectItem key={opt.value}>{opt.label}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                  {item.type === 'date' && (
-                    <DatePicker
-                      label={item.label}
-                      granularity='minute'
-                      hourCycle={24}
-                      isRequired={item.required}
-                      value={parseDateTime(table.formData?.[item.name])}
-                      onChange={(value) => handleDateChange(item.name, value)}
-                    />
-                  )}
-                  {(item.type === 'text' ||
-                    item.type === 'number' ||
-                    item.type === 'float' ||
-                    item.type === 'email' ||
-                    item.type === 'password') && (
-                    <Input
-                      size='md'
-                      type='text'
-                      name={item.name}
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      isRequired={item.required}
-                      value={String(table.formData?.[item.name] || '')}
-                      onChange={(e) => handleChange(e, item.type)}
-                    />
-                  )}
-                  {item.type == 'textarea' && (
-                    <Textarea
-                      size='md'
-                      type='text'
-                      name={item.name}
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      isRequired={item.required}
-                      value={String(table.formData?.[item.name] || '')}
-                      onChange={(e) => handleChange(e, item.type)}
-                    />
-                  )}
-                </div>
-              ))}
+              {table.modalInputs.map((item, index) => {
+                if (item.divider) {
+                  return (
+                    <div className='flex flex-col gap-2'>
+                      {item.divider.title && (
+                        <div className={`${index !== 0 && 'mt-3'} flex flex-col gap-2`}>
+                          <span className='text-sm font-medium text-muted-foreground'>
+                            {item.divider.title}
+                          </span>
+                        </div>
+                      )}
+                      <Divider />
+                    </div>
+                  )
+                }
+
+                return (
+                  <div key={index} className='w-full'>
+                    {item.type === 'select' && (
+                      <Select
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        name={item.name}
+                        isRequired={item.required}
+                        selectedKeys={
+                          table.formData?.[item.name] ? [String(table.formData[item.name])] : []
+                        }
+                        onSelectionChange={(keys) =>
+                          handleSelectChange(item.name, Array.from(keys)[0] as string)
+                        }
+                      >
+                        {(item.options || []).map((opt) => (
+                          <SelectItem key={opt.value}>{opt.label}</SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                    {item.type === 'date' && (
+                      <I18nProvider locale='es'>
+                        <DatePicker
+                          label={item.label}
+                          isRequired={item.required}
+                          value={parseDateTime(table.formData?.[item.name])}
+                          onChange={(value) => handleDateChange(item.name, value)}
+                        />
+                      </I18nProvider>
+                    )}
+                    {(item.type === 'text' ||
+                      item.type === 'number' ||
+                      item.type === 'float' ||
+                      item.type === 'email' ||
+                      item.type === 'password') && (
+                      <Input
+                        size='md'
+                        type='text'
+                        name={item.name}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        isRequired={item.required}
+                        value={String(table.formData?.[item.name] || '')}
+                        onChange={(e) => handleChange(e, item.type)}
+                      />
+                    )}
+                    {item.type == 'textarea' && (
+                      <Textarea
+                        size='md'
+                        type='text'
+                        name={item.name}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        isRequired={item.required}
+                        value={String(table.formData?.[item.name] || '')}
+                        onChange={(e) => handleChange(e, item.type)}
+                      />
+                    )}
+                  </div>
+                )
+              })}
               {children}
             </div>
           </ModalBody>
