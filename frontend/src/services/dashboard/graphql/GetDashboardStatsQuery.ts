@@ -2,8 +2,8 @@ import { gql } from '@apollo/client'
 
 export const GET_DASHBOARD_PERFORMANCE = gql`
   query GetDashboardPerformance(
-    $paymentFilters: PaymentFilterDto!
-    $expenseFilters: ExpenseFilterDto!
+    $paymentFilters: PaymentFilterInput!
+    $expenseFilters: ExpenseFilterInput!
   ) {
     # Query de Pagos
     payments: getPaymentsPerformance(filters: $paymentFilters) {

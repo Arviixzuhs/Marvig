@@ -1,10 +1,13 @@
-import { ApartmentDto } from '@/modules/apartment/application/dto/apartment.dto'
-import { ApartmentType } from '../types/apartment.type'
+import { Public } from '@/common/decorators/public.decorator'
+import { UserRole } from '@/common/enums/user-role.enum'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
+import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
+import { ApartmentInput } from '@/modules/apartment/infrastructure/graphql/inputs/apartment.input'
 import { ApartmentPageType } from '@/modules/apartment/infrastructure/graphql/types/apartment-page.type'
-import { ApartmentImageDto } from '@/modules/apartment/application/dto/apartment-image.dto'
-import { UpdateApartmentDto } from '@/modules/apartment/application/dto/update-apartment.dto'
-import { ApartmentFilterDto } from '@/modules/apartment/application/dto/apartment-filter.dto'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
+import { ApartmentImageInput } from '@/modules/apartment/infrastructure/graphql/inputs/apartment-image.input'
+import { ApartmentFilterInput } from '@/modules/apartment/infrastructure/graphql/inputs/apartment-filter.input'
+import { UpdateApartmentInput } from '@/modules/apartment/infrastructure/graphql/inputs/update-apartment.input'
 import { FindApartmentUseCase } from '@/modules/apartment/application/usecases/find-apartment.usecase'
 import { FindApartmentsUseCase } from '@/modules/apartment/application/usecases/find-apartments.usecase'
 import { UpdateApartmentUseCase } from '@/modules/apartment/application/usecases/update-apartment.usecase'
@@ -27,29 +30,34 @@ export class ApartmentResolver {
   ) {}
 
   @Mutation(() => ApartmentType)
-  createApartment(@Args('data') data: ApartmentDto): Promise<ApartmentType> {
+  @RequiredRole(UserRole.ADMIN)
+  createApartment(@Args('data') data: ApartmentInput): Promise<ApartmentType> {
     return this.createApartmentUseCase.execute(data)
   }
 
+  @Public()
   @Query(() => ApartmentPageType)
-  findApartments(@Args('filters') filters: ApartmentFilterDto): Promise<ApartmentPageType> {
+  findApartments(@Args('filters') filters: ApartmentFilterInput): Promise<ApartmentPageType> {
     return this.findApartmentsUseCase.execute(filters)
   }
 
+  @Public()
   @Query(() => ApartmentType)
   findApartmentById(@Args('id', { type: () => Int }) id: number): Promise<ApartmentType> {
     return this.findApartmentUseCase.execute(id)
   }
 
   @Mutation(() => ApartmentType)
+  @RequiredRole(UserRole.ADMIN)
   updateApartment(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: UpdateApartmentDto,
+    @Args('data') data: UpdateApartmentInput,
   ): Promise<ApartmentType> {
     return this.updateApartmentUseCase.execute(id, data)
   }
 
   @Mutation(() => ApartmentType)
+  @RequiredRole(UserRole.ADMIN)
   updateApartmentStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('status') status: ApartmentStatusEnum,
@@ -58,11 +66,13 @@ export class ApartmentResolver {
   }
 
   @Mutation(() => ApartmentType)
-  updateApartmentImages(@Args('data') data: ApartmentImageDto): Promise<ApartmentType> {
+  @RequiredRole(UserRole.ADMIN)
+  updateApartmentImages(@Args('data') data: ApartmentImageInput): Promise<ApartmentType> {
     return this.updateApartmentImageUseCase.execute(data)
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deleteApartment(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteApartmentUseCase.execute(id)
     return true

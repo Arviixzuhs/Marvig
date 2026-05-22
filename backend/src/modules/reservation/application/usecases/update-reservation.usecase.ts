@@ -1,4 +1,4 @@
-import { ReservationDto } from '../dto/reservation.dto'
+import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'

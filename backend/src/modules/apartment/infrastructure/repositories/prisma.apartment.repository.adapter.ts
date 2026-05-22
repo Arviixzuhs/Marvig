@@ -65,7 +65,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
         images: true,
       },
     })
-
+    if (!apartment) return null
     return this.apartmentMapper.modelToDomain(apartment)
   }
 
@@ -97,6 +97,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     const apartment = await this.prisma.apartment.findFirst({
       where: {
         number,
+        isDeleted: false,
       },
     })
     return !!apartment

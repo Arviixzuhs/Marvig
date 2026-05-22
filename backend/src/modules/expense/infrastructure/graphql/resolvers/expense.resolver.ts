@@ -1,9 +1,11 @@
-import { ExpenseDto } from '@/modules/expense/application/dto/expense.dto'
+import { UserRole } from '@/common/enums/user-role.enum'
 import { ExpenseType } from '@/modules/expense/infrastructure/graphql/types/expense.type'
+import { ExpenseInput } from '@/modules/expense/infrastructure/graphql/inputs/expense.input'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { ExpensePageType } from '@/modules/expense/infrastructure/graphql/types/expense-page.type'
-import { ExpenseImageDto } from '@/modules/expense/application/dto/expense-image.dto'
-import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
-import { UpdateExpenseDto } from '@/modules/expense/application/dto/update-expense.dto'
+import { ExpenseImageInput } from '@/modules/expense/infrastructure/graphql/inputs/expense-image.input'
+import { UpdateExpenseInput } from '@/modules/expense/infrastructure/graphql/inputs/update-expense.input'
+import { ExpenseFilterInput } from '@/modules/expense/infrastructure/graphql/inputs/expense-filter.input'
 import { FindExpenseUseCase } from '@/modules/expense/application/usecases/find-expense.usecase'
 import { FindExpensesUseCase } from '@/modules/expense/application/usecases/find-expenses.usecase'
 import { CreateExpenseUseCase } from '@/modules/expense/application/usecases/create-expense.usecase'
@@ -27,42 +29,49 @@ export class ExpenseResolver {
   ) {}
 
   @Mutation(() => ExpenseType)
-  createExpense(@Args('data') data: ExpenseDto): Promise<ExpenseType> {
+  @RequiredRole(UserRole.ADMIN)
+  createExpense(@Args('data') data: ExpenseInput): Promise<ExpenseType> {
     return this.createExpenseUseCase.execute(data)
   }
 
   @Query(() => ExpensePageType)
-  findExpenses(@Args('filters') filters: ExpenseFilterDto): Promise<ExpensePageType> {
+  @RequiredRole(UserRole.ADMIN)
+  findExpenses(@Args('filters') filters: ExpenseFilterInput): Promise<ExpensePageType> {
     return this.findExpensesUseCase.execute(filters)
   }
 
   @Query(() => ExpenseType)
+  @RequiredRole(UserRole.ADMIN)
   findExpenseById(@Args('id', { type: () => Int }) id: number): Promise<ExpenseType> {
     return this.findExpenseUseCase.execute(id)
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deleteExpense(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteExpenseUseCase.execute(id)
     return true
   }
 
   @Mutation(() => ExpenseType)
+  @RequiredRole(UserRole.ADMIN)
   updateExpense(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: UpdateExpenseDto,
+    @Args('data') data: UpdateExpenseInput,
   ): Promise<ExpenseType> {
     return this.updateExpenseUseCase.execute(id, data)
   }
 
   @Mutation(() => ExpenseType)
-  async updateExpenseImages(@Args('data') data: ExpenseImageDto): Promise<ExpenseType> {
+  @RequiredRole(UserRole.ADMIN)
+  async updateExpenseImages(@Args('data') data: ExpenseImageInput): Promise<ExpenseType> {
     return this.updateExpenseImagesUseCase.execute(data)
   }
 
   @Query(() => [ExpensePerformanceType])
+  @RequiredRole(UserRole.ADMIN)
   async getExpensesPerformance(
-    @Args('filters') filters: ExpenseFilterDto,
+    @Args('filters') filters: ExpenseFilterInput,
   ): Promise<ExpensePerformanceType[]> {
     return this.getExpensesPerformanceUseCase.execute(filters)
   }

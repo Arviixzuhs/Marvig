@@ -1,8 +1,10 @@
-import { PromotionDto } from '@/modules/promotion/application/dto/promotion.dto'
+import { UserRole } from '@/common/enums/user-role.enum'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { PromotionType } from '@/modules/promotion/infrastructure/graphql/types/promotion.type'
 import { PromotionPageType } from '@/modules/promotion/infrastructure/graphql/types/promotion-page.type'
-import { PromotionFilterDto } from '@/modules/promotion/application/dto/promotion-filter.dto'
-import { UpdatePromotionDto } from '@/modules/promotion/application/dto/update-promotion.dto'
+import { CreatePromotionInput } from '@/modules/promotion/infrastructure/graphql/inputs/create-promotion.input'
+import { UpdatePromotionInput } from '@/modules/promotion/infrastructure/graphql/inputs/update-promotion.input'
+import { PromotionFilterInput } from '@/modules/promotion/infrastructure/graphql/inputs/promotion-filter.input'
 import { FindPromotionUseCase } from '@/modules/promotion/application/usecases/find-promotion.usecase'
 import { FindPromotionsUseCase } from '@/modules/promotion/application/usecases/find-promotions.usecase'
 import { CreatePromotionUseCase } from '@/modules/promotion/application/usecases/create-promotion.usecase'
@@ -21,12 +23,13 @@ export class PromotionResolver {
   ) {}
 
   @Mutation(() => PromotionType)
-  createPromotion(@Args('data') data: PromotionDto): Promise<PromotionType> {
+  @RequiredRole(UserRole.ADMIN)
+  createPromotion(@Args('data') data: CreatePromotionInput): Promise<PromotionType> {
     return this.createPromotionUseCase.execute(data)
   }
 
   @Query(() => PromotionPageType)
-  findPromotions(@Args('filters') filters: PromotionFilterDto): Promise<PromotionPageType> {
+  findPromotions(@Args('filters') filters: PromotionFilterInput): Promise<PromotionPageType> {
     return this.findPromotionsUseCase.execute(filters)
   }
 
@@ -36,15 +39,17 @@ export class PromotionResolver {
   }
 
   @Mutation(() => Boolean)
+  @RequiredRole(UserRole.ADMIN)
   async deletePromotion(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deletePromotionUseCase.execute(id)
     return true
   }
 
   @Mutation(() => PromotionType)
+  @RequiredRole(UserRole.ADMIN)
   updatePromotion(
     @Args('id', { type: () => Int }) id: number,
-    @Args('data') data: UpdatePromotionDto,
+    @Args('data') data: UpdatePromotionInput,
   ): Promise<PromotionType> {
     return this.updatePromotionUseCase.execute(id, data)
   }

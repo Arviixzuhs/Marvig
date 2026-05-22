@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CREATE_PROMOTION = gql`
-  mutation CreatePromotion($data: PromotionDto!) {
+  mutation CreatePromotion($data: CreatePromotionInput!) {
     createPromotion(data: $data) {
       id
       name

@@ -23,6 +23,9 @@ export class ReservationType {
   totalPrice: number
 
   @Field(() => Int, { nullable: true })
+  persons?: number
+
+  @Field(() => Int, { nullable: true })
   userId?: number
 
   @Field({ nullable: true })

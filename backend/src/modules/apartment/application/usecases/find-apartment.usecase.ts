@@ -5,7 +5,8 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 @Injectable()
 export class FindApartmentUseCase {
   constructor(
-    @Inject('ApartmentRepository') private readonly apartmentRepository: ApartmentRepositoryPort,
+    @Inject('ApartmentRepository')
+    private readonly apartmentRepository: ApartmentRepositoryPort,
   ) {}
 
   async execute(id: number): Promise<ApartmentModel> {

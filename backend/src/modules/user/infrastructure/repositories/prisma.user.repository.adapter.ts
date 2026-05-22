@@ -1,7 +1,7 @@
-import { UserPage } from '@/modules/user/application/dto/user-page.dto'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { Injectable } from '@nestjs/common'
 import { UserMapper } from '@/modules/user/infrastructure/mapper/user.mapper'
+import { UserPageDto } from '@/modules/user/application/dto/user-page.dto'
 import { PrismaClient } from 'generated/prisma/client'
 import { UpdateUserDto } from '@/modules/user/application/dto/update-user.dto'
 import { UserFilterDto } from '@/modules/user/application/dto/user-filter.dto'
@@ -26,7 +26,7 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     return this.userMapper.modelToDomain(createdUser)
   }
 
-  async findUsers(filters: UserFilterDto): Promise<UserPage> {
+  async findUsers(filters: UserFilterDto): Promise<UserPageDto> {
     const query = new UserSpecificationBuilder()
       .withSearch(filters.search)
       .withName(filters.name)
@@ -72,11 +72,12 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
     return !!user
   }
 
-  async findUser(userId: number): Promise<UserModel> {
+  async findUser(userId: number): Promise<UserModel | null> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     })
 
+    if (!user) return null
     return this.userMapper.modelToDomain(user)
   }
 }

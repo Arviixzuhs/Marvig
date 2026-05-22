@@ -12,7 +12,7 @@ class SalesPerformanceData {
 @ObjectType()
 class MetricDetail {
   @Field()
-  amount: string
+  amount: number
 
   @Field()
   percentage: string
@@ -36,7 +36,7 @@ class TotalSalesMetric {
 @ObjectType()
 class ProfitMetric {
   @Field()
-  amount: string
+  amount: number
 
   @Field()
   percentage: string

@@ -83,7 +83,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
     return !!employee
   }
 
-  async findEmployee(id: number): Promise<EmployeeModel> {
+  async findEmployee(id: number): Promise<EmployeeModel | null> {
     const employee = await this.prisma.employee.findUnique({
       where: {
         id,
@@ -91,6 +91,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
       },
     })
 
+    if (!employee) return null
     return this.employeeMapper.modelToDomain(employee)
   }
 }

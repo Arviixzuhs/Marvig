@@ -1,5 +1,7 @@
 import React from 'react'
+import toast from 'react-hot-toast'
 import { RootState } from '@/store'
+import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   setFormData,
@@ -11,21 +13,20 @@ import {
   Form,
   Modal,
   Input,
+  Select,
   Button,
+  Textarea,
   ModalBody,
+  DatePicker,
+  SelectItem,
   ModalHeader,
   ModalFooter,
   ModalContent,
-  Select,
-  SelectItem,
-  DatePicker,
-  Textarea,
+  Divider,
 } from '@heroui/react'
-import { parseAbsoluteToLocal } from '@internationalized/date'
-import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 
 export interface EditItemModalProps {
-  action: () => void
+  action: () => Promise<void>
   children: React.ReactNode
 }
 
@@ -35,7 +36,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
-  const { resetFormData, setImages } = useImageUpload()
   const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
 
   const parseDateTime = (value: any) => {
@@ -93,15 +93,17 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   }
 
   const toggleModal = () => {
-    resetFormData()
-    setImages([])
     dispatch(toggleEditItemModal(null))
   }
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    action()
-    toggleModal()
+    try {
+      await action()
+      toggleModal()
+    } catch (error) {
+      toast.error('Error al guardar el registro')
+    }
   }
 
   const handleDateChange = (name: string, value: any) => {
@@ -118,6 +120,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     )
   }
 
+  const filteredInputs = table.modalInputs.filter((input) => input.showOnEdit !== false)
+
   return (
     <Modal
       size='4xl'
@@ -129,76 +133,89 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     >
       <ModalContent>
         <ModalHeader>Editar</ModalHeader>
-
         <Form onSubmit={onSubmit} className='overflow-auto'>
           <ModalBody className='w-full'>
             <div className='w-full flex flex-col gap-4'>
-              {table.modalInputs.map((item, index) => (
-                <div key={index} className='w-full'>
-                  {item.type === 'select' && (
-                    <Select
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      name={item.name}
-                      isRequired={item.required}
-                      defaultSelectedKeys={
-                        currentItemToEdit?.[item.name]
-                          ? [String(currentItemToEdit?.[item.name])]
-                          : []
-                      }
-                      onSelectionChange={(keys) =>
-                        handleSelectChange(item.name, Array.from(keys)[0] as string)
-                      }
-                    >
-                      {(item.options || []).map((opt) => (
-                        <SelectItem key={opt.value}>{opt.label}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                  {item.type === 'date' && (
-                    <DatePicker
-                      label={item.label}
-                      granularity='minute'
-                      hourCycle={24}
-                      isRequired={item.required}
-                      value={parseDateTime(
-                        table.formData?.[item.name] ?? currentItemToEdit?.[item.name],
+              {filteredInputs.map((item, index) => {
+                if (item.divider) {
+                  return (
+                    <div className='flex flex-col gap-2'>
+                      {item.divider.title && (
+                        <div className={`${index !== 0 && 'mt-3'} flex flex-col gap-2`}>
+                          <span className='text-sm font-medium text-muted-foreground'>
+                            {item.divider.title}
+                          </span>
+                        </div>
                       )}
-                      onChange={(value) => handleDateChange(item.name, value)}
-                    />
-                  )}
-                  {(item.type === 'text' ||
-                    item.type === 'number' ||
-                    item.type === 'float' ||
-                    item.type === 'email' ||
-                    item.type === 'password') && (
-                    <Input
-                      size='md'
-                      type='text'
-                      name={item.name}
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      isRequired={item.required}
-                      defaultValue={currentItemToEdit?.[item.name]}
-                      value={String(table.formData?.[item.name] || '')}
-                      onChange={(e) => handleChange(e, item.type)}
-                    />
-                  )}
-                  {item.type == 'textarea' && (
-                    <Textarea
-                      size='md'
-                      type='text'
-                      name={item.name}
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      isRequired={item.required}
-                      value={String(table.formData?.[item.name] || '')}
-                      defaultValue={currentItemToEdit?.[item.name]}
-                      onChange={(e) => handleChange(e, item.type)}
-                    />
-                  )}
-                </div>
-              ))}
+                      <Divider />
+                    </div>
+                  )
+                }
+
+                return (
+                  <div key={index} className='w-full'>
+                    {item.type === 'select' && (
+                      <Select
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        name={item.name}
+                        isRequired={item.required}
+                        defaultSelectedKeys={
+                          currentItemToEdit?.[item.name]
+                            ? [String(currentItemToEdit?.[item.name])]
+                            : []
+                        }
+                        onSelectionChange={(keys) =>
+                          handleSelectChange(item.name, Array.from(keys)[0] as string)
+                        }
+                      >
+                        {(item.options || []).map((opt) => (
+                          <SelectItem key={opt.value}>{opt.label}</SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                    {item.type === 'date' && (
+                      <DatePicker
+                        label={item.label}
+           
+                        isRequired={item.required}
+                        value={parseDateTime(
+                          table.formData?.[item.name] ?? currentItemToEdit?.[item.name],
+                        )}
+                        onChange={(value) => handleDateChange(item.name, value)}
+                      />
+                    )}
+                    {(item.type === 'text' ||
+                      item.type === 'number' ||
+                      item.type === 'float' ||
+                      item.type === 'email' ||
+                      item.type === 'password') && (
+                      <Input
+                        size='md'
+                        type='text'
+                        name={item.name}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        isRequired={item.required}
+                        defaultValue={currentItemToEdit?.[item.name]}
+                        onChange={(e) => handleChange(e, item.type)}
+                      />
+                    )}
+                    {item.type == 'textarea' && (
+                      <Textarea
+                        size='md'
+                        type='text'
+                        name={item.name}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        isRequired={item.required}
+                        defaultValue={currentItemToEdit?.[item.name]}
+                        onChange={(e) => handleChange(e, item.type)}
+                      />
+                    )}
+                  </div>
+                )
+              })}
               {children}
             </div>
           </ModalBody>

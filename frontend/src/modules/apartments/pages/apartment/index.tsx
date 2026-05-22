@@ -1,0 +1,53 @@
+import React from 'react'
+import { RootState } from '@/store'
+import { useParams } from 'react-router-dom'
+import { setApartment } from '@/features/apartmentSlice'
+import { MapPin, Star } from 'lucide-react'
+import { ApartmentDetails } from '@/modules/apartments/components/ApartmentDetails'
+import { apartmentService } from '@/services/apartment'
+import { ApartmentImagesGrid } from '@/modules/apartments/components/ApartmentImagesGrid'
+import { ApartmentCalendarRange } from '@/modules/apartments/components/ApartmentCalendarRange'
+import { useDispatch, useSelector } from 'react-redux'
+
+export const ApartmentPage = () => {
+  const params = useParams<{ apartmentId: string }>()
+  const dispatch = useDispatch()
+  const apartment = useSelector((state: RootState) => state.apartment)
+
+  const loadData = async () => {
+    if (params.apartmentId) {
+      const response = await apartmentService.get(Number(params.apartmentId))
+      dispatch(setApartment(response))
+    }
+  }
+
+  React.useEffect(() => {
+    loadData()
+  }, [])
+
+  if (!apartment) return null
+
+  return (
+    <div className='min-h-screen bg-background'>
+      <div className='max-w-6xl mx-auto px-6 py-8'>
+        <h1 className='text-3xl font-extrabold mb-2 tracking-tight'>
+          Apartamento #{apartment.number}
+        </h1>
+        <div className='flex items-center gap-5 text-sm text-muted-foreground mb-7'>
+          <span className='flex items-center gap-1.5'>
+            <Star size={13} className='fill-yellow-400 text-yellow-400' />{' '}
+            <strong className='text-foreground'>4</strong> (5 reseñas)
+          </span>
+          <span className='flex items-center gap-1.5'>
+            <MapPin size={13} /> testing, testing
+          </span>
+        </div>
+        <ApartmentImagesGrid />
+        <div className='flex w-full gap-5'>
+          <ApartmentDetails />
+          <ApartmentCalendarRange />
+        </div>
+      </div>
+    </div>
+  )
+}

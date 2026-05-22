@@ -1,10 +1,12 @@
+import { manageApartmentSlice } from '@/features/apartmentSlice'
 import { manageAppTableSlice } from '@/features/appTableSlice'
 import { manageUserSlice } from '@/features/userSlice'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 const appReducer = combineReducers({
-  appTable: manageAppTableSlice.reducer,
   user: manageUserSlice.reducer,
+  appTable: manageAppTableSlice.reducer,
+  apartment: manageApartmentSlice.reducer,
 })
 
 const store = configureStore({

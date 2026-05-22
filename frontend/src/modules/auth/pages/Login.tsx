@@ -1,18 +1,17 @@
 import React from 'react'
-import toast from 'react-hot-toast'
 import { Or } from '@/modules/auth/components/Or'
 import { AuthForm } from '@/modules/auth/components/AuthInputForm'
 import { AuthBody } from '@/modules/auth/components/AuthBody'
+import { setMyUser } from '@/features/userSlice'
 import { AuthFooter } from '@/modules/auth/components/AuthFooter'
 import { AuthHeader } from '@/modules/auth/components/AuthHeader'
 import { AuthSubmit } from '@/modules/auth/components/AuthSubmit'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { authService } from '@/modules/auth/services'
 import { AuthLoginOptions } from '@/modules/auth/components/AuthLoginOptions'
 import { ContinueWithGoogle } from '@/modules/auth/components/ContinueWithGoogle'
 import type { IAuthLoginUser } from '@/modules/auth/services/interfaces'
-import { useDispatch } from 'react-redux'
-import { setMyUser } from '@/features/userSlice'
 
 export const LoginPage = () => {
   const navigate = useNavigate()
@@ -92,9 +91,7 @@ export const LoginPage = () => {
       const { user } = response.data
       dispatch(setMyUser(user))
       navigate('/')
-    } catch (error) {
-      toast.error('Usuario o contraseña incorrecto.')
-    }
+    } catch (error) {}
   }
 
   return (

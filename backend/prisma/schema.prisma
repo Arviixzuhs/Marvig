@@ -12,10 +12,17 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id           Int           @id @default(autoincrement())
   name         String        @db.VarChar(50)
-  email        String?       @unique @db.VarChar(100)
+  email        String?       @unique @db.VarChar(250)
+  role         UserRole      @default(USER)
+  phone        String?       @db.VarChar(50)
   avatar       String?       @default("") @db.VarChar(200)
   lastName     String        @db.VarChar(50)
   password     String?       @db.VarChar(200)
@@ -175,16 +182,24 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id            Int           @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   date          DateTime
-  amount        Decimal       @db.Decimal(10, 2)
+  amount        Decimal        @db.Decimal(10, 2)
   method        PaymentMethod
-  status        PaymentStatus @default(PENDING)
-  reference     String        @db.VarChar(200)
-  description   String?       @db.VarChar(200)
-  createdAt     DateTime      @default(now())
-  reservation   Reservation   @relation(fields: [reservationId], references: [id])
+  status        PaymentStatus  @default(PENDING)
+  reference     String         @db.VarChar(200)
+  description   String?        @db.VarChar(200)
+  createdAt     DateTime       @default(now())
+  reservation   Reservation    @relation(fields: [reservationId], references: [id])
   reservationId Int
+  paymentImages PaymentImage[]
+}
+
+model PaymentImage {
+  id        Int     @id @default(autoincrement())
+  url       String
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  paymentId Int
 }
 
 enum PromotionType {

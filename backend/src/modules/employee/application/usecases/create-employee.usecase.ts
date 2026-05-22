@@ -5,7 +5,10 @@ import { EmployeeRepositoryPort } from '@/modules/employee/domain/repositories/e
 
 @Injectable()
 export class CreateEmployeeUseCase {
-  constructor(@Inject('EmployeeRepository') private employeeRepository: EmployeeRepositoryPort) {}
+  constructor(
+    @Inject('EmployeeRepository')
+    private employeeRepository: EmployeeRepositoryPort,
+  ) {}
 
   async execute(data: EmployeeDto): Promise<EmployeeModel> {
     const createdAuthor = await this.employeeRepository.createEmployee(data)

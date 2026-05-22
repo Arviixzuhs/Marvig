@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_EXPENSE_IMAGES = gql`
-  mutation UpdateExpenseImages($data: ExpenseImageDto!) {
+  mutation UpdateExpenseImages($data: ExpenseImageInput!) {
     updateExpenseImages(data: $data) {
       id
       images {

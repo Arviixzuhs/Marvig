@@ -28,12 +28,10 @@ export const userService = {
     return data?.findCurrentUser || null
   },
   get: async (id: number): Promise<UserModel | null> => {
-    const { data } = await apolloClient.mutate<GetUserResponseDto>({
-      mutation: GET_USER,
+    const { data } = await apolloClient.query<GetUserResponseDto>({
+      query: GET_USER,
       variables: {
-        data: {
-          id,
-        },
+        id,
       },
     })
     return data?.user || null
