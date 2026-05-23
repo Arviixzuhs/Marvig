@@ -16,6 +16,12 @@ export class PermissionGuard implements CanActivate {
     const req = ctx.getContext().req
     const currentUser = req.user
 
+    const botApiKey = req.headers['x-bot-api-key']
+    if (botApiKey && botApiKey === process.env.CHATBOT_API_KEY) {
+      return true
+    }
+
+
     const requiredRole = this.reflector.getAllAndOverride<UserRole>('role', [
       context.getHandler(),
       context.getClass(),

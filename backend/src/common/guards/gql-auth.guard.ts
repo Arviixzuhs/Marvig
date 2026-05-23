@@ -30,6 +30,12 @@ export class GqlAuthGuard implements CanActivate {
     const ctx = GqlExecutionContext.create(context)
     const { req } = ctx.getContext()
 
+    const botApiKey = req.headers['x-bot-api-key']
+    if (botApiKey && botApiKey === process.env.CHATBOT_API_KEY) {
+      req.user = { userId: -1, role: 'ADMIN' }
+      return true
+    }
+
     try {
       let token = req.cookies?.accessToken
 
@@ -43,6 +49,7 @@ export class GqlAuthGuard implements CanActivate {
       if (!token) {
         throw new UnauthorizedException('No token provided')
       }
+
 
       const decoded = await new Promise<User>((resolve, reject) => {
         jwt.verify(token, process.env.SECRET_KEY as string, (error, decodedToken) => {

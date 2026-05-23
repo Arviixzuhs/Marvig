@@ -1,19 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GroqProvider } from './providers/groq.provider';
-import { ChatbotToolsExecutor } from './tools/chatbot-tools.executor';
-import { getToolsForRole } from './tools/chatbot-tools.registry';
-import { ChatMessage, ChatRequestDto } from './interfaces/chatbot.interface';
+import { ToolsExecutor } from './tools/tools.executor';
+import { getToolsForRole } from './tools/tools.registry';
+import { ChatMessage, ChatRequestDto } from './interfaces/types';
 
 @Injectable()
-export class ChatbotService {
-  private readonly logger = new Logger(ChatbotService.name);
+export class AppService {
+  private readonly logger = new Logger(AppService.name);
 
   constructor(
     private readonly groqProvider: GroqProvider,
-    private readonly toolsExecutor: ChatbotToolsExecutor,
+    private readonly toolsExecutor: ToolsExecutor,
   ) {}
 
-  async processMessage(request: ChatRequestDto, user: any): Promise<any> {
+  async processMessage(request: ChatRequestDto, user: any, userToken?: string): Promise<any> {
     const role = user?.role || 'GUEST';
     
     let systemPrompt = `Eres el asistente virtual experto de la Posada Marvig. Eres amable, profesional y conciso. Ayudas a los usuarios con información sobre la posada, reservas y disponibilidad. Manten siempre respuestas breves y directas.
@@ -51,7 +51,7 @@ REGLAS ESTRICTAS Y OBLIGATORIAS:
 
       for (const toolCall of response.toolCalls) {
         this.logger.debug(`Ejecutando tool individual: ${toolCall.name}`);
-        const result = await this.toolsExecutor.executeTool(toolCall.name, toolCall.args, user);
+        const result = await this.toolsExecutor.executeTool(toolCall.name, toolCall.args, user, userToken);
         this.logger.debug(`Tool ${toolCall.name} completada. Resultado: ${JSON.stringify(result)}`);
         
         history.push({

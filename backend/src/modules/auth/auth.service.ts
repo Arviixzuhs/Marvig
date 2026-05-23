@@ -42,7 +42,7 @@ export class AuthService {
     })
 
     const token = jwt.sign(
-      { userId: createdUser.id, username: createdUser.name, email: createdUser.email },
+      { userId: createdUser.id, username: createdUser.name, email: createdUser.email, role: createdUser.role },
       process.env.SECRET_KEY,
     )
 
@@ -58,7 +58,7 @@ export class AuthService {
       throw new HttpException('Email o contraseña no válidos.', HttpStatus.UNAUTHORIZED)
 
     const token = jwt.sign(
-      { userId: user.id, username: user.name, email: user.email },
+      { userId: user.id, username: user.name, email: user.email, role: user.role },
       process.env.SECRET_KEY,
     )
 
@@ -116,7 +116,7 @@ export class AuthService {
     })
 
     const accessToken = jwt.sign(
-      { userId: user.id, username: user.name, email: user.email },
+      { userId: user.id, username: user.name, email: user.email, role: user.role },
       process.env.SECRET_KEY,
     )
 

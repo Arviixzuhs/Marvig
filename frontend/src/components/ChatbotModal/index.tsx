@@ -80,13 +80,22 @@ export const ChatbotModal = () => {
     )
 
     try {
-      const { api } = await import('@/api/axios-client')
       const historyToSend = selectedChat.messages.map(m => ({ role: m.role, content: m.content }));
       
-      const response = await api.post('/chatbot/message', {
-        message: currentInput,
-        history: historyToSend
-      });
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        (import.meta.env.VITE_CHATBOT_API || 'http://localhost:3001') + '/chatbot/message',
+        {
+          message: currentInput,
+          history: historyToSend
+        },
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          }
+        }
+      );
+
 
       setChats((prev) =>
         prev.map((chat) =>

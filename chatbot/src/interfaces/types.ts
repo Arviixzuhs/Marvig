@@ -14,7 +14,15 @@ export interface ToolDeclaration {
   };
 }
 
-export interface ChatRequestDto {
+export class ChatRequestDto {
   message: string;
   history?: ChatMessage[];
+}
+
+
+export interface UserPayload {
+  userId: number;
+  username: string;
+  email: string;
+  role: string;
 }

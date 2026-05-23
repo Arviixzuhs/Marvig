@@ -1,12 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ChatMessage, ToolDeclaration } from '../interfaces/chatbot.interface';
+import { ConfigService } from '@nestjs/config';
+import { ChatMessage, ToolDeclaration } from '../interfaces/types';
 
 @Injectable()
 export class GroqProvider {
   private readonly logger = new Logger(GroqProvider.name);
-  private readonly apiKey = process.env.GROQ_API_KEY;
-  private readonly modelName = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+  private readonly apiKey: string;
+  private readonly modelName: string;
   private readonly apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+
+  constructor(private readonly configService: ConfigService) {
+    this.apiKey = this.configService.get<string>('GROQ_API_KEY') || '';
+    this.modelName = this.configService.get<string>('GROQ_MODEL') || 'llama-3.3-70b-versatile';
+  }
 
   async generateResponse(systemPrompt: string, history: ChatMessage[], tools?: ToolDeclaration[]): Promise<any> {
     if (!this.apiKey) {

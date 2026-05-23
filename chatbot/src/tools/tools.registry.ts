@@ -1,4 +1,4 @@
-import { ToolDeclaration } from '../interfaces/chatbot.interface';
+import { ToolDeclaration } from '../interfaces/types';
 
 export const CHATBOT_TOOLS: Record<string, ToolDeclaration> = {
   consultar_disponibilidad: {
@@ -32,7 +32,8 @@ export const CHATBOT_TOOLS: Record<string, ToolDeclaration> = {
         id_apartamento: { type: 'string', description: 'ID del apartamento' },
         fecha_inicio: { type: 'string', description: 'Fecha de inicio (YYYY-MM-DD)' },
         fecha_fin: { type: 'string', description: 'Fecha de fin (YYYY-MM-DD)' },
-        huespedes: { type: 'number', description: 'Número de huéspedes' }
+        huespedes: { type: 'number', description: 'Número de huéspedes' },
+        metodo_pago: { type: 'string', description: 'Método de pago: CASH, PAYPAL, STRIPE, etc. (Opcional, por defecto CASH)' }
       },
       required: ['id_apartamento', 'fecha_inicio', 'fecha_fin', 'huespedes']
     }
