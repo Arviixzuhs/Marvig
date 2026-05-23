@@ -67,6 +67,7 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'paymentMethod',
     label: 'Método de Pago',
+    placeholder: 'Seleccione un método de pago',
     type: 'select',
     required: true,
     options: [
@@ -83,6 +84,7 @@ export const modalInputs: ModalInput[] = [
     name: 'category',
     label: 'Categoría',
     type: 'select',
+    placeholder: 'Seleccione una categoría',
     required: true,
     options: [
       { label: 'Mantenimiento', value: ExpenseCategory.MAINTENANCE },
@@ -97,7 +99,7 @@ export const modalInputs: ModalInput[] = [
     name: 'description',
     label: 'Descripción',
     type: 'textarea',
-    placeholder: 'Motivo del gasto...',
+    placeholder: 'Ingrese el motivo del gasto...',
     required: false,
   },
 ]
