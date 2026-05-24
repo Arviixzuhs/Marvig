@@ -59,7 +59,7 @@ export const ApartmentCalendarRange = () => {
 
   return (
     <div>
-      <Card className='w-fit'>
+      <Card className='w-full md:w-fit'>
         <CardHeader className='flex gap-3'>
           <div className='flex items-baseline gap-1'>
             <span className='text-2xl font-extrabold'>{formatCurrency(apartment.pricePerDay)}</span>
@@ -67,7 +67,7 @@ export const ApartmentCalendarRange = () => {
           </div>
         </CardHeader>
         <Divider />
-        <CardBody>
+        <CardBody className='flex w-full justify-center items-center'>
           <I18nProvider locale='es'>
             <RangeCalendar
               value={value}
@@ -76,7 +76,7 @@ export const ApartmentCalendarRange = () => {
               errorMessage='Selecciona una fecha disponible'
               isDateUnavailable={isDateUnavailable}
               classNames={{
-                base: 'shadow-none',
+                base: 'shadow-none ',
               }}
             />
           </I18nProvider>

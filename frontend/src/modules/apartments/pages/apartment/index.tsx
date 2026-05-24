@@ -43,7 +43,7 @@ export const ApartmentPage = () => {
           </span>
         </div>
         <ApartmentImagesGrid />
-        <div className='flex w-full gap-5'>
+        <div className='flex flex-col md:flex-row w-full gap-5'>
           <ApartmentDetails />
           <ApartmentCalendarRange />
         </div>
