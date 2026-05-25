@@ -59,9 +59,8 @@ const StatCard = ({
 }) => (
   <Card shadow='none' className='border-none bg-white'>
     <CardBody className='p-6'>
-      <p className='text-sm text-default-500 mb-2'>{label}</p>
-      <div className='flex items-end justify-between'>
-        <div className='text-3xl font-bold text-foreground'>{value}</div>
+      <div className='flex items-center justify-between'>
+        <p className='text-sm text-default-500 mb-2'>{label}</p>
         <Chip size='sm' variant='flat' color={isPositive ? 'success' : 'danger'}>
           <div
             className={`text-sm font-semibold flex items-center gap-1 ${
@@ -73,6 +72,7 @@ const StatCard = ({
           </div>
         </Chip>
       </div>
+      <div className='text-3xl font-bold text-foreground'>{value}</div>
     </CardBody>
   </Card>
 )
