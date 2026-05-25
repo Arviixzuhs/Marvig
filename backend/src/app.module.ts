@@ -21,6 +21,7 @@ import { PermissionGuard } from '@/common/guards/permission.guard'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
+import { VerificationCodeModule } from '@/modules/verificationCode/verificationCode.module'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
 config()
@@ -36,6 +37,7 @@ config()
     PromotionModule,
     ApartmentModule,
     ReservationModule,
+    VerificationCodeModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
