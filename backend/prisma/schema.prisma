@@ -18,29 +18,30 @@ enum UserRole {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  name         String        @db.VarChar(50)
-  email        String?       @unique @db.VarChar(250)
-  role         UserRole      @default(USER)
-  phone        String?       @db.VarChar(50)
-  avatar       String?       @default("") @db.VarChar(200)
-  lastName     String        @db.VarChar(50)
-  password     String?       @db.VarChar(200)
-  createdAt    DateTime?     @default(now())
-  updatedAt    DateTime?     @updatedAt
-  reservations Reservation[]
+  id                Int                @id @default(autoincrement())
+  name              String             @db.VarChar(50)
+  email             String?            @unique @db.VarChar(250)
+  role              UserRole           @default(USER)
+  phone             String?            @db.VarChar(50)
+  avatar            String?            @default("") @db.VarChar(200)
+  lastName          String             @db.VarChar(50)
+  password          String?            @db.VarChar(200)
+  createdAt         DateTime?          @default(now())
+  updatedAt         DateTime?          @updatedAt
+  reservations      Reservation[]
   verificationCodes VerificationCode[]
 }
 
 model VerificationCode {
-  id            Int       @id @default(autoincrement())
-  code          String    @db.VarChar(10)
-  attempts      Int       @default(0)
-  isUsed        Boolean   @default(false)
-  createdAt     DateTime? @default(now())
+  id            Int                  @id @default(autoincrement())
+  code          String               @db.VarChar(64)
+  type          VerificationCodeType
+  attempts      Int                  @default(0)
+  isUsed        Boolean              @default(false)
+  createdAt     DateTime?            @default(now())
   expiresAt     DateTime
   nextAllowedAt DateTime
-  user          User      @relation(fields: [userId], references: [id])
+  user          User                 @relation(fields: [userId], references: [id])
   userId        Int
 }
 
