@@ -6,7 +6,8 @@ export const manageUserSlice = createSlice({
   initialState: null as UserModel | null,
   reducers: {
     setMyUser: (_, action) => action.payload,
+    clearUser: () => null,
   },
 })
 
-export const { setMyUser } = manageUserSlice.actions
+export const { setMyUser, clearUser } = manageUserSlice.actions

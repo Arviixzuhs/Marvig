@@ -19,6 +19,9 @@ export class UserType {
   avatar?: string | null
 
   @Field({ nullable: true })
+  phone?: string | null
+
+  @Field({ nullable: true })
   createdAt?: Date | null
 
   @Field({ nullable: true })

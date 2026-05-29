@@ -7,10 +7,23 @@ export interface UserModel {
   email?: string
   avatar?: string
   lastName: string
+  phone?: string
   password?: string
   createdAt: string
   updatedAt: string
 }
+
+export interface UpdateMyProfileInput {
+  name?: string
+  lastName?: string
+  phone?: string
+  avatar?: string
+}
+
+export interface UpdateMyProfileResponse {
+  updateMyProfile: UserModel
+}
+
 
 export interface GetUsersResponseDto {
   users: IPageResponse<UserModel>

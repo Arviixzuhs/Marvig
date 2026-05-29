@@ -7,6 +7,8 @@ import { FindUsersUseCase } from './usecases/find-users.usecase'
 import { CreateUserUseCase } from './usecases/create-user.usecase'
 import { UpdateUserUseCase } from './usecases/update-user.usecase'
 import { DeleteUserUseCase } from './usecases/delete-user.usecase'
+import { UpdateMyProfileUseCase } from './usecases/update-my-profile.usecase'
+import { ChangePasswordUseCase } from './usecases/change-password.usecase'
 import { PrismaUserRepositoryAdapter } from '@/modules/user/infrastructure/repositories/prisma.user.repository.adapter'
 
 config()
@@ -24,6 +26,8 @@ config()
     DeleteUserUseCase,
     FindUsersUseCase,
     CreateUserUseCase,
+    UpdateMyProfileUseCase,
+    ChangePasswordUseCase,
     {
       provide: 'UserRepository',
       useClass: PrismaUserRepositoryAdapter,
@@ -35,6 +39,8 @@ config()
     DeleteUserUseCase,
     FindUsersUseCase,
     CreateUserUseCase,
+    UpdateMyProfileUseCase,
+    ChangePasswordUseCase,
   ],
 })
 export class ApplicationModule {}
