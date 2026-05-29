@@ -143,7 +143,7 @@ export const ChatbotModal = () => {
     <>
       <button
         onClick={onOpen}
-        className='hover:scale-110 transition-transform cursor-pointer ml-12 md:ml-0'
+        className='hover:scale-110 transition-transform cursor-pointer ml-12 lg:ml-0'
       >
         <img src={GeminiLogo} alt='Abrir Chat' className='h-8 w-8' />
       </button>
