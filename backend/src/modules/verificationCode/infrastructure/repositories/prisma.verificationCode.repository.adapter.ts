@@ -8,7 +8,7 @@ import { UpdateVerificationDto } from '../../application/dto/update-verification
 
 @Injectable()
 export class PrismaVerificationCodeRepositoryAdapter implements VerificationCodeRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
   private readonly verificationCodeMapper = new VerificationCodeMapper()
 
   async findLastest(email: string, type: VerificationCodeType): Promise<VerificationCodeModel> {
