@@ -12,7 +12,6 @@ import { FindUsersUseCase } from '@/modules/user/application/usecases/find-users
 import { DeleteUserUseCase } from '@/modules/user/application/usecases/delete-user.usecase'
 import { UpdateUserUseCase } from '@/modules/user/application/usecases/update-user.usecase'
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user.usecase'
-import { UpdateMyProfileUseCase } from '@/modules/user/application/usecases/update-my-profile.usecase'
 import { ChangePasswordUseCase } from '@/modules/user/application/usecases/change-password.usecase'
 import { UpdateMyProfileInput } from '@/modules/user/infrastructure/graphql/inputs/update-my-profile.input'
 import { ChangePasswordInput } from '@/modules/user/infrastructure/graphql/inputs/change-password.input'
@@ -27,7 +26,6 @@ export class UserResolver {
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
-    private readonly updateMyProfileUseCase: UpdateMyProfileUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
   ) {}
 
@@ -74,7 +72,7 @@ export class UserResolver {
     @CurrentUser() user: User,
     @Args('data') data: UpdateMyProfileInput,
   ): Promise<UserType> {
-    return this.updateMyProfileUseCase.execute(user.userId, data)
+    return this.updateUserUseCase.execute(user.userId, data)
   }
 
   @Mutation(() => Boolean)
