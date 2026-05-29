@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common'
 import { ChangePasswordDto } from '@/modules/user/application/dto/change-password.dto'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
-import { PasswordHasherPort } from '@/modules/user/domain/repositories/password-hasher.port'
+import { PasswordHasherPort } from '@/modules/user/domain/ports/password-hasher.port'
 
 @Injectable()
 export class ChangePasswordUseCase {

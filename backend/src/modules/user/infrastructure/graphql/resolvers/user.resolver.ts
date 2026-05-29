@@ -72,7 +72,13 @@ export class UserResolver {
     @CurrentUser() user: User,
     @Args('data') data: UpdateMyProfileInput,
   ): Promise<UserType> {
-    return this.updateUserUseCase.execute(user.userId, data)
+    const dto: import('@/modules/user/application/dto/update-my-profile.dto').UpdateMyProfileDto = {
+      name: data.name,
+      lastName: data.lastName,
+      phone: data.phone,
+      avatar: data.avatar,
+    }
+    return this.updateUserUseCase.execute(user.userId, dto)
   }
 
   @Mutation(() => Boolean)
