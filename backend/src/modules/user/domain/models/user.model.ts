@@ -11,5 +11,6 @@ export class UserModel {
   lastName: string
   createdAt?: Date | null
   updatedAt?: Date | null
+  hasPassword?: boolean
   reservations: ReservationModel[]
 }

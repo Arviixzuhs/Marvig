@@ -11,6 +11,7 @@ export const UPDATE_MY_PROFILE = gql`
       avatar
       phone
       createdAt
+      hasPassword
     }
   }
 `

@@ -29,4 +29,7 @@ export class UserType {
 
   @Field()
   role: UserRole
+
+  @Field({ nullable: true })
+  hasPassword?: boolean
 }

@@ -9,6 +9,7 @@ export interface UserModel {
   lastName: string
   phone?: string
   password?: string
+  hasPassword?: boolean
   createdAt: string
   updatedAt: string
 }
