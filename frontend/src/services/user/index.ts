@@ -13,8 +13,8 @@ import {
   UpdateUserInput,
   DeleteUserResponse,
   UpdateUserResponse,
-  UpdateMyProfileInput,
   UpdateMyProfileResponse,
+  ChangePasswordInput,
 } from '@/models/UserModel'
 import {
   CreateUserInput,
@@ -77,7 +77,7 @@ export const userService = {
     })
     return !!data?.deleteUser
   },
-  updateMyProfile: async (payload: UpdateMyProfileInput) => {
+  updateMyProfile: async (payload: UpdateUserInput) => {
     const { data } = await apolloClient.mutate<UpdateMyProfileResponse>({
       mutation: UPDATE_MY_PROFILE,
       variables: {
@@ -86,7 +86,7 @@ export const userService = {
     })
     return data?.updateMyProfile
   },
-  changePassword: async (payload: any) => {
+  changePassword: async (payload: ChangePasswordInput) => {
     const { data } = await apolloClient.mutate<{ changePassword: boolean }>({
       mutation: CHANGE_PASSWORD,
       variables: {

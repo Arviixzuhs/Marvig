@@ -9,7 +9,7 @@ import { UpdateUserUseCase } from './usecases/update-user.usecase'
 import { DeleteUserUseCase } from './usecases/delete-user.usecase'
 import { ChangePasswordUseCase } from './usecases/change-password.usecase'
 import { PrismaUserRepositoryAdapter } from '@/modules/user/infrastructure/repositories/prisma.user.repository.adapter'
-import { BcryptPasswordHasherAdapter } from '@/modules/user/infrastructure/adapters/bcrypt-password-hasher.adapter'
+import { BcryptPasswordHasherAdapter } from '@/common/adapters/bcrypt-password-hasher.adapter'
 
 config()
 @Module({

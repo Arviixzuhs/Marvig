@@ -53,6 +53,9 @@ export class AuthService {
     const user = await this.findUserByEmail(data.email)
     if (!user) throw new HttpException('Usuario no encontrado.', HttpStatus.NOT_FOUND)
 
+    if (!user.password)
+      throw new HttpException('Este usuario no tiene contraseña. Inicia sesión con Google.', HttpStatus.UNAUTHORIZED)
+
     const isPasswordValid = await bcrypt.compare(data.password, user.password)
     if (!isPasswordValid)
       throw new HttpException('Email o contraseña no válidos.', HttpStatus.UNAUTHORIZED)

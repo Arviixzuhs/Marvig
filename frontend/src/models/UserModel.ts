@@ -13,13 +13,6 @@ export interface UserModel {
   updatedAt: string
 }
 
-export interface UpdateMyProfileInput {
-  name?: string
-  lastName?: string
-  phone?: string
-  avatar?: string
-}
-
 export interface UpdateMyProfileResponse {
   updateMyProfile: UserModel
 }
@@ -48,6 +41,12 @@ export interface UpdateUserResponse {
 
 export interface DeleteUserResponse {
   deleteUser: boolean
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
 }
 
 export interface IUserFilter extends IPaginationFilter {

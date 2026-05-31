@@ -13,7 +13,6 @@ import { DeleteUserUseCase } from '@/modules/user/application/usecases/delete-us
 import { UpdateUserUseCase } from '@/modules/user/application/usecases/update-user.usecase'
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user.usecase'
 import { ChangePasswordUseCase } from '@/modules/user/application/usecases/change-password.usecase'
-import { UpdateMyProfileInput } from '@/modules/user/infrastructure/graphql/inputs/update-my-profile.input'
 import { ChangePasswordInput } from '@/modules/user/infrastructure/graphql/inputs/change-password.input'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
@@ -70,15 +69,14 @@ export class UserResolver {
   @Mutation(() => UserType)
   updateMyProfile(
     @CurrentUser() user: User,
-    @Args('data') data: UpdateMyProfileInput,
+    @Args('data') data: UpdateUserInput,
   ): Promise<UserType> {
-    const dto: import('@/modules/user/application/dto/update-my-profile.dto').UpdateMyProfileDto = {
+    return this.updateUserUseCase.execute(user.userId, {
       name: data.name,
       lastName: data.lastName,
       phone: data.phone,
       avatar: data.avatar,
-    }
-    return this.updateUserUseCase.execute(user.userId, dto)
+    })
   }
 
   @Mutation(() => Boolean)
