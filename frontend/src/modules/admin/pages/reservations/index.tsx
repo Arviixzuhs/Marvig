@@ -3,11 +3,12 @@ import toast from 'react-hot-toast'
 import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
-import { calculateReservationTotal } from '@/utils/calcTotalByApartmentAndDates'
+import { ApartmentStatus } from '@/models/ApartmentModel'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { apartmentService } from '@/services/apartment'
 import { reservationService } from '@/services/reservation'
 import { useDispatch, useSelector } from 'react-redux'
+import { calculateReservationTotal } from '@/utils/calcTotalByApartmentAndDates'
 import { tableColumns, modalInputs } from './data'
 import { Autocomplete, AutocompleteChip } from '@/components/Autocomplete'
 import {
@@ -147,6 +148,7 @@ export const AdminReservationPage = () => {
                     search,
                     page: 0,
                     pageSize: 10,
+                    status: ApartmentStatus.AVAILABLE
                   })
                   return (
                     res?.content.map((item) => ({
