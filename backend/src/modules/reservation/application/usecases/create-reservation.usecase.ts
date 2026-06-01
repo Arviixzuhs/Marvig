@@ -3,6 +3,7 @@ import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enu
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
 import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
@@ -26,12 +27,13 @@ export class CreateReservationUseCase {
     private readonly userRepository: UserRepositoryPort,
 
     private readonly emailService: EmailService
-  ) { }
+  ) {}
 
   async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
     const user = await this.userRepository.findUser(userId)
     if (!user) throw new NotFoundException('El usuario no existe')
 
+    const toDay = new Date()
     const start = new Date(data.startDate)
     const end = new Date(data.endDate)
 
@@ -103,6 +105,13 @@ export class CreateReservationUseCase {
       description: data.payment.description,
       reservationId: createdReservation.id,
     })
+
+    const todayMidnight = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate())
+    const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate())
+
+    if (todayMidnight.getTime() === startMidnight.getTime()) {
+      await this.apartmentRepository.updateStatusByApartmentIds(data.apartmentIds, ApartmentStatusEnum.OCCUPIED)
+    }
 
     try {
       await this.emailService.sendSingleEmail({
