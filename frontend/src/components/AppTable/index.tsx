@@ -29,7 +29,7 @@ export interface AppTableProps {
 
 export const AppTable = ({
   hiddeAdd,
-  totalPages = 1,
+  totalPages,
   tableContent = [],
   tableActions,
   filterByDate,
