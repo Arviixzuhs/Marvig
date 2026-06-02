@@ -33,9 +33,10 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
   async findPayments(filters: PaymentFilterDto): Promise<PaymentPage> {
     const builder = new PaymentSpecificationBuilder()
       .withSearch(filters.search)
+      .withStatus(filters.status)
+      .withPagination(filters.page, filters.pageSize)
       .withReservationId(filters.reservationId)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 

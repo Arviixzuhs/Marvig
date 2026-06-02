@@ -1,4 +1,5 @@
 import { Prisma } from 'generated/prisma/client'
+import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 
 export interface PaymentSpecificationBuild {
   where: Prisma.PaymentWhereInput
@@ -24,7 +25,17 @@ export class PaymentSpecificationBuilder {
 
   withSearch(search?: string) {
     if (search && search.trim() !== '') {
-      this.where.description = { contains: search, mode: 'insensitive' }
+      this.where.OR = [
+        { description: { contains: search } },
+        { reference: { contains: search } },
+      ]
+    }
+    return this
+  }
+
+  withStatus(status?: PaymentStatus) {
+    if (status) {
+      this.where.status = status
     }
     return this
   }

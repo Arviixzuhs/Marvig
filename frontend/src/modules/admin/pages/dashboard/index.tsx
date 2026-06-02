@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { IPaymentPerformance } from '@/models/PaymentModel'
+import { IPaymentPerformance, PaymentStatus } from '@/models/PaymentModel'
 import { dashboardService } from '@/services/dashboard'
 import { IExpensePerformance } from '@/models/ExpenseModel'
 import { tableColumns } from '../expenses/data'
@@ -96,6 +96,7 @@ export const AdminDashboardPage = () => {
         paymentFilters: {
           fromDate: filters.fromDate,
           toDate: filters.toDate,
+          status: PaymentStatus.CONFIRMED
         },
       })
 
