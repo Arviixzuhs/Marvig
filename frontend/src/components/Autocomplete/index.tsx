@@ -27,32 +27,8 @@ export const Autocomplete = <T extends { id: number; name: string }>({
 }: AutocompleteProps<T>) => {
   const dispatch = useDispatch()
   const table = useSelector((state: RootState) => state.appTable)
-  const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
-
   const [result, setResult] = useState<T[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
-
-  useEffect(() => {
-    if (!currentItemToEdit) return
-
-    const existingValues = table.formData?.[formDataKey] as AutocompleteChip[]
-
-    if (!existingValues || existingValues.length === 0) {
-      const initialValues = currentItemToEdit[formDataKey]?.map((i: T) => ({
-        id: i.id,
-        label: i.name,
-      }))
-      if (initialValues) {
-        dispatch(
-          setFormData({
-            name: formDataKey,
-            value: initialValues,
-          }),
-        )
-      }
-    }
-  }, [currentItemToEdit])
-
   const items = (table.formData?.[formDataKey] as AutocompleteChip[]) || []
 
   useEffect(() => {
