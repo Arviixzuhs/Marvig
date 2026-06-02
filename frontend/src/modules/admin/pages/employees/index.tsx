@@ -18,7 +18,7 @@ export const AdminEmployeePage = () => {
 
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<{ findEmployees: IPageResponse<EmployeeModel> }>(
+  const { data, refetch, previousData } = useQuery<{ findEmployees: IPageResponse<EmployeeModel> }>(
     GET_EMPLOYEES,
     {
       variables: {
@@ -28,6 +28,7 @@ export const AdminEmployeePage = () => {
           pageSize: table.rowsPerPage,
         },
       },
+      notifyOnNetworkStatusChange: true,
     },
   )
 
@@ -51,7 +52,7 @@ export const AdminEmployeePage = () => {
 
   return (
     <AppTable
-      totalPages={data?.findEmployees.totalPages}
+      totalPages={data?.findEmployees.totalPages || previousData?.findEmployees.totalPages}
       tableContent={data?.findEmployees.content || []}
       tableActions={tableActions}
       searchbarPlaceholder='Buscar empleado por nombre...'

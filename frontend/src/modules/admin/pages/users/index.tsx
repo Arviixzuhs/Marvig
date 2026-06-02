@@ -16,7 +16,7 @@ export const AdminUserPage = () => {
   const [debounceValue] = useDebounce(table.filterValue, 100)
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<GetUsersResponseDto>(GET_USERS, {
+  const { data, refetch, previousData } = useQuery<GetUsersResponseDto>(GET_USERS, {
     variables: {
       filters: {
         page: table.currentPage,
@@ -24,6 +24,7 @@ export const AdminUserPage = () => {
         pageSize: table.rowsPerPage,
       },
     },
+    notifyOnNetworkStatusChange: true,
   })
 
   const tableActions: AppTableActions = {
@@ -47,7 +48,7 @@ export const AdminUserPage = () => {
   return (
     <AppTable
       hiddeAdd
-      totalPages={data?.users.totalPages}
+      totalPages={data?.users.totalPages || previousData?.users.totalPages}
       tableContent={data?.users.content || []}
       tableActions={tableActions}
       searchbarPlaceholder='Buscar usuario por nombre...'

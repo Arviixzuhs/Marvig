@@ -24,15 +24,19 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
 
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<{ findPayments: IPageResponse<PaymentModel> }>(FIND_PAYMENTS, {
-    variables: {
-      filters: {
-        page: table.currentPage,
-        search: debounceValue,
-        pageSize: table.rowsPerPage,
+  const { data, refetch, previousData } = useQuery<{ findPayments: IPageResponse<PaymentModel> }>(
+    FIND_PAYMENTS,
+    {
+      variables: {
+        filters: {
+          page: table.currentPage,
+          search: debounceValue,
+          pageSize: table.rowsPerPage,
+        },
       },
+      notifyOnNetworkStatusChange: true,
     },
-  })
+  )
 
   const { reserve, ...form } = table.formData
   const tableFormData = {
@@ -50,7 +54,7 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
 
   return (
     <AppTable
-      totalPages={data?.findPayments.totalPages}
+      totalPages={data?.findPayments.totalPages || previousData?.findPayments.totalPages}
       tableContent={data?.findPayments.content || []}
       tableActions={tableActions}
       hiddeTopContent={hiddeTopContent}

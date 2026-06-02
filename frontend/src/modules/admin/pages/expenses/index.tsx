@@ -24,15 +24,19 @@ export const AdminExpensePage = () => {
 
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<{ findExpenses: IPageResponse<ExpenseModel> }>(GET_EXPENSES, {
-    variables: {
-      filters: {
-        page: table.currentPage,
-        search: debounceValue,
-        pageSize: table.rowsPerPage,
+  const { data, refetch, previousData } = useQuery<{ findExpenses: IPageResponse<ExpenseModel> }>(
+    GET_EXPENSES,
+    {
+      variables: {
+        filters: {
+          page: table.currentPage,
+          search: debounceValue,
+          pageSize: table.rowsPerPage,
+        },
       },
+      notifyOnNetworkStatusChange: true,
     },
-  })
+  )
 
   const tableActions: AppTableActions = {
     create: async () => {
@@ -89,7 +93,7 @@ export const AdminExpensePage = () => {
 
   return (
     <AppTable
-      totalPages={data?.findExpenses.totalPages}
+      totalPages={data?.findExpenses.totalPages || previousData?.findExpenses.totalPages}
       tableContent={data?.findExpenses.content || []}
       modalExtension={
         <>
