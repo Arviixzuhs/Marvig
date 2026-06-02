@@ -3,6 +3,7 @@ import { ReservationStatus } from '@/modules/reservation/domain/enums/reservatio
 import { ReservationPaymentDto } from './reservation-payment.input'
 import { Field, Float, InputType, Int } from '@nestjs/graphql'
 import {
+  ArrayMinSize,
   IsArray,
   IsDateString,
   IsEnum,
@@ -14,22 +15,32 @@ import {
   MaxLength,
   Min,
 } from 'class-validator'
+import { Transform } from 'class-transformer'
 
 @InputType()
 export class CreateReservationInput {
   @Field({ nullable: false })
-  @IsNotEmpty({ message: 'La fecha de salida es obligatoria' })
-  @IsDateString({}, { message: 'La fecha de salida debe tener un formato ISO válido' })
-  endDate: string
-
-  @Field({ nullable: false })
   @IsNotEmpty({ message: 'La fecha de entrada es obligatoria' })
+  @Transform(({ value }) => {
+    if (!value || String(value).trim() === '') return undefined;
+    return new Date(value).toISOString();
+  })
   @IsDateString({}, { message: 'La fecha de entrada debe tener un formato ISO válido' })
   startDate: string
 
+  @Field({ nullable: false })
+  @IsNotEmpty({ message: 'La fecha de salida es obligatoria' })
+  @Transform(({ value }) => {
+    if (!value || String(value).trim() === '') return undefined;
+    return new Date(value).toISOString();
+  })
+  @IsDateString({}, { message: 'La fecha de salida debe tener un formato ISO válido' })
+  endDate: string
+
   @Field(() => [Int], { nullable: false })
-  @IsNotEmpty({ message: 'El ID del apartamento es obligatorio' })
+  @IsNotEmpty({ message: 'Los apartamentos son obligatorios' })
   @IsArray({ message: 'Debe ser un arreglo de IDs' })
+  @ArrayMinSize(1, { message: 'Debe agregar mínimo 1 apartamento' })
   @IsInt({ each: true, message: 'Cada ID debe ser un número entero' })
   apartmentIds: number[]
 

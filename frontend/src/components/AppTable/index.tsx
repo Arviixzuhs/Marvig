@@ -22,6 +22,7 @@ export interface AppTableProps {
   tableActions?: AppTableActions
   dropdownItems?: DropdownItemInteface[]
   modalExtension?: React.ReactElement
+  modalExtensionUp?: React.ReactElement
   hiddeTopContent?: boolean
   topContentExtension?: React.ReactElement
   searchbarPlaceholder?: string
@@ -35,6 +36,7 @@ export const AppTable = ({
   filterByDate,
   dropdownItems,
   modalExtension,
+  modalExtensionUp,
   hiddeTopContent = false,
   topContentExtension,
   searchbarPlaceholder,
@@ -120,7 +122,9 @@ export const AppTable = ({
         </TableBody>
       </Table>
       {tableActions?.create && (
-        <AddItemModal action={tableActions.create}>{modalExtension}</AddItemModal>
+        <AddItemModal action={tableActions.create} modalExtensionUp={modalExtensionUp}>
+          {modalExtension}
+        </AddItemModal>
       )}
 
       {tableActions?.update && (

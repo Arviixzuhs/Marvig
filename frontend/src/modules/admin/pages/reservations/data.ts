@@ -52,48 +52,8 @@ export const tableColumns: TableColumnInterface[] = [
 export const modalInputs: ModalInput[] = [
   {
     divider: {
-      title: 'Información del cliente',
-    },
-  },
-  {
-    name: 'clientName',
-    label: 'Nombre del Cliente',
-    type: 'text',
-    placeholder: 'Nombre completo',
-    required: true,
-  },
-  {
-    name: 'clientEmail',
-    label: 'Email del Cliente',
-    type: 'email',
-    placeholder: 'correo@ejemplo.com',
-    required: false,
-  },
-  {
-    name: 'clientPhone',
-    label: 'Teléfono del Cliente',
-    type: 'text',
-    placeholder: '+34 000 000 000',
-    required: false,
-  },
-  {
-    divider: {
       title: 'Información de la reserva',
     },
-  },
-  {
-    name: 'startDate',
-    label: 'Fecha de Inicio',
-    type: 'date',
-    placeholder: 'Selecciona fecha de inicio',
-    required: true,
-  },
-  {
-    name: 'endDate',
-    label: 'Fecha de Fin',
-    type: 'date',
-    placeholder: 'Selecciona fecha de fin',
-    required: true,
   },
   {
     name: 'persons',
@@ -126,6 +86,33 @@ export const modalInputs: ModalInput[] = [
       { label: 'Completado', value: ReservationStatus.COMPLETED },
     ],
   },
+  {
+    divider: {
+      title: 'Información del cliente',
+    },
+  },
+  {
+    name: 'clientName',
+    label: 'Nombre del Cliente',
+    type: 'text',
+    placeholder: 'Nombre completo',
+    required: true,
+  },
+  {
+    name: 'clientEmail',
+    label: 'Email del Cliente',
+    type: 'email',
+    placeholder: 'correo@ejemplo.com',
+    required: false,
+  },
+  {
+    name: 'clientPhone',
+    label: 'Teléfono del Cliente',
+    type: 'text',
+    placeholder: '+34 000 000 000',
+    required: false,
+  },
+
   {
     showOnEdit: false,
     divider: {

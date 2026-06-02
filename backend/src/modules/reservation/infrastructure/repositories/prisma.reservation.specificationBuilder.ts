@@ -26,10 +26,20 @@ export class ReservationSpecificationBuilder {
 
   withApartmentId(apartmentId?: number) {
     if (apartmentId) {
-      this.where.apartments.some = {
-        id: apartmentId,
-        isDeleted: false,
-      }
+      this.where.apartments = this.where.apartments || {}
+      this.where.apartments.some = this.where.apartments.some || {}
+      this.where.apartments.some.id = apartmentId
+      this.where.apartments.some.isDeleted = false
+    }
+    return this
+  }
+
+  withApartmentIds(apartmentIds?: number[]) {
+    if (apartmentIds && apartmentIds.length > 0) {
+      this.where.apartments = this.where.apartments || {}
+      this.where.apartments.some = this.where.apartments.some || {}
+      this.where.apartments.some.id = { in: apartmentIds }
+      this.where.apartments.some.isDeleted = false
     }
     return this
   }

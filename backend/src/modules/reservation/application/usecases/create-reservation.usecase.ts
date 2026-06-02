@@ -49,7 +49,7 @@ export class CreateReservationUseCase {
     })
 
     if (apartments.content.length !== data.apartmentIds.length) {
-      throw new BadRequestException('Algunos de los apartamentos no existen')
+      throw new NotFoundException('Algunos de los apartamentos no existen')
     }
 
     const isAvailable = await this.reservationRepository.checkAvailability(
