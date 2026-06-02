@@ -45,9 +45,9 @@ export const modalInputs: ModalInput[] = [
   },
   {
     name: 'phone',
-    label: 'Telefono',
+    label: 'Teléfono',
     type: 'text',
-    placeholder: 'Ingresa el telefono',
+    placeholder: 'Ingresa el teléfono',
     required: true,
   },
   {
