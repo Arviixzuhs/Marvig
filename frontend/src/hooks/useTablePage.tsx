@@ -1,17 +1,10 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import {
-  ModalInput,
-  setTableData,
-  setFilterValue,
-  setModalInputs,
-  setTableColumns,
-  TableColumnInterface,
-} from '@/features/appTableSlice'
+import { ModalInput, setTableData, TableColumnInterface } from '@/features/appTableSlice'
 
 interface UseTablePageProps {
-  tableColumns: TableColumnInterface[]
   modalInputs: ModalInput[]
+  tableColumns: TableColumnInterface[]
 }
 
 export const useTablePage = ({ tableColumns, modalInputs }: UseTablePageProps) => {
@@ -20,12 +13,12 @@ export const useTablePage = ({ tableColumns, modalInputs }: UseTablePageProps) =
   useEffect(() => {
     dispatch(
       setTableData({
+        columns: tableColumns,
         currentPage: 0,
         rowsPerPage: 10,
+        filterValue: '',
+        modalInputs: modalInputs,
       }),
     )
-    dispatch(setFilterValue(''))
-    dispatch(setModalInputs(modalInputs))
-    dispatch(setTableColumns(tableColumns))
   }, [])
 }

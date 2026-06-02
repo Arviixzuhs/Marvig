@@ -121,13 +121,19 @@ export const manageAppTableSlice = createSlice({
     setTableData: (
       state,
       action: PayloadAction<{
+        filterValue: string
         currentPage: number
         rowsPerPage: number
+        modalInputs: ModalInput[]
+        columns: TableColumnInterface[]
       }>,
     ) => {
-      const { currentPage, rowsPerPage } = action.payload
+      const { currentPage, rowsPerPage, modalInputs, columns, filterValue } = action.payload
+      state.columns = columns
       state.currentPage = currentPage
       state.rowsPerPage = rowsPerPage
+      state.modalInputs = modalInputs
+      state.filterValue = filterValue
     },
     setTableColumns: (state, action: PayloadAction<TableColumnInterface[]>) => {
       state.columns = action.payload
