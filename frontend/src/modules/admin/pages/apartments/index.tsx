@@ -1,47 +1,41 @@
-import React from 'react'
 import toast from 'react-hot-toast'
 import { Divider } from '@heroui/react'
 import { AppTable } from '@/components/AppTable'
+import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
 import { fileService } from '@/services/file'
+import { useSelector } from 'react-redux'
+import { useTablePage } from '@/hooks/useTablePage'
+import { IPageResponse } from '@/api/interfaces'
 import { ImageUploader } from '@/components/ImageUploader'
+import { ApartmentModel } from '@/models/ApartmentModel'
 import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
+import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { apartmentService } from '@/services/apartment'
-import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import { deleteItem, setTableData, setModalInputs, setTableColumns } from '@/features/appTableSlice'
 
 export const AdminApartmentPage = () => {
   const table = useSelector((state: RootState) => state.appTable)
   const id = table.currentItemToUpdate
-  const dispatch = useDispatch()
   const { formData, images } = useImageUpload()
   const [debounceValue] = useDebounce(table.filterValue, 100)
 
-  const loadData = async () => {
-    try {
-      const response = await apartmentService.getAll({
-        page: table.currentPage,
-        search: debounceValue,
-        pageSize: table.rowsPerPage,
-      })
-      if (!response) return
-      dispatch(setTableData(response))
-    } catch (error) {
-      console.error('Error loading apartments:', error)
-    }
-  }
+  useTablePage({ tableColumns, modalInputs })
 
-  React.useEffect(() => {
-    loadData()
-  }, [debounceValue, table.currentPage, table.rowsPerPage])
-
-  React.useEffect(() => {
-    dispatch(setModalInputs(modalInputs))
-    dispatch(setTableColumns(tableColumns))
-  }, [])
+  const { data, refetch } = useQuery<{ findApartments: IPageResponse<ApartmentModel> }>(
+    GET_APARTMENTS,
+    {
+      variables: {
+        filters: {
+          page: table.currentPage,
+          search: debounceValue,
+          pageSize: table.rowsPerPage,
+        },
+      },
+    },
+  )
 
   const tableActions: AppTableActions = {
     create: async () => {
@@ -53,7 +47,7 @@ export const AdminApartmentPage = () => {
           await apartmentService.updateImages(newApartment.id, uploadRes.fileUrls)
         }
 
-        await loadData()
+        await refetch()
         toast.success('Apartamento creado correctamente')
       } catch (error) {
         console.error(error)
@@ -78,7 +72,7 @@ export const AdminApartmentPage = () => {
         }
 
         await apartmentService.updateImages(id, finalURLs)
-        await loadData()
+        await refetch()
         toast.success('Apartamento actualizado correctamente')
       } catch (error) {
         console.error(error)
@@ -88,7 +82,6 @@ export const AdminApartmentPage = () => {
     delete: async () => {
       try {
         await apartmentService.delete(table.currentItemToDelete)
-        dispatch(deleteItem(table.currentItemToDelete))
         toast.success('Apartamento eliminado correctamente')
       } catch (error) {
         toast.error('Error al eliminar')
@@ -98,6 +91,8 @@ export const AdminApartmentPage = () => {
 
   return (
     <AppTable
+      totalPages={data?.findApartments.totalPages}
+      tableContent={data?.findApartments.content || []}
       modalExtension={
         <>
           <Divider />
