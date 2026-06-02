@@ -13,7 +13,7 @@ import { ReservationSpecificationBuilder } from './prisma.reservation.specificat
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   private readonly reservationMapper = new ReservationMapper()
 
@@ -23,6 +23,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withApartmentId(filters.apartmentId)
       .withStatus(filters.status)
       .withType(filters.type)
+      .withApartmentIds(filters.apartmentIds)
       .withSearch(filters.search)
       .withStayDates(filters.startDate, filters.endDate)
       .withTotalPriceBetween(filters.minPrice, filters.maxPrice)
