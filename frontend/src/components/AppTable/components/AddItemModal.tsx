@@ -24,11 +24,13 @@ import toast from 'react-hot-toast'
 export interface AddItemModalProps {
   action: () => Promise<void>
   children: React.ReactNode
+  modalExtensionUp?: React.ReactNode
 }
 
 export const AddItemModal: React.FC<AddItemModalProps> = ({
   action,
   children,
+  modalExtensionUp,
 }: AddItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
@@ -104,8 +106,8 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     try {
       await action()
       toggleModal()
-    } catch (error) {
-      toast.error('Error al guardar el registro')
+    } catch (error: any) {
+      toast.error(error.message || 'Error al guardar el registro')
     }
   }
 
@@ -121,6 +123,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
         <ModalHeader className='flex flex-col gap-1'>Agregar Registro</ModalHeader>
         <Form onSubmit={onSubmit} className='overflow-auto'>
           <ModalBody className='w-full'>
+            {modalExtensionUp}
             <div className='w-full flex flex-col gap-4'>
               {table.modalInputs.map((item, index) => {
                 if (item.divider) {
