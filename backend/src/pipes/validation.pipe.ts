@@ -16,8 +16,8 @@ const ValidationPipe = new ValidationPipeBase({
     const keys = Object.keys(error.constraints)
     const firstConstraint = error.constraints[keys[0]]
     throw new BadRequestException(
-      'INVALID_' + error.property.toUpperCase() + '_FORMAT',
       firstConstraint,
+      'INVALID_' + error.property.toUpperCase() + '_FORMAT',
     )
   },
 })

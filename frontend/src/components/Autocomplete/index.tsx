@@ -63,7 +63,7 @@ export const Autocomplete = <T extends { id: number; name: string }>({
   const availableItems = result.filter((item) => !items.some((c) => c.id === item.id))
 
   return (
-    <div className='flex w-full flex-col gap-2'>
+    <div className='flex w-full flex-col gap-4'>
       <div className='flex w-full flex-wrap md:flex-nowrap gap-4'>
         <AutocompleteHeroUI<T>
           label={label}
@@ -80,10 +80,10 @@ export const Autocomplete = <T extends { id: number; name: string }>({
           {(item) => <AutocompleteItem key={item.id}>{item.name}</AutocompleteItem>}
         </AutocompleteHeroUI>
       </div>
-      {chips && (
-        <div className='flex gap-2 pt-2'>
+      {chips && items.length > 0 && (
+        <div className='flex gap-2'>
           {items.map((item) => (
-            <Chip key={item.id} color='primary' variant='flat' onClose={() => handleRemove(item)}>
+            <Chip key={item.id} color='primary' variant='solid' onClose={() => handleRemove(item)}>
               {item.label}
             </Chip>
           ))}

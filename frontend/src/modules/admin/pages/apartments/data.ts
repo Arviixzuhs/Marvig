@@ -81,9 +81,9 @@ export const modalInputs: ModalInput[] = [
   },
   {
     name: 'pricePerDay',
-    label: 'Precio por día',
+    label: 'Precio por noche',
     type: 'number',
-    placeholder: 'Precio por dóa',
+    placeholder: 'Precio por noche',
     required: true,
   },
   {
