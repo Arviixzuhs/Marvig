@@ -74,11 +74,11 @@ export const reservationService = {
     })
     return !!data?.deleteReservation
   },
-  getInvalidDates: async (apartmentId: number): Promise<InvalidDate[] | null> => {
+  getInvalidDates: async (apartmentIds: number[]): Promise<InvalidDate[] | null> => {
     const { data } = await apolloClient.query<{ getInvalidDates: InvalidDate[] }>({
       query: GET_INVALID_DATES,
       variables: {
-        apartmentId,
+        apartmentIds,
       },
     })
     return data?.getInvalidDates || null
