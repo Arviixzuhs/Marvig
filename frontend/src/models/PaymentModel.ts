@@ -40,8 +40,8 @@ export interface IPaymentFilter extends IPaginationFilter {
 }
 
 export interface ISalesChartData {
-  name: string;
-  value: number;
+  name: string
+  value: number
 }
 
 export interface IMetricTrend {

@@ -11,7 +11,7 @@ export const tableColumns: TableColumnInterface[] = [
     uid: 'type',
     style: 'chip',
     chipConfig: {
-      [PromotionType.FIXED]: { label: 'Fijo', color: '#3B82F6' },
+      [PromotionType.FIXED]: { label: 'Monto Fijo', color: '#3B82F6' },
       [PromotionType.PERCENTAGE]: { label: 'Porcentaje', color: '#10B981' },
     },
   },

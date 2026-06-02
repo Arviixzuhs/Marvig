@@ -28,15 +28,17 @@ import {
 export interface EditItemModalProps {
   action: () => Promise<void>
   children: React.ReactNode
+  tableContent: any[]
 }
 
 export const EditItemModal: React.FC<EditItemModalProps> = ({
   action,
   children,
+  tableContent,
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
-  const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
+  const currentItemToEdit = tableContent.find((item) => item.id === table.currentItemToUpdate)
 
   const parseDateTime = (value: any) => {
     if (!value) return null
@@ -177,7 +179,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     {item.type === 'date' && (
                       <DatePicker
                         label={item.label}
-           
                         isRequired={item.required}
                         value={parseDateTime(
                           table.formData?.[item.name] ?? currentItemToEdit?.[item.name],
