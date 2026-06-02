@@ -1,81 +1,56 @@
-import React from 'react'
 import toast from 'react-hot-toast'
 import { AppTable } from '@/components/AppTable'
+import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
+import { GET_USERS } from '@/services/user/graphql/getUsersQuery'
 import { useDebounce } from 'use-debounce'
 import { userService } from '@/services/user'
+import { useSelector } from 'react-redux'
+import { useTablePage } from '@/hooks/useTablePage'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
-import { useDispatch, useSelector } from 'react-redux'
+import { GetUsersResponseDto } from '@/models/UserModel'
 import { tableColumns, modalInputs } from './data'
-import {
-  addItem,
-  updateItem,
-  deleteItem,
-  setTableData,
-  setModalInputs,
-  setTableColumns,
-} from '@/features/appTableSlice'
 
 export const AdminUserPage = () => {
   const table = useSelector((state: RootState) => state.appTable)
-  const dispatch = useDispatch()
   const [debounceValue] = useDebounce(table.filterValue, 100)
+  useTablePage({ tableColumns, modalInputs })
 
-  const loadData = async () => {
-    try {
-      const response = await userService.getAll({
+  const { data, refetch } = useQuery<GetUsersResponseDto>(GET_USERS, {
+    variables: {
+      filters: {
         page: table.currentPage,
         search: debounceValue,
         pageSize: table.rowsPerPage,
-      })
-      if (!response) return
-
-      dispatch(
-        setTableData({
-          ...response,
-          content: response.content.map((item) => ({
-            ...item,
-            fullName: `${item.name} ${item.lastName}`,
-          })),
-        }),
-      )
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  React.useEffect(() => {
-    loadData()
-  }, [debounceValue, table.currentPage, table.rowsPerPage])
-
-  React.useEffect(() => {
-    dispatch(setModalInputs(modalInputs))
-    dispatch(setTableColumns(tableColumns))
-  }, [])
+      },
+    },
+  })
 
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await userService.create(table.formData as any)
-      dispatch(addItem(response))
+      await userService.create(table.formData as any)
+      await refetch()
       toast.success('Usuario creado correctamente')
     },
     delete: async () => {
       await userService.delete(table.currentItemToDelete)
-      dispatch(deleteItem(table.currentItemToDelete))
+      await refetch()
       toast.success('Usuario eliminado correctamente')
     },
     update: async () => {
       await userService.update(table.currentItemToUpdate, table.formData)
-      dispatch(updateItem({ id: table.currentItemToUpdate, newData: table.formData }))
+      await refetch()
       toast.success('Usuario actualizado correctamente')
     },
   }
 
   return (
     <AppTable
+      hiddeAdd
+      totalPages={data?.users.totalPages}
+      tableContent={data?.users.content || []}
       tableActions={tableActions}
       searchbarPlaceholder='Buscar usuario por nombre...'
-      hiddeAdd
     />
   )
 }
