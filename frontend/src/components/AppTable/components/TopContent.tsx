@@ -21,7 +21,7 @@ export const TopContent = ({
   const dispatch = useDispatch()
 
   return (
-    <div className='flex gap-2 w-full'>
+    <div className='flex gap-2 w-full mb-4'>
       <Searchbar searchbarPlaceholder={searchbarPlaceholder} />
       {filterByDate && <FilterByDatePicker />}
       {topContentExtension && topContentExtension}
