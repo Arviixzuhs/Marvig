@@ -26,18 +26,18 @@ export const AdminReservationPage = () => {
 
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<{ findReservations: IPageResponse<ReservationModel> }>(
-    GET_RESERVATIONS,
-    {
-      variables: {
-        filters: {
-          page: table.currentPage,
-          search: debounceValue,
-          pageSize: table.rowsPerPage,
-        },
+  const { data, refetch, previousData } = useQuery<{
+    findReservations: IPageResponse<ReservationModel>
+  }>(GET_RESERVATIONS, {
+    variables: {
+      filters: {
+        page: table.currentPage,
+        search: debounceValue,
+        pageSize: table.rowsPerPage,
       },
     },
-  )
+    notifyOnNetworkStatusChange: true,
+  })
 
   const getPayload = () => {
     const {
@@ -117,7 +117,7 @@ export const AdminReservationPage = () => {
 
   return (
     <AppTable
-      totalPages={data?.findReservations.totalPages}
+      totalPages={data?.findReservations.totalPages || previousData?.findReservations.totalPages}
       tableContent={data?.findReservations.content || []}
       tableActions={tableActions}
       searchbarPlaceholder='Buscar reservación...'

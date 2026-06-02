@@ -24,18 +24,18 @@ export const AdminApartmentPage = () => {
 
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<{ findApartments: IPageResponse<ApartmentModel> }>(
-    GET_APARTMENTS,
-    {
-      variables: {
-        filters: {
-          page: table.currentPage,
-          search: debounceValue,
-          pageSize: table.rowsPerPage,
-        },
+  const { data, refetch, previousData } = useQuery<{
+    findApartments: IPageResponse<ApartmentModel>
+  }>(GET_APARTMENTS, {
+    variables: {
+      filters: {
+        page: table.currentPage,
+        search: debounceValue,
+        pageSize: table.rowsPerPage,
       },
     },
-  )
+    notifyOnNetworkStatusChange: true,
+  })
 
   const tableActions: AppTableActions = {
     create: async () => {
@@ -91,7 +91,7 @@ export const AdminApartmentPage = () => {
 
   return (
     <AppTable
-      totalPages={data?.findApartments.totalPages}
+      totalPages={data?.findApartments.totalPages || previousData?.findApartments.totalPages}
       tableContent={data?.findApartments.content || []}
       modalExtension={
         <>

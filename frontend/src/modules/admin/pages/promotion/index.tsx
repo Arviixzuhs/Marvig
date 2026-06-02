@@ -17,18 +17,18 @@ export const AdminPromotionPage = () => {
   const [debounceValue] = useDebounce(table.filterValue, 100)
   useTablePage({ tableColumns, modalInputs })
 
-  const { data, refetch } = useQuery<{ findPromotions: IPageResponse<PromotionModel> }>(
-    FIND_PROMOTIONS,
-    {
-      variables: {
-        filters: {
-          page: table.currentPage,
-          search: debounceValue,
-          pageSize: table.rowsPerPage,
-        },
+  const { data, refetch, previousData } = useQuery<{
+    findPromotions: IPageResponse<PromotionModel>
+  }>(FIND_PROMOTIONS, {
+    variables: {
+      filters: {
+        page: table.currentPage,
+        search: debounceValue,
+        pageSize: table.rowsPerPage,
       },
     },
-  )
+    notifyOnNetworkStatusChange: true,
+  })
 
   const tableActions: AppTableActions = {
     create: async () => {
@@ -50,7 +50,7 @@ export const AdminPromotionPage = () => {
 
   return (
     <AppTable
-      totalPages={data?.findPromotions.totalPages}
+      totalPages={data?.findPromotions.totalPages || previousData?.findPromotions.totalPages}
       tableContent={data?.findPromotions.content || []}
       tableActions={tableActions}
       searchbarPlaceholder='Buscar promoción por nombre...'
