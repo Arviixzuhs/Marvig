@@ -33,17 +33,38 @@ export interface PaymentModel {
 
 export interface IPaymentFilter extends IPaginationFilter {
   search?: string
-  reservationId?: number
-  fromDate?: string
+  status?: PaymentStatus
   toDate?: string
+  fromDate?: string
+  reservationId?: number
+}
+
+export interface ISalesChartData {
+  name: string
+  value: number
+}
+
+export interface IMetricTrend {
+  percentage: string
+  isPositive: boolean
+}
+
+export interface IFinancialMetric extends IMetricTrend {
+  amount: string
+}
+
+export interface ICountMetric extends IMetricTrend {
+  count: number
+}
+
+export interface IPaymentPerformanceMetrics {
+  weeklySales: IFinancialMetric
+  dailySales: IFinancialMetric
+  totalSales: ICountMetric
+  profit: IFinancialMetric
 }
 
 export interface IPaymentPerformance {
-  salesPerformanceData: { name: string; value: number }[]
-  metrics: {
-    weeklySales: { amount: string; percentage: string; isPositive: boolean }
-    dailySales: { amount: string; percentage: string; isPositive: boolean }
-    totalSales: { count: number; percentage: string; isPositive: boolean }
-    profit: { amount: string; percentage: string; isPositive: boolean }
-  }
+  salesPerformanceData: ISalesChartData[]
+  metrics: IPaymentPerformanceMetrics
 }

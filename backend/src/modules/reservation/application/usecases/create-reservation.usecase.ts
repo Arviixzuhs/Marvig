@@ -1,10 +1,15 @@
+import { EmailService } from '@/common/utils/mail-sender.util'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
+import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
+import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
+import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
-import { Inject, Injectable, ConflictException, BadRequestException } from '@nestjs/common'
+import { Inject, Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common'
 
 @Injectable()
 export class CreateReservationUseCase {
@@ -17,9 +22,18 @@ export class CreateReservationUseCase {
 
     @Inject('PaymentRepository')
     private readonly paymentRepository: PaymentRepositoryPort,
+
+    @Inject('UserRepository')
+    private readonly userRepository: UserRepositoryPort,
+
+    private readonly emailService: EmailService
   ) {}
 
   async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
+    const user = await this.userRepository.findUser(userId)
+    if (!user) throw new NotFoundException('El usuario no existe')
+
+    const toDay = new Date()
     const start = new Date(data.startDate)
     const end = new Date(data.endDate)
 
@@ -35,7 +49,7 @@ export class CreateReservationUseCase {
     })
 
     if (apartments.content.length !== data.apartmentIds.length) {
-      throw new BadRequestException('Algunos de los apartamentos no existen')
+      throw new NotFoundException('Algunos de los apartamentos no existen')
     }
 
     const isAvailable = await this.reservationRepository.checkAvailability(
@@ -55,7 +69,7 @@ export class CreateReservationUseCase {
       if (apartment.promotion) {
         const promoValue = Number(apartment.promotion.value)
 
-        if (apartment.promotion.type === 'PERCENTAGE') {
+        if (apartment.promotion.type === PromotionTypeEnum.PERCENTAGE) {
           discount = (pricePerDay * promoValue) / 100
         } else {
           discount = promoValue
@@ -82,7 +96,7 @@ export class CreateReservationUseCase {
       userId,
     )
 
-    await this.paymentRepository.createPayment({
+    const createdPayment = await this.paymentRepository.createPayment({
       date: new Date(),
       amount: finalTotal,
       status: PaymentStatus.CONFIRMED,
@@ -92,7 +106,36 @@ export class CreateReservationUseCase {
       reservationId: createdReservation.id,
     })
 
-    const reservation = await this.reservationRepository.findReservationById(createdReservation.id)
-    return reservation
+    const todayMidnight = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate())
+    const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate())
+
+    if (todayMidnight.getTime() === startMidnight.getTime()) {
+      await this.apartmentRepository.updateStatusByApartmentIds(data.apartmentIds, ApartmentStatusEnum.OCCUPIED)
+    }
+
+    try {
+      await this.emailService.sendSingleEmail({
+        to: data.clientEmail ? data.clientEmail : user.email,
+        subject: 'Confirmación de Reserva',
+        title: '¡Tu reserva ha sido confirmada con éxito!',
+        subtitle: `Hola, ${data.clientName ? data.clientName : user.name || 'Cliente'}`,
+        content: `
+          <p>Nos complace informarte que tu reserva se ha procesado correctamente. Aquí tienes los detalles:</p>
+          <hr />
+          <p><strong>Fecha de Entrada (Check-in):</strong> ${getFormattedDateTime({ value: start })}</p>
+          <p><strong>Fecha de Salida (Check-out):</strong> ${getFormattedDateTime({ value: end })}</p>
+          <p><strong>Total de Noches:</strong> ${diffDays}</p>
+          <p><strong>Total Pagado:</strong> $${finalTotal}</p>
+          <hr />
+          <p>El pago con referencia <strong>${createdPayment.reference}</strong> fue aprobado mediante el método de <strong>${createdPayment.method}</strong>.</p>
+          <p>¡Gracias por confiar en nosotros! Te esperamos pronto.</p>
+        `
+      })
+    } catch (emailError) {
+      console.error(`La reserva #${createdReservation.id} se creó pero falló el envío del email:`, emailError)
+    }
+
+    return createdReservation
   }
+
 }

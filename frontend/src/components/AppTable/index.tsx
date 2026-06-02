@@ -1,26 +1,28 @@
 import React from 'react'
-import type { RootState } from '@/store'
 import { TopContent } from './components/TopContent'
 import { RenderCell } from './components/RenderCell'
-import { useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { AddItemModal } from './components/AddItemModal'
 import { EmptyContent } from './components/EmptyContent'
 import { EditItemModal } from './components/EditItemModal'
+import type { RootState } from '@/store'
 import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 import { TablePagination } from './components/Pagination'
 import { ConfirmDeleteModal } from './components/ConfirmDeleteModal'
 import { DropdownItemInteface } from './components/DropdownAction'
 import type { AppTableActions } from './interfaces/appTable'
-import { useDispatch, useSelector } from 'react-redux'
-import { setFilterValue, setTableData, type TableColumnInterface } from '@/features/appTableSlice'
+import { type TableColumnInterface } from '@/features/appTableSlice'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react'
 
 export interface AppTableProps {
   hiddeAdd?: boolean
+  totalPages?: number
+  tableContent: any[]
   filterByDate?: boolean
   tableActions?: AppTableActions
   dropdownItems?: DropdownItemInteface[]
   modalExtension?: React.ReactElement
+  modalExtensionUp?: React.ReactElement
   hiddeTopContent?: boolean
   topContentExtension?: React.ReactElement
   searchbarPlaceholder?: string
@@ -28,30 +30,19 @@ export interface AppTableProps {
 
 export const AppTable = ({
   hiddeAdd,
+  totalPages,
+  tableContent = [],
   tableActions,
   filterByDate,
   dropdownItems,
   modalExtension,
+  modalExtensionUp,
   hiddeTopContent = false,
   topContentExtension,
   searchbarPlaceholder,
 }: AppTableProps) => {
-  const location = useLocation()
-  const dispatch = useDispatch()
   const table = useSelector((state: RootState) => state.appTable)
   const { resetFormData, setImages } = useImageUpload()
-
-  React.useEffect(() => {
-    dispatch(
-      setTableData({
-        content: [],
-        totalPages: 0,
-        currentPage: 0,
-        rowsPerPage: 10,
-      }),
-    )
-    dispatch(setFilterValue(''))
-  }, [location.pathname])
 
   React.useEffect(() => {
     if (table.currentItemToUpdate === -1 && table.isAddItemModalOpen) {
@@ -59,7 +50,7 @@ export const AppTable = ({
       return
     }
 
-    const itemToUpdate = table.data.find((item) => item.id === table.currentItemToUpdate)
+    const itemToUpdate = tableContent.find((item) => item.id === table.currentItemToUpdate)
 
     if (itemToUpdate?.images) {
       setImages(
@@ -69,7 +60,7 @@ export const AppTable = ({
         })),
       )
     }
-  }, [table.currentItemToUpdate, table.data, table.isAddItemModalOpen])
+  }, [table.currentItemToUpdate, tableContent, table.isAddItemModalOpen])
 
   return (
     <>
@@ -89,13 +80,15 @@ export const AppTable = ({
             )}
           </>
         }
-        bottomContent={<TablePagination />}
+        bottomContent={<TablePagination totalPages={totalPages} />}
+        bottomContentPlacement='outside'
         topContentPlacement='outside'
         classNames={{
-          base: 'h-full',
+          base: 'grow overflow-auto overflow-hidden gap-0 h-full',
           tbody: 'h-full',
-          table: [`${table.data.length === 0 && 'h-full'}`],
-          wrapper: 'h-full',
+          table: [`${tableContent.length === 0 && 'h-full'}`],
+          wrapper:
+            'grow overflow-auto hoverScrollbar rounded-none rounded-t-2xl rounded-2xl rounded-b-none h-full',
           emptyWrapper: 'h-full',
         }}
       >
@@ -110,7 +103,7 @@ export const AppTable = ({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={table.data} emptyContent={<EmptyContent />}>
+        <TableBody items={tableContent} emptyContent={<EmptyContent />}>
           {(item) => (
             <TableRow key={String(item.id)}>
               {(columnKey) => (
@@ -129,11 +122,15 @@ export const AppTable = ({
         </TableBody>
       </Table>
       {tableActions?.create && (
-        <AddItemModal action={tableActions.create}>{modalExtension}</AddItemModal>
+        <AddItemModal action={tableActions.create} modalExtensionUp={modalExtensionUp}>
+          {modalExtension}
+        </AddItemModal>
       )}
 
       {tableActions?.update && (
-        <EditItemModal action={tableActions.update}>{modalExtension}</EditItemModal>
+        <EditItemModal action={tableActions.update} tableContent={tableContent}>
+          {modalExtension}
+        </EditItemModal>
       )}
 
       {tableActions?.delete && <ConfirmDeleteModal handleDelete={tableActions.delete} />}

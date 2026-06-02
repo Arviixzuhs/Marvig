@@ -81,13 +81,11 @@ export type ModalInput = SharedProps &
     | ({ divider: IDivider } & { [K in keyof StandardFields]?: never })
   )
 
-export interface AppTableInterface<T> {
-  data: T[]
+export interface AppTableInterface {
   columns: TableColumnInterface[]
   formData: Record<string, string | unknown>
   dateFilter: DateFilter
   filterValue: string
-  totalPages: number
   currentPage: number
   rowsPerPage: number
   dateFilterPeriod: DateFilterPeriod | null
@@ -102,11 +100,9 @@ export interface AppTableInterface<T> {
 export const manageAppTableSlice = createSlice({
   name: 'appTable',
   initialState: {
-    data: [],
     columns: [],
     formData: {},
     filterValue: '',
-    totalPages: 0,
     currentPage: 0,
     rowsPerPage: 10,
     modalInputs: [],
@@ -120,22 +116,24 @@ export const manageAppTableSlice = createSlice({
       end: '',
       start: '',
     },
-  } as AppTableInterface<any>,
+  } as AppTableInterface,
   reducers: {
     setTableData: (
       state,
       action: PayloadAction<{
-        totalPages: number
+        filterValue: string
         currentPage: number
         rowsPerPage: number
-        content: unknown[]
+        modalInputs: ModalInput[]
+        columns: TableColumnInterface[]
       }>,
     ) => {
-      const { totalPages, currentPage, rowsPerPage, content } = action.payload
+      const { currentPage, rowsPerPage, modalInputs, columns, filterValue } = action.payload
+      state.columns = columns
       state.currentPage = currentPage
-      state.totalPages = totalPages
       state.rowsPerPage = rowsPerPage
-      state.data = content
+      state.modalInputs = modalInputs
+      state.filterValue = filterValue
     },
     setTableColumns: (state, action: PayloadAction<TableColumnInterface[]>) => {
       state.columns = action.payload
@@ -145,9 +143,6 @@ export const manageAppTableSlice = createSlice({
     },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload
-    },
-    setTotalPages: (state, action: PayloadAction<number>) => {
-      state.totalPages = action.payload
     },
     setRowsPerPage: (state, action: PayloadAction<number>) => {
       state.rowsPerPage = action.payload
@@ -163,20 +158,6 @@ export const manageAppTableSlice = createSlice({
     },
     clearFormData: (state, _action) => {
       state.formData = {}
-    },
-    addItem: (state, action) => {
-      state.data.unshift(action.payload)
-    },
-    deleteItem: (state, action: PayloadAction<number>) => {
-      state.data = state.data.filter((item) => item.id !== action.payload)
-    },
-    updateItem: (state, action: PayloadAction<{ id: number; newData: object }>) => {
-      const { id, newData } = action.payload
-      const item = state.data.find((item) => item.id === id)
-      if (!item) return
-
-      const updatedItem = Object.assign(item, newData)
-      state.data[state.data.indexOf(item)] = updatedItem
     },
     toggleConfirmDeleteModal: (state, _action) => {
       state.isConfirmDeleteModalOpen = !state.isConfirmDeleteModalOpen
@@ -213,15 +194,11 @@ export const {
   setCurrentPage,
   toggleEditItemModal,
   setModalInputs,
-  setTotalPages,
   toggleAddItemModal,
   setRowsPerPage,
   setFormData,
   clearFormData,
-  addItem,
-  deleteItem,
   setDateFilterPeriod,
-  updateItem,
   toggleConfirmDeleteModal,
   setCurrentItemToUpdate,
   setCurrentItemToDelete,

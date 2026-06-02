@@ -27,32 +27,8 @@ export const Autocomplete = <T extends { id: number; name: string }>({
 }: AutocompleteProps<T>) => {
   const dispatch = useDispatch()
   const table = useSelector((state: RootState) => state.appTable)
-  const currentItemToEdit = table.data.find((item) => item.id === table.currentItemToUpdate)
-
   const [result, setResult] = useState<T[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
-
-  useEffect(() => {
-    if (!currentItemToEdit) return
-
-    const existingValues = table.formData?.[formDataKey] as AutocompleteChip[]
-
-    if (!existingValues || existingValues.length === 0) {
-      const initialValues = currentItemToEdit[formDataKey]?.map((i: T) => ({
-        id: i.id,
-        label: i.name,
-      }))
-      if (initialValues) {
-        dispatch(
-          setFormData({
-            name: formDataKey,
-            value: initialValues,
-          }),
-        )
-      }
-    }
-  }, [currentItemToEdit])
-
   const items = (table.formData?.[formDataKey] as AutocompleteChip[]) || []
 
   useEffect(() => {
@@ -87,7 +63,7 @@ export const Autocomplete = <T extends { id: number; name: string }>({
   const availableItems = result.filter((item) => !items.some((c) => c.id === item.id))
 
   return (
-    <div className='flex w-full flex-col gap-2'>
+    <div className='flex w-full flex-col gap-4'>
       <div className='flex w-full flex-wrap md:flex-nowrap gap-4'>
         <AutocompleteHeroUI<T>
           label={label}
@@ -104,10 +80,10 @@ export const Autocomplete = <T extends { id: number; name: string }>({
           {(item) => <AutocompleteItem key={item.id}>{item.name}</AutocompleteItem>}
         </AutocompleteHeroUI>
       </div>
-      {chips && (
-        <div className='flex gap-2 pt-2'>
+      {chips && items.length > 0 && (
+        <div className='flex gap-2'>
           {items.map((item) => (
-            <Chip key={item.id} color='primary' variant='flat' onClose={() => handleRemove(item)}>
+            <Chip key={item.id} color='primary' variant='solid' onClose={() => handleRemove(item)}>
               {item.label}
             </Chip>
           ))}

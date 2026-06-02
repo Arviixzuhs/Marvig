@@ -1,16 +1,18 @@
-import React from 'react'
 import toast from 'react-hot-toast'
+import { useQuery } from '@apollo/client/react'
 import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
+import { useSelector } from 'react-redux'
 import { PaymentModel } from '@/models/PaymentModel'
+import { useTablePage } from '@/hooks/useTablePage'
+import { IPageResponse } from '@/api/interfaces'
+import { FIND_PAYMENTS } from '@/services/payment/graphql/getPaymentsQuery'
 import { paymentService } from '@/services/payment'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { reservationService } from '@/services/reservation'
-import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
 import { Autocomplete, AutocompleteChip } from '@/components/Autocomplete'
-import { addItem, setTableData, setModalInputs, setTableColumns } from '@/features/appTableSlice'
 
 interface IAdminPaymentPage {
   hiddeTopContent?: boolean
@@ -18,49 +20,43 @@ interface IAdminPaymentPage {
 
 export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage) => {
   const table = useSelector((state: RootState) => state.appTable)
-  const dispatch = useDispatch()
   const [debounceValue] = useDebounce(table.filterValue, 100)
 
-  const loadData = async () => {
-    try {
-      const response = await paymentService.getAll({
-        page: table.currentPage,
-        search: debounceValue,
-        pageSize: table.rowsPerPage,
-      })
-      if (!response) return
+  useTablePage({ tableColumns, modalInputs })
 
-      dispatch(setTableData(response))
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const { data, refetch, previousData } = useQuery<{ findPayments: IPageResponse<PaymentModel> }>(
+    FIND_PAYMENTS,
+    {
+      variables: {
+        filters: {
+          page: table.currentPage,
+          search: debounceValue,
+          pageSize: table.rowsPerPage,
+        },
+      },
+      notifyOnNetworkStatusChange: true,
+    },
+  )
 
-  React.useEffect(() => {
-    loadData()
-  }, [debounceValue, table.currentPage, table.rowsPerPage])
-
-  React.useEffect(() => {
-    dispatch(setModalInputs(modalInputs))
-    dispatch(setTableColumns(tableColumns))
-  }, [])
-
-  const { reserve, ...data } = table.formData
+  const { reserve, ...form } = table.formData
   const tableFormData = {
-    ...data,
+    ...form,
     reservationId: (reserve as AutocompleteChip[])?.[0]?.id || null,
   }
 
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await paymentService.create(tableFormData as PaymentModel)
-      dispatch(addItem(response))
+      await paymentService.create(tableFormData as PaymentModel)
+      await refetch()
       toast.success('Pago registrado correctamente')
     },
   }
 
   return (
     <AppTable
+      hiddeAdd
+      totalPages={data?.findPayments.totalPages || previousData?.findPayments.totalPages}
+      tableContent={data?.findPayments.content || []}
       tableActions={tableActions}
       hiddeTopContent={hiddeTopContent}
       searchbarPlaceholder='Buscar pago...'

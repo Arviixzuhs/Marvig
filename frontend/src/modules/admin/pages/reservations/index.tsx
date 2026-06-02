@@ -1,52 +1,41 @@
 import React from 'react'
 import toast from 'react-hot-toast'
 import { AppTable } from '@/components/AppTable'
+import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
+import { DateValue } from '@internationalized/date'
+import { useSelector } from 'react-redux'
 import { useDebounce } from 'use-debounce'
-import { calculateReservationTotal } from '@/utils/calcTotalByApartmentAndDates'
+import { useTablePage } from '@/hooks/useTablePage'
+import { IPageResponse } from '@/api/interfaces'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
-import { apartmentService } from '@/services/apartment'
+import { GET_RESERVATIONS } from '@/services/reservation/graphql/getReservationsQuery'
+import { ReservationModel } from '@/models/ReservationModel'
+import { AutocompleteChip } from '@/components/Autocomplete'
 import { reservationService } from '@/services/reservation'
-import { useDispatch, useSelector } from 'react-redux'
+import { EstimationWithCalendar } from './components/EstimationWithCalendar'
 import { tableColumns, modalInputs } from './data'
-import { Autocomplete, AutocompleteChip } from '@/components/Autocomplete'
-import {
-  addItem,
-  updateItem,
-  deleteItem,
-  setFormData,
-  setTableData,
-  setModalInputs,
-  setTableColumns,
-} from '@/features/appTableSlice'
 
 export const AdminReservationPage = () => {
   const table = useSelector((state: RootState) => state.appTable)
-  const dispatch = useDispatch()
   const [debounceValue] = useDebounce(table.filterValue, 100)
+  const [value, setValue] = React.useState<{ start: DateValue; end: DateValue } | null>(null)
   const [totalCalculated, setTotalCalculated] = React.useState(0)
 
-  const loadData = async () => {
-    try {
-      const response = await reservationService.getAll({
+  useTablePage({ tableColumns, modalInputs })
+
+  const { data, refetch, previousData } = useQuery<{
+    findReservations: IPageResponse<ReservationModel>
+  }>(GET_RESERVATIONS, {
+    variables: {
+      filters: {
         page: table.currentPage,
         search: debounceValue,
         pageSize: table.rowsPerPage,
-      })
-      if (response) dispatch(setTableData(response))
-    } catch (error) {
-      console.error('Error loading reservations:', error)
-    }
-  }
-
-  React.useEffect(() => {
-    loadData()
-  }, [debounceValue, table.currentPage, table.rowsPerPage])
-
-  React.useEffect(() => {
-    dispatch(setModalInputs(modalInputs))
-    dispatch(setTableColumns(tableColumns))
-  }, [dispatch])
+      },
+    },
+    notifyOnNetworkStatusChange: true,
+  })
 
   const getPayload = () => {
     const {
@@ -61,6 +50,8 @@ export const AdminReservationPage = () => {
       ...rest,
       apartmentIds: (apartments as AutocompleteChip[])?.map((item) => item.id) || [],
       totalPrice: totalCalculated,
+      startDate: String(value?.start),
+      endDate: String(value?.end),
       payment: {
         date: paymentDate,
         method: paymentMethod,
@@ -72,93 +63,35 @@ export const AdminReservationPage = () => {
 
   const tableActions: AppTableActions = {
     create: async () => {
-      const response = await reservationService.create(getPayload())
-      dispatch(addItem(response))
+      await reservationService.create(getPayload())
+      await refetch()
       toast.success('Reservación creada correctamente')
     },
     delete: async () => {
       await reservationService.delete(table.currentItemToDelete)
-      dispatch(deleteItem(table.currentItemToDelete))
+      await refetch()
       toast.success('Reservación eliminada correctamente')
     },
     update: async () => {
       await reservationService.update(table.currentItemToUpdate, table.formData)
-      dispatch(updateItem({ id: table.currentItemToUpdate, newData: table.formData }))
+      await refetch()
       toast.success('Reservación actualizada correctamente')
     },
   }
 
-  const startDate = table.formData?.startDate
-  const endDate = table.formData?.endDate
-  const selectedApartments = table.formData?.apartments as AutocompleteChip[]
-
-  const handleCalculateTotal = async () => {
-    if (!startDate || !endDate || !selectedApartments?.length) {
-      setTotalCalculated(0)
-      return
-    }
-
-    try {
-      const response = await apartmentService.getAll({
-        search: '',
-        page: 0,
-        pageSize: 50,
-        ids: selectedApartments.map((a) => a.id),
-      })
-
-      if (response?.content) {
-        const total = calculateReservationTotal(
-          new Date(startDate as string),
-          new Date(endDate as string),
-          response.content,
-        )
-        setTotalCalculated(total)
-        dispatch(setFormData({ name: 'totalPrice', value: total }))
-      }
-    } catch (error) {
-      console.error('Error calculating total:', error)
-    }
-  }
-
-  React.useEffect(() => {
-    handleCalculateTotal()
-  }, [startDate, endDate, selectedApartments])
-
   return (
     <AppTable
+      totalPages={data?.findReservations.totalPages || previousData?.findReservations.totalPages}
+      tableContent={data?.findReservations.content || []}
       tableActions={tableActions}
       searchbarPlaceholder='Buscar reservación...'
-      modalExtension={
-        <>
-          {table.currentItemToUpdate === -1 && (
-            <div className='flex flex-col gap-4'>
-              <div className='p-4 bg-primary-50 rounded-lg border border-primary-100'>
-                <h3 className='text-lg font-semibold text-primary-700'>
-                  Total Estimado: <span className='text-xl'>${totalCalculated.toFixed(2)}</span>
-                </h3>
-              </div>
-              <Autocomplete
-                chips
-                label='Apartamentos'
-                formDataKey='apartments'
-                placeholder='Buscar apartamentos...'
-                fetchItems={async (search) => {
-                  const res = await apartmentService.getAll({
-                    search,
-                    page: 0,
-                    pageSize: 10,
-                  })
-                  return (
-                    res?.content.map((item) => ({
-                      id: item.id,
-                      name: `Apto. ${item.number} - $${item.pricePerDay}/día`,
-                    })) || []
-                  )
-                }}
-              />
-            </div>
-          )}
-        </>
+      modalExtensionUp={
+        <EstimationWithCalendar
+          value={value}
+          setValue={setValue}
+          totalCalculated={totalCalculated}
+          setTotalCalculated={setTotalCalculated}
+        />
       }
     />
   )

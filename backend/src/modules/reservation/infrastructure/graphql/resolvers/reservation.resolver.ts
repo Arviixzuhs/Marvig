@@ -33,9 +33,9 @@ export class ReservationResolver {
       'Obtiene todas las fechas no disponibles (ocupadas) para un apartamento específico',
   })
   getInvalidDates(
-    @Args('apartmentId', { type: () => Int }) apartmentId: number,
+    @Args('apartmentIds', { type: () => [Int] }) apartmentIds: number[],
   ): Promise<InvalidDateType[]> {
-    return this.getInvalidDatesUseCase.execute(apartmentId)
+    return this.getInvalidDatesUseCase.execute(apartmentIds)
   }
 
   @Mutation(() => ReservationType, {

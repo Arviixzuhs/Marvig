@@ -14,4 +14,5 @@ export interface ApartmentRepositoryPort {
   createApartment(apartment: ApartmentDto): Promise<ApartmentModel>
   updateApartment(apartmentId: number, newData: UpdateApartmentDto): Promise<ApartmentModel>
   deleteApartment(apartmentId: number): Promise<void>
+  updateStatusByApartmentIds(apartmentIds: number[], status: ApartmentStatusEnum): Promise<number>
 }

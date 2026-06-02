@@ -34,7 +34,7 @@ export const ApartmentCalendarRange = () => {
 
     const loadData = async () => {
       try {
-        const response = await reservationService.getInvalidDates(apartment.id)
+        const response = await reservationService.getInvalidDates([apartment.id])
         if (!response) return
 
         const formattedDates = response.map(

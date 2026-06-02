@@ -12,4 +12,5 @@ export class ReservationFilterDto extends PaginationFilterDto {
   minPrice?: number
   startDate?: string
   apartmentId?: number
+  apartmentIds?: number[]
 }
