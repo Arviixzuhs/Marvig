@@ -54,6 +54,7 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
 
   return (
     <AppTable
+      hiddeAdd
       totalPages={data?.findPayments.totalPages || previousData?.findPayments.totalPages}
       tableContent={data?.findPayments.content || []}
       tableActions={tableActions}
