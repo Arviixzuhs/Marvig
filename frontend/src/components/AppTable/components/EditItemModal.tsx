@@ -103,8 +103,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     try {
       await action()
       toggleModal()
-    } catch (error) {
-      toast.error('Error al guardar el registro')
+    } catch (error: any) {
+      toast.error(error.message || 'Error al guardar el registro')
     }
   }
 
