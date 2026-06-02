@@ -4,23 +4,30 @@ import { RowsPerPage } from './RowsPerPage'
 import { setCurrentPage } from '@/features/appTableSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
-export const TablePagination = () => {
+interface ITablePagination {
+  totalPages: number
+}
+
+export const TablePagination = ({ totalPages }: ITablePagination) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
 
   const handlePagination = (page: number) => {
     dispatch(setCurrentPage(page - 1))
   }
-
+  
   return (
-    <div className='flex justify-end gap-2'>
-      <Pagination
-        page={table.currentPage + 1}
-        total={table.totalPages}
-        onChange={handlePagination}
-        initialPage={table.currentPage}
-      />
+    <div className='flex justify-end bg-white items-center hoverScrollbar overflow-auto sm:bg-c-card p-2 px-4 rounded-b-2xl gap-3 min-h-[60px]'>
       <RowsPerPage />
+      <Pagination
+        isCompact
+        variant='light'
+        showControls
+        initialPage={1}
+        page={table.currentPage + 1}
+        total={totalPages}
+        onChange={handlePagination}
+      />
     </div>
   )
 }

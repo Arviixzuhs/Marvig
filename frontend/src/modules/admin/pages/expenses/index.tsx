@@ -1,47 +1,38 @@
-import React from 'react'
 import toast from 'react-hot-toast'
 import { Divider } from '@heroui/react'
 import { AppTable } from '@/components/AppTable'
+import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
+import { useSelector } from 'react-redux'
 import { fileService } from '@/services/file'
+import { GET_EXPENSES } from '@/services/exepense/graphql/getExpensesQuery'
+import { ExpenseModel } from '@/models/ExpenseModel'
+import { useTablePage } from '@/hooks/useTablePage'
 import { ImageUploader } from '@/components/ImageUploader'
+import { IPageResponse } from '@/api/interfaces'
 import { expenseService } from '@/services/exepense'
 import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
-import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import { deleteItem, setTableData, setModalInputs, setTableColumns } from '@/features/appTableSlice'
 
 export const AdminExpensePage = () => {
   const table = useSelector((state: RootState) => state.appTable)
   const id = table.currentItemToUpdate
-  const dispatch = useDispatch()
   const { formData, images } = useImageUpload()
   const [debounceValue] = useDebounce(table.filterValue, 100)
 
-  const loadData = async () => {
-    try {
-      const response = await expenseService.getAll({
+  useTablePage({ tableColumns, modalInputs })
+
+  const { data, refetch } = useQuery<{ findExpenses: IPageResponse<ExpenseModel> }>(GET_EXPENSES, {
+    variables: {
+      filters: {
         page: table.currentPage,
         search: debounceValue,
         pageSize: table.rowsPerPage,
-      })
-      if (!response) return
-      dispatch(setTableData(response))
-    } catch (error) {
-      console.error('Error loading expenses:', error)
-    }
-  }
-
-  React.useEffect(() => {
-    loadData()
-  }, [debounceValue, table.currentPage, table.rowsPerPage])
-
-  React.useEffect(() => {
-    dispatch(setModalInputs(modalInputs))
-    dispatch(setTableColumns(tableColumns))
-  }, [])
+      },
+    },
+  })
 
   const tableActions: AppTableActions = {
     create: async () => {
@@ -53,7 +44,7 @@ export const AdminExpensePage = () => {
           await expenseService.updateImages(newExpense.id, uploadRes.fileUrls)
         }
 
-        await loadData()
+        await refetch()
         toast.success('Gasto registrado correctamente')
       } catch (error) {
         console.error(error)
@@ -77,7 +68,8 @@ export const AdminExpensePage = () => {
         }
 
         await expenseService.updateImages(id, finalURLs)
-        await loadData()
+
+        await refetch()
         toast.success('Gasto actualizado correctamente')
       } catch (error) {
         console.error(error)
@@ -87,7 +79,7 @@ export const AdminExpensePage = () => {
     delete: async () => {
       try {
         await expenseService.delete(table.currentItemToDelete)
-        dispatch(deleteItem(table.currentItemToDelete))
+        await refetch()
         toast.success('Gasto eliminado correctamente')
       } catch (error) {
         toast.error('Error al eliminar')
@@ -97,6 +89,8 @@ export const AdminExpensePage = () => {
 
   return (
     <AppTable
+      totalPages={data?.findExpenses.totalPages}
+      tableContent={data?.findExpenses.content || []}
       modalExtension={
         <>
           <Divider />
