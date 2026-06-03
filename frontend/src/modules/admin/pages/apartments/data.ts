@@ -96,7 +96,7 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'squareMeters',
     label: 'Metros Cuadrados',
-    type: 'number',
+    type: 'float',
     placeholder: 'Ej: 65.5',
     required: false,
   },

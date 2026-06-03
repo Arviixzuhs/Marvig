@@ -58,10 +58,6 @@ export interface IDivider {
   title?: string
 }
 
-export interface IDivider {
-  title?: string
-}
-
 interface SharedProps {
   showOnEdit?: boolean
 }

@@ -53,7 +53,7 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'email',
     label: 'Correo',
-    type: 'text',
+    type: 'email',
     placeholder: 'Ingresa el correo',
     required: false,
   },
