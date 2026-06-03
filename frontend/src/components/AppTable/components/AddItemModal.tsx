@@ -1,5 +1,7 @@
 import React from 'react'
+import toast from 'react-hot-toast'
 import { RootState } from '@/store'
+import { I18nProvider } from '@react-aria/i18n'
 import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFormData, clearFormData, toggleAddItemModal } from '@/features/appTableSlice'
@@ -9,6 +11,7 @@ import {
   Input,
   Button,
   Select,
+  Divider,
   Textarea,
   ModalBody,
   SelectItem,
@@ -16,10 +19,7 @@ import {
   ModalHeader,
   ModalFooter,
   ModalContent,
-  Divider,
 } from '@heroui/react'
-import { I18nProvider } from '@react-aria/i18n'
-import toast from 'react-hot-toast'
 
 export interface AddItemModalProps {
   action: () => Promise<void>
@@ -52,28 +52,26 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
     const { name, value } = e.target
-    let processedValue: string | number | null = value
-
     if (value === '') {
       dispatch(setFormData({ name, value: null }))
       return
     }
 
+    let processedValue: string | number | null = value
+
     if (type === 'number' || type === 'float') {
       const regex = type === 'float' ? /[^0-9.]/g : /[^0-9]/g
-      const sanitizedString = value.replace(regex, '')
+      let sanitizedString = value.replace(regex, '')
 
-      if (type === 'float' && (sanitizedString.match(/\./g) || []).length > 1) return
+      if (sanitizedString === '') return
 
-      if (sanitizedString.endsWith('.')) {
-        dispatch(setFormData({ name, value: sanitizedString }))
-        return
+      if (type === 'float') {
+        const dots = (sanitizedString.match(/\./g) || []).length
+        if (dots > 1) return
+        processedValue = sanitizedString
+      } else {
+        processedValue = sanitizedString
       }
-
-      processedValue =
-        type === 'float' ? parseFloat(sanitizedString) : parseInt(sanitizedString, 10)
-
-      if (isNaN(processedValue)) return
     }
 
     dispatch(setFormData({ name, value: processedValue }))
@@ -178,13 +176,13 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
                       item.type === 'password') && (
                       <Input
                         size='md'
-                        type='text'
+                        type={item.type === 'float' || item.type === 'number' ? 'text' : item.type}
                         name={item.name}
                         label={item.label}
-                        placeholder={item.placeholder}
-                        isRequired={item.required}
-                        value={String(table.formData?.[item.name] || '')}
                         onChange={(e) => handleChange(e, item.type)}
+                        isRequired={item.required}
+                        placeholder={item.placeholder}
+                        value={String(table.formData?.[item.name] || '')}
                       />
                     )}
                     {item.type == 'textarea' && (
@@ -193,10 +191,10 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
                         type='text'
                         name={item.name}
                         label={item.label}
+                        onChange={handleChange}
                         placeholder={item.placeholder}
                         isRequired={item.required}
                         value={String(table.formData?.[item.name] || '')}
-                        onChange={(e) => handleChange(e, item.type)}
                       />
                     )}
                   </div>
