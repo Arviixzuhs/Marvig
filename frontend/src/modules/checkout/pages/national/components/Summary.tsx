@@ -1,3 +1,5 @@
+import { Divider } from '@heroui/react'
+import { pluralize } from '@/utils/pluralize'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
@@ -10,7 +12,7 @@ export const Summary = () => {
 
   return (
     <div className='w-full'>
-      <div className='bg-card border border-border rounded-2xl p-5 sticky top-8'>
+      <div className='bg-card border border-border rounded-2xl p-5 sticky'>
         <h3 className='font-semibold mb-4 text-sm'>Resumen de reserva</h3>
         <div className='flex gap-3 mb-5'>
           <div className='w-20 h-16 rounded-xl bg-muted overflow-hidden shrink-0'>
@@ -34,21 +36,23 @@ export const Summary = () => {
                 {formatCurrency(apartment.pricePerDay)}
                 <span className='text-muted-foreground font-normal text-xs'>/noche</span>
               </span>
-              <span className='text-xs text-muted-foreground'>5 reseñas</span>
             </div>
           </div>
         </div>
-        <div className='border-t border-border pt-4 space-y-2 text-sm'>
+        <div className='text-sm flex flex-col gap-3'>
+          <Divider />
           <div className='flex justify-between'>
             <span className='text-muted-foreground'>
               {checkout.date.start?.toLocaleDateString('es-ES')} -{' '}
               {checkout.date.end?.toLocaleDateString('es-ES')}
             </span>
             <span className='text-muted-foreground font-bold'>
-              {checkout.nights} <span className='font-normal'>Noches</span>
+              {checkout.nights}{' '}
+              <span className='font-normal'>{pluralize(checkout.nights, 'noche', 'noches')}</span>
             </span>
           </div>
-          <div className='flex justify-between font-bold border-t border-border pt-3 text-base'>
+          <Divider />
+          <div className='flex justify-between font-bold text-base'>
             <span>Total</span>
             <span>{formatCurrency(apartment.pricePerDay * checkout.nights)}</span>
           </div>
