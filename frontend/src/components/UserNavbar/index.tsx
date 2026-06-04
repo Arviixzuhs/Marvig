@@ -5,13 +5,14 @@ import { appConfig } from '@/config'
 import { ChevronLeft } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { NavbarUserOptions } from '@/components/UserOptions'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 export const UserNavbar = () => {
   const user = useSelector((state: RootState) => state.user)
   const { pathname } = useLocation()
   const isLanding = pathname === '/'
+  const navigate = useNavigate()
 
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -112,12 +113,12 @@ export const UserNavbar = () => {
       {!isLanding && (
         <div className='w-full bg-slate-50/90 backdrop-blur border-b border-t border-gray-200 py-2'>
           <div className='max-w-7xl mx-auto px-5'>
-            <Link
-              to='/'
-              className='text-xs font-medium text-slate-600 hover:text-blue-600 flex items-center gap-1 transition-colors w-fit'
+            <button
+              onClick={() => navigate(-1)}
+              className='text-xs font-medium cursor-pointer text-slate-600 hover:text-blue-600 flex items-center gap-1 transition-colors w-fit'
             >
-              <ChevronLeft size={14} /> Volver al inicio
-            </Link>
+              <ChevronLeft size={14} /> Volver
+            </button>
           </div>
         </div>
       )}
