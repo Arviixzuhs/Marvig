@@ -2,24 +2,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface AppTableInterface {
   formData: Record<string, string | unknown>
-  date: {
-    start: Date | null
-    end: Date | null
-  }
   nights: number
 }
 
+const initialState = {
+  formData: {},
+  nights: 0,
+} as AppTableInterface
+
 export const manageCheckoutSlice = createSlice({
   name: 'checkout',
-  initialState: {
-    formData: {},
-    date: {
-      start: null,
-      end: null,
-    },
-    nights: 0,
-  } as AppTableInterface,
+  initialState,
   reducers: {
+    clearCheckout: () => initialState,
     setCheckoutFormData: (
       state,
       action: PayloadAction<{ name: string; value: string | unknown }>,
@@ -29,15 +24,10 @@ export const manageCheckoutSlice = createSlice({
         state.formData[name] = value
       }
     },
-    setDate: (state, action: PayloadAction<{ start: Date | null; end: Date | null }>) => {
-      const { start, end } = action.payload
-      state.date.start = start
-      state.date.end = end
-    },
     setNights: (state, action: PayloadAction<number>) => {
       state.nights = action.payload
     },
   },
 })
 
-export const { setCheckoutFormData, setDate, setNights } = manageCheckoutSlice.actions
+export const { clearCheckout, setCheckoutFormData, setNights } = manageCheckoutSlice.actions
