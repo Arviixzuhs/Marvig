@@ -12,7 +12,7 @@ import { ReservationSpecificationBuilder } from './prisma.reservation.specificat
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly reservationMapper = new ReservationMapper()
 
@@ -58,8 +58,8 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         },
         status: {
           in: [ReservationStatus.CONFIRMED, ReservationStatus.PENDING],
-        }
-      }
+        },
+      },
     })
 
     return this.reservationMapper.modelsToDomain(result)

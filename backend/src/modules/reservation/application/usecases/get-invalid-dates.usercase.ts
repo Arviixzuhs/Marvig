@@ -11,7 +11,7 @@ export class GetInvalidDatesUseCase {
 
     @Inject('ReservationRepository')
     private readonly reservationRepository: ReservationRepositoryPort,
-  ) { }
+  ) {}
 
   async execute(apartmentIds: number[]): Promise<InvalidDateResponseDto[]> {
     const apartments = await this.apartmentRepository.findApartments({

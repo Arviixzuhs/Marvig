@@ -48,7 +48,7 @@ config()
     {
       provide: 'UserRepository',
       useClass: PrismaUserRepositoryAdapter,
-    }
+    },
   ],
   exports: [
     GetInvalidDatesUseCase,
@@ -60,4 +60,4 @@ config()
     UpdateReservationStatusUseCase,
   ],
 })
-export class ReservationApplicationModule { }
+export class ReservationApplicationModule {}

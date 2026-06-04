@@ -55,7 +55,10 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
     }
   }
 
-  async updateStatusByApartmentIds(apartmentIds: number[], status: ApartmentStatusEnum): Promise<number> {
+  async updateStatusByApartmentIds(
+    apartmentIds: number[],
+    status: ApartmentStatusEnum,
+  ): Promise<number> {
     const result = await this.prisma.apartment.updateMany({
       where: {
         id: {

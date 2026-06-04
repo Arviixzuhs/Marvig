@@ -22,8 +22,8 @@ export class CreateReservationInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'La fecha de entrada es obligatoria' })
   @Transform(({ value }) => {
-    if (!value || String(value).trim() === '') return undefined;
-    return new Date(value).toISOString();
+    if (!value || String(value).trim() === '') return undefined
+    return new Date(value).toISOString()
   })
   @IsDateString({}, { message: 'La fecha de entrada debe tener un formato ISO válido' })
   startDate: string
@@ -31,8 +31,8 @@ export class CreateReservationInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'La fecha de salida es obligatoria' })
   @Transform(({ value }) => {
-    if (!value || String(value).trim() === '') return undefined;
-    return new Date(value).toISOString();
+    if (!value || String(value).trim() === '') return undefined
+    return new Date(value).toISOString()
   })
   @IsDateString({}, { message: 'La fecha de salida debe tener un formato ISO válido' })
   endDate: string

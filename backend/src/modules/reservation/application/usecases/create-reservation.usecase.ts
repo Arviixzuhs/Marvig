@@ -9,7 +9,13 @@ import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
-import { Inject, Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  ConflictException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common'
 
 @Injectable()
 export class CreateReservationUseCase {
@@ -26,7 +32,7 @@ export class CreateReservationUseCase {
     @Inject('UserRepository')
     private readonly userRepository: UserRepositoryPort,
 
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
   ) {}
 
   async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
@@ -63,7 +69,7 @@ export class CreateReservationUseCase {
     }
 
     const hasUnavailableApartment = apartments.content.some(
-      (apartment) => apartment.status === ApartmentStatusEnum.MAINTENANCE
+      (apartment) => apartment.status === ApartmentStatusEnum.MAINTENANCE,
     )
 
     if (hasUnavailableApartment) {
@@ -118,7 +124,10 @@ export class CreateReservationUseCase {
     const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate())
 
     if (todayMidnight.getTime() === startMidnight.getTime()) {
-      await this.apartmentRepository.updateStatusByApartmentIds(data.apartmentIds, ApartmentStatusEnum.OCCUPIED)
+      await this.apartmentRepository.updateStatusByApartmentIds(
+        data.apartmentIds,
+        ApartmentStatusEnum.OCCUPIED,
+      )
     }
 
     try {
@@ -137,13 +146,15 @@ export class CreateReservationUseCase {
           <hr />
           <p>El pago con referencia <strong>${createdPayment.reference}</strong> fue aprobado mediante el método de <strong>${createdPayment.method}</strong>.</p>
           <p>¡Gracias por confiar en nosotros! Te esperamos pronto.</p>
-        `
+        `,
       })
     } catch (emailError) {
-      console.error(`La reserva #${createdReservation.id} se creó pero falló el envío del email:`, emailError)
+      console.error(
+        `La reserva #${createdReservation.id} se creó pero falló el envío del email:`,
+        emailError,
+      )
     }
 
     return createdReservation
   }
-
 }
