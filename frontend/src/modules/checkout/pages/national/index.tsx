@@ -2,6 +2,7 @@ import React from 'react'
 import toast from 'react-hot-toast'
 import { Success } from './components/Success'
 import { Summary } from './components/Summary'
+import { Spinner } from '@heroui/react'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { PaymentInfo } from './components/PaymentInfo'
@@ -9,12 +10,32 @@ import { useNavigate } from 'react-router-dom'
 import { Stepper, StepItem } from '@/components/Stepper'
 import { reservationService } from '@/services/reservation'
 import { PersonalInformation } from './components/PersonalInformation'
+import Confetti from 'react-confetti'
 
 export const NationalCheckoutPage = () => {
   const [step, setStep] = React.useState<number>(1)
   const navigate = useNavigate()
   const checkout = useSelector((state: RootState) => state.checkout)
   const apartment = useSelector((state: RootState) => state.apartment)
+  const [isLoading, setLoading] = React.useState(false)
+  const [showConfetti, setShowConfetti] = React.useState(false)
+
+  const [windowDimension, setWindowDimension] = React.useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
+
+  const detectSize = () => {
+    setWindowDimension({ width: window.innerWidth, height: window.innerHeight })
+  }
+
+  React.useEffect(() => {
+    window.addEventListener('resize', detectSize)
+    return () => {
+      window.removeEventListener('resize', detectSize)
+    }
+  }, [])
+
   if (!apartment) return
 
   React.useEffect(() => {
@@ -69,20 +90,39 @@ export const NationalCheckoutPage = () => {
 
   const handleFinalSubmit = async () => {
     try {
+      setLoading(true)
       await reservationService.create(getPayload())
       setStep(checkoutSteps.length)
+      setShowConfetti(true)
     } catch (error: any) {
       toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className=' flex items-center justify-center'>
-      <div className='w-full max-w-5xl  px-4 sm:px-6 py-6 md:py-10'>
+    <div className='relative flex items-center justify-center'>
+      {showConfetti && (
+        <div className='absolute inset-0 z-10 overflow-hidden'>
+          <Confetti
+            width={windowDimension.width}
+            height={windowDimension.height}
+            recycle={false}
+            numberOfPieces={400}
+          />
+        </div>
+      )}
+      {isLoading && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-white/70 dark:bg-black/70'>
+          <Spinner size='lg' label='Procesando tu reserva...' color='primary' />
+        </div>
+      )}
+      <div className='w-full max-w-5xl px-4 sm:px-6 py-6 md:py-10 z-20'>
         <div
           className={`grid gap-8 items-start w-full ${isFinalStep ? 'grid-cols-1 max-w-xl mx-auto' : 'grid-cols-1 lg:grid-cols-5'}`}
         >
-          <div className={` col-span-3 w-full order-1`}>
+          <div className='col-span-3 w-full order-1'>
             <Stepper
               items={checkoutSteps}
               currentStep={step}
@@ -93,7 +133,7 @@ export const NationalCheckoutPage = () => {
             />
           </div>
           {!isFinalStep && (
-            <div className='lg:col-span-2 w-full order-2 lg:sticky lg:top-10'>
+            <div className='lg:col-span-2 w-full order-2 lg:sticky lg:top-34'>
               <Summary />
             </div>
           )}
