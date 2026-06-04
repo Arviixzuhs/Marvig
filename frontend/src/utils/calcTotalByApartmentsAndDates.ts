@@ -1,10 +1,17 @@
 import { ApartmentModel } from '@/models/ApartmentModel'
+import { PromotionType } from '@/models/PromotionModel'
 
-export const calculateReservationTotal = (
-  startDate: Date,
-  endDate: Date,
-  apartments: ApartmentModel[],
-): number => {
+interface ICalcTotalByApartmentsAndDatesProps {
+  endDate: Date
+  startDate: Date
+  apartments: ApartmentModel[]
+}
+
+export const calcTotalByApartmentsAndDates = ({
+  startDate,
+  endDate,
+  apartments,
+}: ICalcTotalByApartmentsAndDatesProps): number => {
   const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
@@ -17,7 +24,7 @@ export const calculateReservationTotal = (
     if (apartment.promotion) {
       const promoValue = Number(apartment.promotion.value)
 
-      if (apartment.promotion.type === 'PERCENTAGE') {
+      if (apartment.promotion.type === PromotionType.PERCENTAGE) {
         discount = (pricePerDay * promoValue) / 100
       } else {
         discount = promoValue

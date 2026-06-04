@@ -17,6 +17,11 @@ export interface PromotionModel {
   apartments?: ApartmentModel[]
 }
 
+export interface IPromotionDto {
+  type: PromotionType
+  value: number | string
+}
+
 export interface IPromotionFilter extends IPaginationFilter {
   name?: string
   search?: string
