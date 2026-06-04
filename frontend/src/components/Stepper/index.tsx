@@ -12,6 +12,7 @@ interface StepperProps {
   currentStep: number
   onStepChange: (step: number) => void
   submitButtonText?: string
+  isLoading?: boolean
   onFinalSubmit?: () => void
   showSecondaryButton?: boolean
   secondaryButtonText?: string
@@ -24,6 +25,7 @@ export const Stepper: React.FC<StepperProps> = ({
   onStepChange,
   submitButtonText = 'Continuar',
   onFinalSubmit,
+  isLoading = false,
   showSecondaryButton = false,
   secondaryButtonText = 'Atrás',
   onSecondaryAction,
@@ -36,7 +38,6 @@ export const Stepper: React.FC<StepperProps> = ({
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    window.scrollTo(0, 0)
 
     if (currentStep < totalSteps - 1) {
       onStepChange(currentStep + 1)
@@ -64,7 +65,7 @@ export const Stepper: React.FC<StepperProps> = ({
                 {secondaryButtonText}
               </Button>
             )}
-            <Button color='primary' type='submit' className='w-full'>
+            <Button color='primary' type='submit' className='w-full' isLoading={isLoading}>
               {isSubmitStep ? submitButtonText : 'Continuar'}
             </Button>
           </div>

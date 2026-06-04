@@ -80,6 +80,7 @@ export const reservationService = {
       variables: {
         apartmentIds,
       },
+      fetchPolicy: 'network-only',
     })
     return data?.getInvalidDates || null
   },
