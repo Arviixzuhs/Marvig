@@ -1,8 +1,8 @@
 import React from 'react'
 import toast from 'react-hot-toast'
+import Confetti from 'react-confetti'
 import { Success } from './components/Success'
 import { Summary } from './components/Summary'
-import { Spinner } from '@heroui/react'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { PaymentInfo } from './components/PaymentInfo'
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { Stepper, StepItem } from '@/components/Stepper'
 import { reservationService } from '@/services/reservation'
 import { PersonalInformation } from './components/PersonalInformation'
-import Confetti from 'react-confetti'
+import { useCalendarContext } from '@/context/calendarContext'
 
 export const NationalCheckoutPage = () => {
   const [step, setStep] = React.useState<number>(1)
@@ -19,7 +19,7 @@ export const NationalCheckoutPage = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
   const [isLoading, setLoading] = React.useState(false)
   const [showConfetti, setShowConfetti] = React.useState(false)
-
+  const { date, refreshCalendar } = useCalendarContext()
   const [windowDimension, setWindowDimension] = React.useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -39,7 +39,7 @@ export const NationalCheckoutPage = () => {
   if (!apartment) return
 
   React.useEffect(() => {
-    if (!checkout.date.end || !checkout.date.start) {
+    if (!date?.end || !date?.start) {
       navigate(`/apartment/${apartment.id}`)
       return
     }
@@ -74,8 +74,8 @@ export const NationalCheckoutPage = () => {
     } = checkout.formData
     return {
       ...rest,
-      endDate: new Date(String(checkout.date?.end)),
-      startDate: new Date(String(checkout.date?.start)),
+      endDate: date?.end.toString(),
+      startDate: date?.start.toString(),
       clientName: rest.clientName + ' ' + clientLastname,
       totalPrice: apartment.pricePerDay * checkout.nights,
       apartmentIds: [apartment.id],
@@ -93,8 +93,10 @@ export const NationalCheckoutPage = () => {
       setLoading(true)
       await reservationService.create(getPayload())
       setStep(checkoutSteps.length)
+      window.scrollTo(0, 0)
       setShowConfetti(true)
     } catch (error: any) {
+      refreshCalendar()
       toast.error(error.message)
     } finally {
       setLoading(false)
@@ -113,11 +115,6 @@ export const NationalCheckoutPage = () => {
           />
         </div>
       )}
-      {isLoading && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-white/70 dark:bg-black/70'>
-          <Spinner size='lg' label='Procesando tu reserva...' color='primary' />
-        </div>
-      )}
       <div className='w-full max-w-5xl px-4 sm:px-6 py-6 md:py-10 z-20'>
         <div
           className={`grid gap-8 items-start w-full ${isFinalStep ? 'grid-cols-1 max-w-xl mx-auto' : 'grid-cols-1 lg:grid-cols-5'}`}
@@ -127,13 +124,14 @@ export const NationalCheckoutPage = () => {
               items={checkoutSteps}
               currentStep={step}
               onStepChange={setStep}
-              submitButtonText='Confirmar y pagar'
+              isLoading={isLoading}
+              submitButtonText={isLoading ? 'Procesando...' : 'Enviar'}
               onFinalSubmit={handleFinalSubmit}
               showSecondaryButton={step > 1}
             />
           </div>
           {!isFinalStep && (
-            <div className='lg:col-span-2 w-full order-2 lg:sticky lg:top-34'>
+            <div className='lg:col-span-2 max-w-2xl w-fit order-2 lg:sticky lg:top-34'>
               <Summary />
             </div>
           )}
