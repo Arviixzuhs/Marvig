@@ -50,15 +50,13 @@ export class CreateReservationInput {
   @Min(0, { message: 'El precio total no puede ser negativo' })
   totalPrice: number
 
-  @Field(() => RentalType)
-  @IsNotEmpty({ message: 'El tipo de alquiler es obligatorio' })
+  @Field(() => RentalType, { nullable: true })
   @IsEnum(RentalType, { message: 'Tipo de alquiler no válido' })
-  type: RentalType
+  type?: RentalType
 
-  @Field(() => ReservationStatus)
-  @IsNotEmpty({ message: 'El estado de la reserva es obligatorio' })
+  @Field(() => ReservationStatus, { nullable: true })
   @IsEnum(ReservationStatus, { message: 'Estado de reserva no válido' })
-  status: ReservationStatus
+  status?: ReservationStatus
 
   @Field({ nullable: true })
   @IsOptional()
