@@ -5,7 +5,6 @@ import { ReservationModel } from '@/modules/reservation/domain/models/reservatio
 import { ReservationMapper } from '@/modules/reservation/infrastructure/mappers/reservation.mapper'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
-import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
@@ -47,6 +46,23 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       currentPage: filters.page,
       rowsPerPage: query.take,
     }
+  }
+
+  async findAvailableReservations(apartmentIds: number[]) {
+    const result = await this.prisma.reservation.findMany({
+      where: {
+        apartments: {
+          some: {
+            id: { in: apartmentIds },
+          },
+        },
+        status: {
+          in: [ReservationStatus.CONFIRMED, ReservationStatus.PENDING],
+        }
+      }
+    })
+
+    return this.reservationMapper.modelsToDomain(result)
   }
 
   async existsById(id: number): Promise<boolean> {
@@ -169,7 +185,6 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         apartments: {
           some: {
             id: { in: apartmentIds },
-            status: ApartmentStatusEnum.AVAILABLE
           },
         },
         isDeleted: false,
