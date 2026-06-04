@@ -59,7 +59,15 @@ export class CreateReservationUseCase {
     )
 
     if (!isAvailable) {
-      throw new ConflictException('Uno o más apartamentos no están disponibles')
+      throw new ConflictException('Uno o más apartamentos no están disponibles.')
+    }
+
+    const hasUnavailableApartment = apartments.content.some(
+      (apartment) => apartment.status === ApartmentStatusEnum.MAINTENANCE
+    )
+
+    if (hasUnavailableApartment) {
+      throw new ConflictException('Uno de los apartamentos está en mantenimiento.')
     }
 
     const calculatedTotal = apartments.content.reduce((acc, apartment) => {
