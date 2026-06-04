@@ -25,10 +25,7 @@ export class PaymentSpecificationBuilder {
 
   withSearch(search?: string) {
     if (search && search.trim() !== '') {
-      this.where.OR = [
-        { description: { contains: search } },
-        { reference: { contains: search } },
-      ]
+      this.where.OR = [{ description: { contains: search } }, { reference: { contains: search } }]
     }
     return this
   }

@@ -14,4 +14,5 @@ export interface ReservationRepositoryPort {
   deleteReservation(id: number): Promise<void>
   checkAvailability(apartmentIds: number[], startDate: Date, endDate: Date): Promise<boolean>
   findReservationById(id: number): Promise<ReservationModel | null>
+  findAvailableReservations(apartmentIds: number[]): Promise<ReservationModel[]>
 }

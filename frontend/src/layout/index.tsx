@@ -1,6 +1,6 @@
+import React from 'react'
 import { Footer } from '@/components/Footer/Footer'
 import { UserNavbar } from '@/components/UserNavbar'
-import React from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
 export const UserLayout = () => {
@@ -11,9 +11,11 @@ export const UserLayout = () => {
   }, [pathname])
 
   return (
-    <div>
+    <div className='flex flex-col min-h-screen bg-background text-foreground'>
       <UserNavbar />
-      <Outlet />
+      <main className='flex-grow w-full'>
+        <Outlet />
+      </main>
       <Footer />
     </div>
   )

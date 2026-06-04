@@ -17,9 +17,10 @@ import { AdminPromotionPage } from '@/modules/admin/pages/promotion'
 import { AdminApartmentPage } from '@/modules/admin/pages/apartments'
 import { AdminDashboardPage } from '@/modules/admin/pages/dashboard'
 import { AdminReservationPage } from '@/modules/admin/pages/reservations'
+import { NationalCheckoutPage } from '@/modules/checkout/pages/national'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { LoadCurrentUserMiddleware } from '@/middlewares/LoadCurrentUserMiddleware'
-import { NationalCheckoutPage } from '@/modules/checkout/pages/national'
+import { LoadCurrentApartmentMiddleware } from './middlewares/LoadCurrentApartmentMiddleware'
 
 function App() {
   return (
@@ -28,13 +29,15 @@ function App() {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route element={<LoadCurrentUserMiddleware />}>
-        <Route element={<NationalCheckoutPage />} path='/checkout/national' />
         <Route element={<UserLayout />}>
           <Route element={<AuthMiddleware />}>
             <Route element={<ConfigPage />} path='/config' />
           </Route>
           <Route element={<LandingPage />} path='/' />
-          <Route element={<ApartmentPage />} path='/apartment/:apartmentId' />
+          <Route element={<LoadCurrentApartmentMiddleware />}>
+            <Route element={<NationalCheckoutPage />} path='/checkout/national/:apartmentId' />
+            <Route element={<ApartmentPage />} path='/apartment/:apartmentId' />
+          </Route>
           <Route element={<ApartmentsPage />} path='/apartments' />
         </Route>
       </Route>

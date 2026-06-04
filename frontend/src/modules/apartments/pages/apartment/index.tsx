@@ -1,30 +1,12 @@
-import React from 'react'
 import { RootState } from '@/store'
-import { useParams } from 'react-router-dom'
-import { setApartment } from '@/features/apartmentSlice'
+import { useSelector } from 'react-redux'
 import { MapPin, Star } from 'lucide-react'
 import { ApartmentDetails } from '@/modules/apartments/components/ApartmentDetails'
-import { apartmentService } from '@/services/apartment'
 import { ApartmentImagesGrid } from '@/modules/apartments/components/ApartmentImagesGrid'
 import { ApartmentCalendarRange } from '@/modules/apartments/components/ApartmentCalendarRange'
-import { useDispatch, useSelector } from 'react-redux'
 
 export const ApartmentPage = () => {
-  const params = useParams<{ apartmentId: string }>()
-  const dispatch = useDispatch()
   const apartment = useSelector((state: RootState) => state.apartment)
-
-  const loadData = async () => {
-    if (params.apartmentId) {
-      const response = await apartmentService.get(Number(params.apartmentId))
-      dispatch(setApartment(response))
-    }
-  }
-
-  React.useEffect(() => {
-    loadData()
-  }, [])
-
   if (!apartment) return null
 
   return (

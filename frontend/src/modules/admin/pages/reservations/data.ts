@@ -112,7 +112,6 @@ export const modalInputs: ModalInput[] = [
     placeholder: '+34 000 000 000',
     required: false,
   },
-
   {
     showOnEdit: false,
     divider: {

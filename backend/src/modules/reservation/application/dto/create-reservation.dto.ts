@@ -3,8 +3,8 @@ import { ReservationStatus } from '@/modules/reservation/domain/enums/reservatio
 import { ReservationPaymentDto } from './reservation-payment.dto'
 
 export class CreateReservationDto {
-  type: RentalType
-  status: ReservationStatus
+  type?: RentalType
+  status?: ReservationStatus
   payment: ReservationPaymentDto
   endDate: string
   persons?: number
