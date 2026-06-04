@@ -2,11 +2,13 @@ import { Check } from 'lucide-react'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
+import { useCalendarContext } from '@/context/calendarContext'
+import { formatCalendarDate } from '@/utils/formatCalendarDate'
 
 export const Success = () => {
   const checkout = useSelector((state: RootState) => state.checkout)
   const apartment = useSelector((state: RootState) => state.apartment)
-  
+  const { date } = useCalendarContext()
   if (!apartment) return null
 
   return (
@@ -24,13 +26,13 @@ export const Success = () => {
         <div className='flex justify-between items-center'>
           <span className='text-muted-foreground'>Entrada</span>
           <span className='font-medium text-foreground'>
-            {checkout.date.start?.toLocaleDateString('es-ES')}
+            {date?.start && formatCalendarDate(date.start)}
           </span>
         </div>
         <div className='flex justify-between items-center'>
-          <span className='text-muted-foreground'>Salida</span>
+          <span className='text-muted-foreground'>Sálida</span>
           <span className='font-medium text-foreground'>
-            {checkout.date.end?.toLocaleDateString('es-ES')}
+            {date?.end && formatCalendarDate(date.end)}
           </span>
         </div>
         <div className='flex justify-between items-center font-bold border-t border-border pt-2.5 mt-1'>
@@ -40,9 +42,9 @@ export const Success = () => {
           </span>
         </div>
       </div>
-      <button 
-        type='button' 
-        className='text-sm font-bold underline hover:opacity-80 transition-opacity' 
+      <button
+        type='button'
+        className='text-sm font-bold underline hover:opacity-80 transition-opacity'
         style={{ color: '#2B4FFF' }}
       >
         Ver mis reservas
