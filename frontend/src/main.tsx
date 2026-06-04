@@ -7,6 +7,7 @@ import { apolloClient } from './api/apollo-client.ts'
 import { BrowserRouter } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client/react'
 import { MyHeroUIProvider } from './provider.tsx'
+import { CalendarProvider } from './context/calendarContext.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { NotificationToast } from './components/NotificationToast/index.tsx'
 import { ImageUploadProvider } from './components/ImageUploader/providers/ImageUploaderProvider.tsx'
@@ -21,7 +22,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <NotificationToast />
             <MyHeroUIProvider>
               <ImageUploadProvider>
-                <App />
+                <CalendarProvider>
+                  <App />
+                </CalendarProvider>
               </ImageUploadProvider>
             </MyHeroUIProvider>
           </ApolloProvider>
