@@ -1,11 +1,12 @@
 import React from 'react'
 import { RootState } from '@/store'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { I18nProvider } from '@react-aria/i18n'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { reservationService } from '@/services/reservation'
-import { today, getLocalTimeZone, CalendarDate, DateValue } from '@internationalized/date' // Importamos CalendarDate
+import { setNights, setDate } from '@/features/checkoutSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { today, getLocalTimeZone, CalendarDate, DateValue } from '@internationalized/date'
 import {
   Card,
   Button,
@@ -13,11 +14,13 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  RangeValue,
   RangeCalendar,
 } from '@heroui/react'
 
 export const ApartmentCalendarRange = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const apartment = useSelector((state: RootState) => state.apartment)
   const [invalidDates, setInvalidDates] = React.useState<CalendarDate[]>([])
   const [value, setValue] = React.useState<{
@@ -28,6 +31,10 @@ export const ApartmentCalendarRange = () => {
   const startMs = value?.start.toDate(getLocalTimeZone()).getTime() ?? 0
   const endMs = value?.end.toDate(getLocalTimeZone()).getTime() ?? 0
   const totalDays = value ? Math.round((endMs - startMs) / (1000 * 60 * 60 * 24)) : 0
+
+  React.useEffect(() => {
+    dispatch(setNights(totalDays))
+  }, [totalDays])
 
   React.useEffect(() => {
     if (!apartment?.id) return
@@ -57,6 +64,16 @@ export const ApartmentCalendarRange = () => {
     return invalidDates.some((invalidDate) => date.compare(invalidDate) === 0)
   }
 
+  const onChange = (e: RangeValue<DateValue>) => {
+    setValue(e)
+    dispatch(
+      setDate({
+        end: e.end.toDate(getLocalTimeZone()),
+        start: e.start.toDate(getLocalTimeZone()),
+      }),
+    )
+  }
+
   return (
     <div>
       <Card className='w-full md:w-fit'>
@@ -72,7 +89,7 @@ export const ApartmentCalendarRange = () => {
             <RangeCalendar
               value={value}
               aria-label='Date (Controlled)'
-              onChange={setValue}
+              onChange={onChange}
               errorMessage='Selecciona una fecha disponible'
               isDateUnavailable={isDateUnavailable}
               classNames={{
@@ -94,7 +111,7 @@ export const ApartmentCalendarRange = () => {
             color='primary'
             className='w-full'
             isDisabled={totalDays === 0}
-            onPress={() => navigate('/checkout/national')}
+            onPress={() => navigate(`/checkout/national/${apartment.id}`)}
           >
             {totalDays === 0 ? 'Selecciona una fecha' : 'Reservar'}
           </Button>
