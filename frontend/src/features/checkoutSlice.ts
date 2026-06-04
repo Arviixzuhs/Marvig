@@ -5,13 +5,16 @@ export interface AppTableInterface {
   nights: number
 }
 
+const initialState = {
+  formData: {},
+  nights: 0,
+} as AppTableInterface
+
 export const manageCheckoutSlice = createSlice({
   name: 'checkout',
-  initialState: {
-    formData: {},
-    nights: 0,
-  } as AppTableInterface,
+  initialState,
   reducers: {
+    clearCheckout: () => initialState,
     setCheckoutFormData: (
       state,
       action: PayloadAction<{ name: string; value: string | unknown }>,
@@ -27,4 +30,4 @@ export const manageCheckoutSlice = createSlice({
   },
 })
 
-export const { setCheckoutFormData, setNights } = manageCheckoutSlice.actions
+export const { clearCheckout, setCheckoutFormData, setNights } = manageCheckoutSlice.actions

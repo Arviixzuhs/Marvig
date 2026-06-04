@@ -2,8 +2,8 @@ import { RootState } from '@/store'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
-import { Card, Button, Divider, CardBody, CardFooter, CardHeader } from '@heroui/react'
 import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
+import { Card, Button, Divider, CardBody, CardFooter, CardHeader } from '@heroui/react'
 
 export const ApartmentCalendarRange = () => {
   const navigate = useNavigate()
@@ -11,7 +11,7 @@ export const ApartmentCalendarRange = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
 
   if (!apartment) return null
-
+  
   return (
     <div>
       <Card className='w-full md:w-fit'>
