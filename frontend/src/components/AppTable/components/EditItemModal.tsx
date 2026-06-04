@@ -50,13 +50,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     }
   }
 
-  React.useEffect(() => {
-    if (!table.isEditItemModalOpen) {
-      dispatch(clearFormData(null))
-      dispatch(setCurrentItemToUpdate(-1))
-    }
-  }, [table.isEditItemModalOpen])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
     const { name, value } = e.target
 
@@ -96,6 +89,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
   const toggleModal = () => {
     dispatch(toggleEditItemModal(null))
+    dispatch(clearFormData(null))
+    dispatch(setCurrentItemToUpdate(-1))
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

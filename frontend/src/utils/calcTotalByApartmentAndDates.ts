@@ -28,5 +28,5 @@ export const calculateReservationTotal = (
     return acc + finalPricePerDay * diffDays
   }, 0)
 
-  return (Math.round(rawTotal * 100) / 100) || 0
+  return Math.round(rawTotal * 100) / 100 || 0
 }

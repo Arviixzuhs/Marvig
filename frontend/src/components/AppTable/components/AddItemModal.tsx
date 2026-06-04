@@ -44,12 +44,6 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     }
   }
 
-  React.useEffect(() => {
-    if (table.isAddItemModalOpen) {
-      dispatch(clearFormData(null))
-    }
-  }, [table.isAddItemModalOpen, dispatch])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
     const { name, value } = e.target
     if (value === '') {
@@ -96,6 +90,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   }
 
   const toggleModal = () => {
+    dispatch(clearFormData(null))
     dispatch(toggleAddItemModal(null))
   }
 
