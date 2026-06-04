@@ -1,4 +1,3 @@
-import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { InvalidDateResponseDto } from '@/modules/reservation/application/dto/invalid-date.dto'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
@@ -12,7 +11,7 @@ export class GetInvalidDatesUseCase {
 
     @Inject('ReservationRepository')
     private readonly reservationRepository: ReservationRepositoryPort,
-  ) {}
+  ) { }
 
   async execute(apartmentIds: number[]): Promise<InvalidDateResponseDto[]> {
     const apartments = await this.apartmentRepository.findApartments({
@@ -23,14 +22,11 @@ export class GetInvalidDatesUseCase {
       throw new NotFoundException('Algunos de los apartamentos no existen')
     }
 
-    const reservations = await this.reservationRepository.findReservations({
-      status: ReservationStatus.CONFIRMED,
-      apartmentIds,
-    })
+    const reservations = await this.reservationRepository.findAvailableReservations(apartmentIds)
 
     const invalidDates = []
 
-    for (const reservation of reservations.content) {
+    for (const reservation of reservations) {
       const current = new Date(reservation.startDate)
       const end = new Date(reservation.endDate)
 
