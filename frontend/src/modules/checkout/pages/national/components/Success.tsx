@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { useCalendarContext } from '@/context/calendarContext'
 import { formatCalendarDate } from '@/utils/formatCalendarDate'
+import { calcTotalByApartmentAndNights } from '@/utils/calcTotalByApartmentAndNights'
 
 export const Success = () => {
   const checkout = useSelector((state: RootState) => state.checkout)
@@ -38,7 +39,18 @@ export const Success = () => {
         <div className='flex justify-between items-center font-bold border-t border-border pt-2.5 mt-1'>
           <span className='text-foreground'>Total pagado</span>
           <span className='text-foreground'>
-            {formatCurrency(apartment.pricePerDay * checkout.nights)}
+            {formatCurrency(
+              calcTotalByApartmentAndNights({
+                nights: checkout.nights,
+                pricePerDay: apartment.pricePerDay,
+                ...(apartment.promotion && {
+                  promotion: {
+                    type: apartment.promotion.type,
+                    value: apartment.promotion.value,
+                  },
+                }),
+              }),
+            )}
           </span>
         </div>
       </div>
