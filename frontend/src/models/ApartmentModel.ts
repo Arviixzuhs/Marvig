@@ -10,7 +10,7 @@ export interface ApartmentModel {
   bathrooms: number
   pricePerDay: number
   squareMeters?: number | null
-  promotion: PromotionModel
+  promotion?: PromotionModel
   images?: IApartmentImage[] | null
   createdAt?: Date | null
   updatedAt?: Date | null
