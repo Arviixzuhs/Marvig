@@ -22,8 +22,8 @@ export class CreateReservationInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'La fecha de entrada es obligatoria' })
   @Transform(({ value }) => {
-    if (!value || String(value).trim() === '') return undefined;
-    return new Date(value).toISOString();
+    if (!value || String(value).trim() === '') return undefined
+    return new Date(value).toISOString()
   })
   @IsDateString({}, { message: 'La fecha de entrada debe tener un formato ISO válido' })
   startDate: string
@@ -31,8 +31,8 @@ export class CreateReservationInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'La fecha de salida es obligatoria' })
   @Transform(({ value }) => {
-    if (!value || String(value).trim() === '') return undefined;
-    return new Date(value).toISOString();
+    if (!value || String(value).trim() === '') return undefined
+    return new Date(value).toISOString()
   })
   @IsDateString({}, { message: 'La fecha de salida debe tener un formato ISO válido' })
   endDate: string
@@ -50,15 +50,13 @@ export class CreateReservationInput {
   @Min(0, { message: 'El precio total no puede ser negativo' })
   totalPrice: number
 
-  @Field(() => RentalType)
-  @IsNotEmpty({ message: 'El tipo de alquiler es obligatorio' })
+  @Field(() => RentalType, { nullable: true })
   @IsEnum(RentalType, { message: 'Tipo de alquiler no válido' })
-  type: RentalType
+  type?: RentalType
 
-  @Field(() => ReservationStatus)
-  @IsNotEmpty({ message: 'El estado de la reserva es obligatorio' })
+  @Field(() => ReservationStatus, { nullable: true })
   @IsEnum(ReservationStatus, { message: 'Estado de reserva no válido' })
-  status: ReservationStatus
+  status?: ReservationStatus
 
   @Field({ nullable: true })
   @IsOptional()

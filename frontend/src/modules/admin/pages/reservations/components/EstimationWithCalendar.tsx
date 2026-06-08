@@ -6,7 +6,7 @@ import { formatCurrency } from '@/utils/formatCurrency'
 import { apartmentService } from '@/services/apartment'
 import { reservationService } from '@/services/reservation'
 import { Divider, RangeCalendar } from '@heroui/react'
-import { calculateReservationTotal } from '@/utils/calcTotalByApartmentAndDates'
+import { calcTotalByApartmentsAndDates } from '@/utils/calcTotalByApartmentsAndDates'
 import { Autocomplete, AutocompleteChip } from '@/components/Autocomplete'
 import { CalendarDate, DateValue, getLocalTimeZone, today } from '@internationalized/date'
 
@@ -65,11 +65,11 @@ export const EstimationWithCalendar = ({
       })
 
       if (response?.content) {
-        const total = calculateReservationTotal(
-          new Date(String(value?.start)),
-          new Date(String(value?.end)),
-          response.content,
-        )
+        const total = calcTotalByApartmentsAndDates({
+          startDate: new Date(String(value?.start)),
+          endDate: new Date(String(value?.end)),
+          apartments: response.content,
+        })
         setTotalCalculated(total)
       }
     } catch (error) {

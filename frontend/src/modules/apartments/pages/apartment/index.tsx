@@ -1,28 +1,21 @@
 import React from 'react'
 import { RootState } from '@/store'
-import { useParams } from 'react-router-dom'
-import { setApartment } from '@/features/apartmentSlice'
 import { MapPin, Star } from 'lucide-react'
+import { clearCheckout } from '@/features/checkoutSlice'
 import { ApartmentDetails } from '@/modules/apartments/components/ApartmentDetails'
-import { apartmentService } from '@/services/apartment'
+import { useCalendarContext } from '@/context/calendarContext'
 import { ApartmentImagesGrid } from '@/modules/apartments/components/ApartmentImagesGrid'
 import { ApartmentCalendarRange } from '@/modules/apartments/components/ApartmentCalendarRange'
 import { useDispatch, useSelector } from 'react-redux'
 
 export const ApartmentPage = () => {
-  const params = useParams<{ apartmentId: string }>()
-  const dispatch = useDispatch()
   const apartment = useSelector((state: RootState) => state.apartment)
-
-  const loadData = async () => {
-    if (params.apartmentId) {
-      const response = await apartmentService.get(Number(params.apartmentId))
-      dispatch(setApartment(response))
-    }
-  }
+  const dispatch = useDispatch()
+  const { setDate } = useCalendarContext()
 
   React.useEffect(() => {
-    loadData()
+    setDate(null)
+    dispatch(clearCheckout())
   }, [])
 
   if (!apartment) return null

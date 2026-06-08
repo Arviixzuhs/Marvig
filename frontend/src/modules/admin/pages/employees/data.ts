@@ -45,15 +45,15 @@ export const modalInputs: ModalInput[] = [
   },
   {
     name: 'phone',
-    label: 'Telefono',
+    label: 'Teléfono',
     type: 'text',
-    placeholder: 'Ingresa el telefono',
+    placeholder: 'Ingresa el teléfono',
     required: true,
   },
   {
     name: 'email',
     label: 'Correo',
-    type: 'text',
+    type: 'email',
     placeholder: 'Ingresa el correo',
     required: false,
   },
