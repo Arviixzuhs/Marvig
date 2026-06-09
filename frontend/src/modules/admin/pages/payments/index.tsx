@@ -1,18 +1,18 @@
 import toast from 'react-hot-toast'
+import { Edit } from 'lucide-react'
 import { useQuery } from '@apollo/client/react'
 import { AppTable } from '@/components/AppTable'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
-import { useSelector } from 'react-redux'
-import { PaymentModel } from '@/models/PaymentModel'
 import { useTablePage } from '@/hooks/useTablePage'
 import { IPageResponse } from '@/api/interfaces'
 import { FIND_PAYMENTS } from '@/services/payment/graphql/getPaymentsQuery'
 import { paymentService } from '@/services/payment'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
-import { reservationService } from '@/services/reservation'
+import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import { Autocomplete, AutocompleteChip } from '@/components/Autocomplete'
+import { PaymentModel, PaymentStatus } from '@/models/PaymentModel'
+import { setCurrentItemToUpdate, toggleEditItemModal } from '@/features/appTableSlice'
 
 interface IAdminPaymentPage {
   hiddeTopContent?: boolean
@@ -21,6 +21,7 @@ interface IAdminPaymentPage {
 export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage) => {
   const table = useSelector((state: RootState) => state.appTable)
   const [debounceValue] = useDebounce(table.filterValue, 100)
+  const dispatch = useDispatch()
 
   useTablePage({ tableColumns, modalInputs })
 
@@ -38,17 +39,14 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
     },
   )
 
-  const { reserve, ...form } = table.formData
-  const tableFormData = {
-    ...form,
-    reservationId: (reserve as AutocompleteChip[])?.[0]?.id || null,
-  }
-
   const tableActions: AppTableActions = {
-    create: async () => {
-      await paymentService.create(tableFormData as PaymentModel)
+    update: async () => {
+      await paymentService.updateStatus(
+        table.currentItemToUpdate,
+        table.formData['status'] as PaymentStatus,
+      )
       await refetch()
-      toast.success('Pago registrado correctamente')
+      toast.success('Pago actualizado correctamente')
     },
   }
 
@@ -59,30 +57,18 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
       tableContent={data?.findPayments.content || []}
       tableActions={tableActions}
       hiddeTopContent={hiddeTopContent}
+      dropdownItems={[
+        {
+          key: 'edit_payment',
+          title: 'Editar',
+          startContent: <Edit size={14} />,
+          onPress: (itemId: number) => {
+            dispatch(setCurrentItemToUpdate(itemId))
+            dispatch(toggleEditItemModal(null))
+          },
+        },
+      ]}
       searchbarPlaceholder='Buscar pago...'
-      modalExtension={
-        <>
-          <Autocomplete
-            chips
-            label='Reserva'
-            formDataKey='reserve'
-            placeholder='Buscar reserva...'
-            fetchItems={async (search) => {
-              const res = await reservationService.getAll({
-                search,
-                page: 0,
-                pageSize: 10,
-              })
-              return (
-                res?.content.map((item) => ({
-                  id: item.id,
-                  name: `${item.clientName} (${new Date(item.startDate).toLocaleDateString()} - ${new Date(item.endDate).toLocaleDateString()})`,
-                })) || []
-              )
-            }}
-          />
-        </>
-      }
     />
   )
 }

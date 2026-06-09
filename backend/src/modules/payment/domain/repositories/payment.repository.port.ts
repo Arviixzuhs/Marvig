@@ -7,5 +7,6 @@ export interface PaymentRepositoryPort {
   existsById(paymentId: number): Promise<boolean>
   findPayment(paymentId: number): Promise<PaymentModel | null>
   findPayments(filters: PaymentFilterDto): Promise<PaymentPage>
+  updateStatus(id: number, status: string): Promise<PaymentModel>
   createPayment(payment: CreatePaymentDto): Promise<PaymentModel>
 }

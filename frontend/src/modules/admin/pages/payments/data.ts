@@ -41,32 +41,13 @@ export const tableColumns: TableColumnInterface[] = [
     uid: 'date',
     style: 'date',
   },
+  {
+    name: 'Acciones',
+    uid: 'actions',
+  },
 ]
 
 export const modalInputs: ModalInput[] = [
-  {
-    name: 'amount',
-    label: 'Monto del Pago',
-    type: 'float',
-    placeholder: '0.00',
-    required: true,
-  },
-  {
-    name: 'method',
-    label: 'Método de Pago',
-    type: 'select',
-    placeholder: 'Selecciona un método',
-    required: true,
-    options: [
-      { label: 'Efectivo', value: PaymentMethod.CASH },
-      { label: 'PayPal', value: PaymentMethod.PAYPAL },
-      { label: 'Stripe', value: PaymentMethod.STRIPE },
-      { label: 'Pago Móvil', value: PaymentMethod.PAGO_MOVIL },
-      { label: 'Tarjeta de Débito', value: PaymentMethod.DEBIT_CARD },
-      { label: 'Tarjeta de Crédito', value: PaymentMethod.CREDID_CARD },
-      { label: 'Transferencia Bancaria', value: PaymentMethod.BANK_TRANSFER },
-    ],
-  },
   {
     name: 'status',
     label: 'Estado del Pago',
@@ -79,25 +60,5 @@ export const modalInputs: ModalInput[] = [
       { label: 'Fallido', value: PaymentStatus.FAILED },
       { label: 'Cancelado', value: PaymentStatus.CANCELLED },
     ],
-  },
-  {
-    name: 'reference',
-    label: 'Referencia / Confirmación',
-    type: 'text',
-    placeholder: 'Número de operación',
-    required: true,
-  },
-  {
-    name: 'date',
-    label: 'Fecha de Pago',
-    type: 'date',
-    required: true,
-  },
-  {
-    name: 'description',
-    label: 'Descripción',
-    type: 'textarea',
-    placeholder: 'Notas adicionales...',
-    required: false,
   },
 ]
