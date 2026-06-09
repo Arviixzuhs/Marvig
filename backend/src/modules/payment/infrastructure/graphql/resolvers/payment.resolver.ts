@@ -1,6 +1,7 @@
 import { UserRole } from '@/common/enums/user-role.enum'
 import { PaymentType } from '@/modules/payment/infrastructure/graphql/types/payment.type'
 import { RequiredRole } from '@/common/decorators/required-role.decorator'
+import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { PaymentPageType } from '@/modules/payment/infrastructure/graphql/types/payment-page.type'
 import { CreatePaymentInput } from '@/modules/payment/infrastructure/graphql/inputs/create-payment.input'
 import { PaymentFilterInput } from '@/modules/payment/infrastructure/graphql/inputs/payment-filter.input'
@@ -8,6 +9,7 @@ import { FindPaymentUseCase } from '@/modules/payment/application/usecases/find-
 import { FindPaymentsUseCase } from '@/modules/payment/application/usecases/find-payments.usecase'
 import { CreatePaymentUseCase } from '@/modules/payment/application/usecases/create-payment.usecase'
 import { PaymentPerformanceType } from '@/modules/payment/infrastructure/graphql/types/payment-performance.type'
+import { UpdatePaymentStatusUseCase } from '@/modules/payment/application/usecases/update-payment-status.usecase'
 import { GetPaymentsPerformanceUseCase } from '@/modules/payment/application/usecases/get-payments-performance.usercase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
@@ -17,6 +19,7 @@ export class PaymentResolver {
     private readonly findPaymentUseCase: FindPaymentUseCase,
     private readonly findPaymentsUseCase: FindPaymentsUseCase,
     private readonly createPaymentUseCase: CreatePaymentUseCase,
+    private readonly updatePaymentStatusUseCase: UpdatePaymentStatusUseCase,
     private readonly getPaymentsPerformanceUseCase: GetPaymentsPerformanceUseCase,
   ) {}
 
@@ -44,5 +47,14 @@ export class PaymentResolver {
     @Args('filters') filters: PaymentFilterInput,
   ): Promise<PaymentPerformanceType> {
     return this.getPaymentsPerformanceUseCase.execute(filters)
+  }
+
+  @Mutation(() => PaymentType)
+  @RequiredRole(UserRole.ADMIN)
+  updatePaymentStatus(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('status') status: PaymentStatus,
+  ): Promise<PaymentType> {
+    return this.updatePaymentStatusUseCase.execute(id, status)
   }
 }
