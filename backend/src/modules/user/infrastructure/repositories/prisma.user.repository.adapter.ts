@@ -36,10 +36,8 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
       .withOrderBy({ createdAt: 'desc' })
       .build()
 
-    const [users, totalItems] = await this.prisma.$transaction([
-      this.prisma.user.findMany(query),
-      this.prisma.user.count({ where: query.where }),
-    ])
+    const users = await this.prisma.user.findMany(query)
+    const totalItems = await this.prisma.user.count({ where: query.where })
 
     return {
       content: this.userMapper.modelsToDomain(users),

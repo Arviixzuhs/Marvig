@@ -38,12 +38,11 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
       .withReservationId(filters.reservationId)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
       .withOrderBy({ createdAt: 'desc' })
+      .withInclude({ reservation: { include: { apartments: true } } })
       .build()
 
-    const [payments, totalItems] = await this.prisma.$transaction([
-      this.prisma.payment.findMany(builder),
-      this.prisma.payment.count({ where: builder.where }),
-    ])
+    const payments = await this.prisma.payment.findMany(builder)
+    const totalItems = await this.prisma.payment.count({ where: builder.where })
 
     const rowsPerPage = builder.take || 10
 

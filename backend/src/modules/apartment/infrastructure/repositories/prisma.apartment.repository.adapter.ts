@@ -41,10 +41,8 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
       .withInclude({ images: true })
       .build()
 
-    const [apartments, totalItems] = await this.prisma.$transaction([
-      this.prisma.apartment.findMany(query),
-      this.prisma.apartment.count({ where: query.where }),
-    ])
+    const apartments = await this.prisma.apartment.findMany(query)
+    const totalItems = await this.prisma.apartment.count({ where: query.where })
 
     return {
       content: this.apartmentMapper.modelsToDomain(apartments),

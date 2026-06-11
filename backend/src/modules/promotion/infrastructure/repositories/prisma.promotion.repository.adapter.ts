@@ -36,10 +36,8 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
       .withOrderBy({ createdAt: 'desc' })
       .build()
 
-    const [promotions, totalItems] = await this.prisma.$transaction([
-      this.prisma.promotion.findMany(builder),
-      this.prisma.promotion.count({ where: builder.where }),
-    ])
+    const promotions = await this.prisma.promotion.findMany(builder)
+    const totalItems = await this.prisma.promotion.count({ where: builder.where })
 
     const rowsPerPage = builder.take || 10
 

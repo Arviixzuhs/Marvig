@@ -1,7 +1,6 @@
 import { Avatar } from '@heroui/react'
 import { useState, useEffect, useRef } from 'react'
 import {
-  Badge,
   Bell,
   Building,
   CreditCard,
@@ -14,7 +13,6 @@ import {
   Loader2,
   Lock,
   User,
-  Phone,
 } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store'

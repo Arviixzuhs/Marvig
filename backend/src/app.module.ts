@@ -22,6 +22,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
 import { VerificationCodeModule } from '@/modules/verificationCode/verificationCode.module'
+import { ReportModule } from '@/modules/report/report.module'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
 
@@ -40,6 +41,7 @@ config()
     ApartmentModule,
     ReservationModule,
     VerificationCodeModule,
+    ReportModule,
     ThrottlerModule.forRoot({
 
       throttlers: [

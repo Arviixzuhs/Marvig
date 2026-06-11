@@ -30,7 +30,10 @@ export interface GetUserResponseDto {
 export interface CreateUserInput
   extends Pick<UserModel, 'name' | 'lastName' | 'email' | 'password'> {}
 
-export interface UpdateUserInput extends Partial<Omit<CreateUserInput, 'password'>> {}
+export interface UpdateUserInput extends Partial<Omit<CreateUserInput, 'password'>> {
+  phone?: string
+  avatar?: string
+}
 
 export interface CreateUserResponse {
   createUser: Pick<UserModel, 'id' | 'name' | 'lastName' | 'email'>
