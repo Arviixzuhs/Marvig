@@ -9,15 +9,16 @@ import { NotificationSpecificationBuilder } from '@/modules/notification/infrast
 
 @Injectable()
 export class PrismaNotificationRepositoryAdapter implements NotificationRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   private readonly notificationMapper = new NotificationMapper()
 
-  async findNotifications(filters: NotificationFilterDto) {
+  async findNotifications(filters: NotificationFilterDto, userId?: number) {
     const query = new NotificationSpecificationBuilder()
       .withType(filters.type)
       .withStatus(filters.status)
-      .withUserId(filters.userId)
+      .withUserId(userId)
+      .withUserTargetRole(filters.userTargetRole)
       .withDateBetween(filters.fromDate, filters.toDate)
       .withPagination(filters.page, filters.pageSize)
       .withOrderBy({ createdAt: 'desc' })
@@ -48,6 +49,7 @@ export class PrismaNotificationRepositoryAdapter implements NotificationReposito
         status: data.status,
         userId: data.userId,
         payload: data.payload,
+        userTargetRole: data.userTargetRole,
       },
     })
 
