@@ -16,4 +16,4 @@ import { ReservationApplicationModule } from '@/modules/reservation/application/
   controllers: [ReportController],
   providers: [ReportService, PrismaService, PdfGeneratorService],
 })
-export class ReportModule {}
+export class ReportModule { }

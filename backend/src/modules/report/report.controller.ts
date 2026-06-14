@@ -10,7 +10,7 @@ import { OccupancyReportQueryDto } from './dto/occupancy-report-query.dto'
 
 @Controller('reports')
 export class ReportController {
-  constructor(private readonly reportService: ReportService) {}
+  constructor(private readonly reportService: ReportService) { }
 
 
   @Get('payments/pdf')

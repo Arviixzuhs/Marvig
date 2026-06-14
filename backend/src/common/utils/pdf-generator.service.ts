@@ -7,11 +7,11 @@ import { jsPDF } from 'jspdf'
  */
 @Injectable()
 export class PdfGeneratorService {
-  readonly BRAND_COLOR: [number, number, number] = [30, 41, 59]      // slate-800
-  readonly ACCENT_COLOR: [number, number, number] = [148, 163, 184]  // slate-400
-  readonly LIGHT_COLOR: [number, number, number] = [248, 250, 252]   // slate-50
+  readonly BRAND_COLOR: [number, number, number] = [15, 23, 42]      // slate-900 (Deep, elegant)
+  readonly ACCENT_COLOR: [number, number, number] = [79, 70, 229]     // Indigo-600 (Vibrant brand color)
+  readonly LIGHT_COLOR: [number, number, number] = [248, 250, 252]    // slate-50
   readonly TEXT_MUTED: [number, number, number] = [100, 116, 139]    // slate-500
-  readonly BORDER_COLOR: [number, number, number] = [241, 245, 249]  // slate-100
+  readonly BORDER_COLOR: [number, number, number] = [226, 232, 240]  // slate-200 (Clean, visible borders)
 
   formatCurrency(amount: number = 0): string {
     return amount.toLocaleString('es-AR', {
@@ -32,37 +32,45 @@ export class PdfGeneratorService {
   }
 
   /**
-   * Genera un encabezado limpio y asimétrico sobre fondo blanco.
+   * Genera un encabezado limpio y asimétrico sobre fondo blanco con acento de marca.
    */
   addPdfHeader(doc: jsPDF, title: string, subtitle: string): void {
     const pageW = doc.internal.pageSize.getWidth()
 
+    // --- ACCENT BAR: Franja decorativa superior en color Indigo ---
+    doc.setFillColor(...this.ACCENT_COLOR)
+    doc.rect(0, 0, pageW, 4.5, 'F')
+
     // --- LADO IZQUIERDO: Branding de la aplicación ---
+    // Pequeño logo minimalista (un rectángulo vertical en Accent Color)
+    doc.setFillColor(...this.ACCENT_COLOR)
+    doc.roundedRect(14, 11, 4, 10, 0.5, 0.5, 'F')
+
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(14)
+    doc.setFontSize(13)
     doc.setTextColor(...this.BRAND_COLOR)
-    doc.text('MARVIG', 14, 18)
+    doc.text('MARVIG', 21, 18.5)
 
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8.5)
-    doc.setTextColor(...this.ACCENT_COLOR)
-    doc.text('Sistema de Gestión', 14, 24)
+    doc.setFontSize(8)
+    doc.setTextColor(...this.TEXT_MUTED)
+    doc.text('Sistema de Gestión', 21, 23.5)
 
     // --- LADO DERECHO: Metadatos del Reporte ---
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(16)
-    doc.setTextColor(15, 23, 42) // Slate 900
-    doc.text(title, pageW - 14, 18, { align: 'right' })
+    doc.setFontSize(15)
+    doc.setTextColor(...this.BRAND_COLOR)
+    doc.text(title, pageW - 14, 18.5, { align: 'right' })
 
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8.5)
+    doc.setFontSize(8)
     doc.setTextColor(...this.TEXT_MUTED)
-    doc.text(subtitle, pageW - 14, 24, { align: 'right' })
+    doc.text(subtitle, pageW - 14, 23.5, { align: 'right' })
 
     // Línea divisoria minimalista y delgada
     doc.setDrawColor(...this.BORDER_COLOR)
     doc.setLineWidth(0.5)
-    doc.line(14, 30, pageW - 14, 30)
+    doc.line(14, 28, pageW - 14, 28)
   }
 
   /**
@@ -89,33 +97,47 @@ export class PdfGeneratorService {
   }
 
   /**
-   * Caja de KPI en formato de panel plano sin bordes negros,
-   * simulando una interfaz web moderna.
+   * Caja de KPI en formato de tarjetas individuales con bordes y barra de acento izquierdo.
    * @returns La siguiente posición Y disponible.
    */
   addSummaryBox(doc: jsPDF, items: { label: string; value: string }[], startY: number): number {
     const pageW = doc.internal.pageSize.getWidth()
     const margin = 14
     const totalWidth = pageW - margin * 2
-    const itemW = totalWidth / items.length
-
-    doc.setFillColor(...this.LIGHT_COLOR)
-    doc.roundedRect(margin, startY, totalWidth, 22, 1.5, 1.5, 'F')
+    const gap = 4 // Espaciado entre tarjetas
+    const totalGapWidth = gap * (items.length - 1)
+    const itemW = (totalWidth - totalGapWidth) / items.length
+    const height = 18
 
     items.forEach((item, i) => {
-      const x = margin + i * itemW + itemW / 2
+      const cardX = margin + i * (itemW + gap)
 
-      doc.setFontSize(7.5)
+      // Dibujar fondo de tarjeta
+      doc.setFillColor(...this.LIGHT_COLOR)
+      doc.roundedRect(cardX, startY, itemW, height, 1, 1, 'F')
+
+      // Dibujar borde sutil
+      doc.setDrawColor(...this.BORDER_COLOR)
+      doc.setLineWidth(0.4)
+      doc.roundedRect(cardX, startY, itemW, height, 1, 1, 'D')
+
+      // Dibujar barra de acento izquierdo
+      doc.setFillColor(...this.ACCENT_COLOR)
+      doc.roundedRect(cardX, startY, 2.5, height, 0.5, 0.5, 'F')
+
+      const textX = cardX + 6.5
+
+      doc.setFontSize(7)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...this.TEXT_MUTED)
-      doc.text(item.label.toUpperCase(), x, startY + 7, { align: 'center' })
+      doc.text(item.label.toUpperCase(), textX, startY + 5.5)
 
-      doc.setFontSize(11)
+      doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...this.BRAND_COLOR)
-      doc.text(item.value, x, startY + 16, { align: 'center' })
+      doc.text(item.value, textX, startY + 13)
     })
 
-    return startY + 28
+    return startY + height + 5
   }
 }

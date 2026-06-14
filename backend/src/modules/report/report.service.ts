@@ -26,7 +26,7 @@ export class ReportService {
     private readonly findPaymentsUseCase: FindPaymentsUseCase,
     private readonly findExpensesUseCase: FindExpensesUseCase,
     private readonly findReservationsUseCase: FindReservationsUseCase,
-  ) {}
+  ) { }
 
   // ─── DATA METHODS ─────────────────────────────────────────────────────────────
 
@@ -163,7 +163,7 @@ export class ReportService {
         { label: 'Cantidad de Transacciones', value: data.totalItems.toString() },
         { label: 'Monto Total Recaudado', value: this.pdf.formatCurrency(totalAmount) },
       ],
-      36,
+      34,
     )
 
     autoTable(doc, {
@@ -180,9 +180,30 @@ export class ReportService {
         p.reservation?.apartments?.map((a) => `#${a.number}`).join(', ') || '—',
       ]),
       theme: 'plain',
-      styles: { font: 'helvetica', fontSize: 8, cellPadding: 4, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.5 },
-      headStyles: { fillColor: this.pdf.LIGHT_COLOR, textColor: [71, 85, 105], fontStyle: 'bold', fontSize: 8 },
-      columnStyles: { 2: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] } },
+      styles: { font: 'helvetica', fontSize: 8, cellPadding: 4.5, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.3, textColor: [51, 65, 85] },
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      columnStyles: {
+        2: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] },
+        3: { halign: 'center' },
+        4: { halign: 'center' },
+        5: { halign: 'center' },
+      },
+      willDrawCell: (data) => {
+        if (data.cell.section === 'body' && data.column.index === 3) {
+          const status = String(data.cell.raw).toUpperCase();
+          if (status.includes('CONFIRM') || status.includes('PAGADO')) {
+            data.cell.styles.textColor = [22, 163, 74];
+            data.cell.styles.fontStyle = 'bold';
+          } else if (status.includes('PEND')) {
+            data.cell.styles.textColor = [217, 119, 6];
+            data.cell.styles.fontStyle = 'bold';
+          } else if (status.includes('REJECT') || status.includes('RECHAZ') || status.includes('CANCEL')) {
+            data.cell.styles.textColor = [220, 38, 38];
+            data.cell.styles.fontStyle = 'bold';
+          }
+        }
+      }
     })
 
     this.pdf.addPdfFooter(doc)
@@ -206,7 +227,7 @@ export class ReportService {
         { label: 'Total de Comprobantes', value: data.totalItems.toString() },
         { label: 'Monto Total Egresado', value: this.pdf.formatCurrency(totalAmount) },
       ],
-      36,
+      34,
     )
 
     autoTable(doc, {
@@ -221,8 +242,9 @@ export class ReportService {
         e.apartment ? `#${e.apartment.number} (Piso ${e.apartment.floor})` : '—',
       ]),
       theme: 'plain',
-      styles: { font: 'helvetica', fontSize: 8, cellPadding: 4, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.5 },
-      headStyles: { fillColor: this.pdf.LIGHT_COLOR, textColor: [71, 85, 105], fontStyle: 'bold', fontSize: 8 },
+      styles: { font: 'helvetica', fontSize: 8, cellPadding: 4.5, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.3, textColor: [51, 65, 85] },
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
       columnStyles: { 2: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] } },
     })
 
@@ -259,7 +281,7 @@ export class ReportService {
         { label: 'Ingresos Cobrados', value: this.pdf.formatCurrency(totalIncome) },
         { label: 'Pendiente de Cobro', value: this.pdf.formatCurrency(totalPending) },
       ],
-      36,
+      34,
     )
 
     autoTable(doc, {
@@ -277,13 +299,30 @@ export class ReportService {
         this.pdf.formatCurrency(r.pendingAmount),
       ]),
       theme: 'plain',
-      styles: { font: 'helvetica', fontSize: 7.5, cellPadding: 3.5, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.5 },
-      headStyles: { fillColor: this.pdf.LIGHT_COLOR, textColor: [71, 85, 105], fontStyle: 'bold', fontSize: 7.5 },
+      styles: { font: 'helvetica', fontSize: 7.5, cellPadding: 4, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.3, textColor: [51, 65, 85] },
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7.5 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
       columnStyles: {
-        6: { halign: 'right', fontStyle: 'bold' },
-        7: { halign: 'right', textColor: [22, 101, 52] },
-        8: { halign: 'right', textColor: [153, 27, 27] },
+        3: { halign: 'center' },
+        6: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] },
+        7: { halign: 'right', fontStyle: 'bold', textColor: [22, 163, 74] },
+        8: { halign: 'right', fontStyle: 'bold', textColor: [220, 38, 38] },
       },
+      willDrawCell: (data) => {
+        if (data.cell.section === 'body' && data.column.index === 3) {
+          const status = String(data.cell.raw).toUpperCase();
+          if (status.includes('CONFIRM') || status.includes('PAGADO')) {
+            data.cell.styles.textColor = [22, 163, 74];
+            data.cell.styles.fontStyle = 'bold';
+          } else if (status.includes('PEND')) {
+            data.cell.styles.textColor = [217, 119, 6];
+            data.cell.styles.fontStyle = 'bold';
+          } else if (status.includes('REJECT') || status.includes('RECHAZ') || status.includes('CANCEL')) {
+            data.cell.styles.textColor = [220, 38, 38];
+            data.cell.styles.fontStyle = 'bold';
+          }
+        }
+      }
     })
 
     this.pdf.addPdfFooter(doc)
@@ -308,7 +347,7 @@ export class ReportService {
         { label: 'Ocupación Promedio', value: `${avgOccupancy.toFixed(1)}%` },
         { label: 'Ingresos Generados', value: this.pdf.formatCurrency(totalIncome) },
       ],
-      36,
+      34,
     )
 
     autoTable(doc, {
@@ -325,9 +364,14 @@ export class ReportService {
         this.pdf.formatCurrency(a.generatedIncome),
       ]),
       theme: 'plain',
-      styles: { font: 'helvetica', fontSize: 8, cellPadding: 4, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.5 },
-      headStyles: { fillColor: this.pdf.LIGHT_COLOR, textColor: [71, 85, 105], fontStyle: 'bold', fontSize: 8 },
-      columnStyles: { 6: { halign: 'center', fontStyle: 'bold' }, 7: { halign: 'right', fontStyle: 'bold' } },
+      styles: { font: 'helvetica', fontSize: 8, cellPadding: 4.5, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.3, textColor: [51, 65, 85] },
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      columnStyles: {
+        0: { fontStyle: 'bold', textColor: [15, 23, 42] },
+        6: { halign: 'center', fontStyle: 'bold' },
+        7: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] }
+      },
     })
 
     this.pdf.addPdfFooter(doc)
@@ -349,28 +393,32 @@ export class ReportService {
         { label: 'Gastos totales', value: this.pdf.formatCurrency(data.totalExpenses) },
         { label: 'Ganancia neta', value: this.pdf.formatCurrency(data.netProfit) },
       ],
-      36,
+      34,
     )
 
     const isProfitable = data.netProfit >= 0
     const alertBg: [number, number, number] = isProfitable ? [240, 253, 244] : [254, 242, 242]
     const alertText: [number, number, number] = isProfitable ? [21, 128, 61] : [185, 28, 28]
+    const alertBorder: [number, number, number] = isProfitable ? [187, 247, 208] : [254, 202, 202]
 
     doc.setFillColor(...alertBg)
-    doc.setDrawColor(...this.pdf.BORDER_COLOR)
+    doc.setDrawColor(...alertBorder)
     doc.setLineWidth(0.4)
-    doc.roundedRect(14, y, pageW - 28, 14, 1, 1, 'FD')
+    doc.roundedRect(14, y, pageW - 28, 12, 1, 1, 'FD')
+
+    // Add a tiny colored bar on the left of the card
+    doc.setFillColor(...alertText)
+    doc.roundedRect(14, y, 2.5, 12, 0.5, 0.5, 'F')
 
     doc.setFontSize(8.5)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...alertText)
     doc.text(
-      `${isProfitable ? '✓ Rentabilidad Estaba Positiva' : '⚠ Balance de Pérdida Neta'}  •  Diferencial Operativo: ${this.pdf.formatCurrency(data.netProfit)}`,
-      pageW / 2,
-      y + 9,
-      { align: 'center' },
+      `${isProfitable ? '✓ Rentabilidad Positiva' : '⚠ Balance de Pérdida Neta'}  •  Diferencial Operativo: ${this.pdf.formatCurrency(data.netProfit)}`,
+      19,
+      y + 8,
     )
-    y += 22
+    y += 18
 
     doc.setFontSize(10)
     doc.setFont('helvetica', 'bold')
@@ -387,11 +435,12 @@ export class ReportService {
         `${e.percentage.toFixed(1)}%`,
       ]),
       theme: 'plain',
-      styles: { font: 'helvetica', fontSize: 8.5, cellPadding: 4.5, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.5 },
-      headStyles: { fillColor: this.pdf.LIGHT_COLOR, textColor: [71, 85, 105], fontStyle: 'bold' },
+      styles: { font: 'helvetica', fontSize: 8.5, cellPadding: 4.5, lineColor: this.pdf.BORDER_COLOR, lineWidth: 0.3, textColor: [51, 65, 85] },
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 8.5 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
       columnStyles: {
-        1: { halign: 'right', fontStyle: 'bold' },
-        2: { halign: 'center', textColor: this.pdf.TEXT_MUTED },
+        1: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] },
+        2: { halign: 'center', textColor: [100, 116, 139] },
       },
     })
 
