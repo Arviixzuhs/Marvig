@@ -30,6 +30,37 @@ model User {
   updatedAt         DateTime?          @updatedAt
   reservations      Reservation[]
   verificationCodes VerificationCode[]
+  notifications     Notification[]
+}
+
+enum NotificationType {
+  PAYMENT_ACTIVITY // Validaciones de pagos, confirmaciones, alertas de fallos
+  SYSTEM_ANNOUNCEMENT // Avisos generales o promociones activadas
+}
+
+enum NotificationStatus {
+  READ
+  UNREAD
+  ARCHIVED
+}
+
+model Notification {
+  id     Int                @id @default(autoincrement())
+  type   NotificationType
+  status NotificationStatus @default(UNREAD)
+
+  title String
+  body  String
+
+  payload   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userTargetRole UserRole @default(USER)
+  user           User?    @relation(fields: [userId], references: [id])
+  userId         Int?
+
+  @@index([userId])
 }
 
 model VerificationCode {

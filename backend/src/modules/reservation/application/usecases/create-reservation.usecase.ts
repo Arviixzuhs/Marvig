@@ -1,20 +1,25 @@
+import { UserRole } from '@/common/enums/user-role.enum'
+import { UserModel } from '@/modules/user/domain/models/user.model'
 import { EmailService } from '@/common/utils/mail-sender.util'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
+import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
-import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
+import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
 import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
+import { calcTotalByApartments } from '@/common/utils/calc-total-by-apartments.util'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
+import { NotificationRepositoryPort } from '@/modules/notification/domain/repositories/notification.repository.port'
 import {
   Inject,
   Injectable,
+  NotFoundException,
   ConflictException,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common'
 
 @Injectable()
@@ -32,12 +37,19 @@ export class CreateReservationUseCase {
     @Inject('UserRepository')
     private readonly userRepository: UserRepositoryPort,
 
+    @Inject('NotificationRepository')
+    private readonly notificationRepository: NotificationRepositoryPort,
+
     private readonly emailService: EmailService,
   ) {}
 
   async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
-    const user = await this.userRepository.findUser(userId)
-    if (!user) throw new NotFoundException('El usuario no existe')
+    let user: UserModel | null = null
+
+    if (userId) {
+      user = await this.userRepository.findUser(userId)
+      if (!user) throw new NotFoundException('El usuario no existe')
+    }
 
     const toDay = new Date()
     const start = new Date(data.startDate)
@@ -46,9 +58,6 @@ export class CreateReservationUseCase {
     if (start >= end) {
       throw new BadRequestException('La fecha de entrada debe ser anterior a la de salida')
     }
-
-    const diffTime = Math.abs(end.getTime() - start.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
     const apartments = await this.apartmentRepository.findApartments({
       ids: data.apartmentIds,
@@ -76,25 +85,11 @@ export class CreateReservationUseCase {
       throw new ConflictException('Uno de los apartamentos está en mantenimiento.')
     }
 
-    const calculatedTotal = apartments.content.reduce((acc, apartment) => {
-      let pricePerDay = Number(apartment.pricePerDay)
-      let discount = 0
-
-      if (apartment.promotion) {
-        const promoValue = Number(apartment.promotion.value)
-
-        if (apartment.promotion.type === PromotionTypeEnum.PERCENTAGE) {
-          discount = (pricePerDay * promoValue) / 100
-        } else {
-          discount = promoValue
-        }
-      }
-
-      const finalPricePerDay = pricePerDay - discount
-      return acc + finalPricePerDay * diffDays
-    }, 0)
-
-    const finalTotal = Math.round(calculatedTotal * 100) / 100
+    const finalTotal = calcTotalByApartments({
+      endDate: end,
+      startDate: start,
+      apartments: apartments.content,
+    })
 
     if (Math.abs(finalTotal - data.totalPrice) > 0.01) {
       throw new BadRequestException(
@@ -113,11 +108,26 @@ export class CreateReservationUseCase {
     const createdPayment = await this.paymentRepository.createPayment({
       date: new Date(),
       amount: finalTotal,
-      status: PaymentStatus.CONFIRMED,
+      status: user.role === UserRole.ADMIN ? PaymentStatus.CONFIRMED : PaymentStatus.PENDING,
       method: data.payment.method,
       reference: data.payment.reference,
       description: data.payment.description,
       reservationId: createdReservation.id,
+    })
+
+    const isConfirmed = createdPayment.status === PaymentStatus.CONFIRMED
+    const notificationTitle = isConfirmed ? '¡Pago Confirmado!' : 'Pago Registrado'
+    const notificationBody = isConfirmed
+      ? `Tu pago de $${finalTotal} por la reservación #${createdReservation.id} ha sido confirmado con éxito.`
+      : `Hemos recibido tu reporte de pago por $${finalTotal} (Ref: ${data.payment.reference}). Está en proceso de verificación.`
+
+    await this.notificationRepository.createNotification({
+      body: notificationBody,
+      type: NotificationType.PAYMENT_ACTIVITY,
+      title: notificationTitle,
+      status: NotificationStatus.UNREAD,
+      userId: user.id,
+      userTargetRole: UserRole.ADMIN,
     })
 
     const todayMidnight = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate())
@@ -141,7 +151,6 @@ export class CreateReservationUseCase {
           <hr />
           <p><strong>Fecha de Entrada (Check-in):</strong> ${getFormattedDateTime({ value: start })}</p>
           <p><strong>Fecha de Salida (Check-out):</strong> ${getFormattedDateTime({ value: end })}</p>
-          <p><strong>Total de Noches:</strong> ${diffDays}</p>
           <p><strong>Total Pagado:</strong> $${finalTotal}</p>
           <hr />
           <p>El pago con referencia <strong>${createdPayment.reference}</strong> fue aprobado mediante el método de <strong>${createdPayment.method}</strong>.</p>

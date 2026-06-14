@@ -3,6 +3,7 @@ import { PaymentPage } from '@/modules/payment/application/dto/payment-page.dto'
 import { PaymentModel } from '@/modules/payment/domain/models/payment.model'
 import { PrismaClient } from 'generated/prisma/client'
 import { PaymentMapper } from '@/modules/payment/infrastructure/mappers/payment.mapper'
+import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
 import { CreatePaymentDto } from '@/modules/payment/application/dto/create-payment.dto'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
@@ -28,6 +29,19 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
     })
 
     return this.paymentMapper.modelToDomain(createdPayment)
+  }
+
+  async updateStatus(id: number, status: PaymentStatus): Promise<PaymentModel> {
+    const updatedPayment = await this.prisma.payment.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
+    })
+
+    return this.paymentMapper.modelToDomain(updatedPayment)
   }
 
   async findPayments(filters: PaymentFilterDto): Promise<PaymentPage> {

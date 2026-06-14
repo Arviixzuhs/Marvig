@@ -21,6 +21,7 @@ import { PermissionGuard } from '@/common/guards/permission.guard'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { ReservationModule } from '@/modules/reservation/reservation.module'
 import { GqlThrottlerGuard } from '@/common/guards/gql-throttler.guard'
+import { NotificationModule } from '@/modules/notification/notification.module'
 import { VerificationCodeModule } from '@/modules/verificationCode/verificationCode.module'
 import { ReportModule } from '@/modules/report/report.module'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
@@ -39,6 +40,7 @@ config()
     EmployeeModule,
     PromotionModule,
     ApartmentModule,
+    NotificationModule,
     ReservationModule,
     VerificationCodeModule,
     ReportModule,
