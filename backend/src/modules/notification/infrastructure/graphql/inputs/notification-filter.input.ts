@@ -3,6 +3,7 @@ import { NotificationStatus } from '@/modules/notification/domain/enums/notifica
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator'
+import { UserRole } from '@/common/enums/user-role.enum'
 
 @InputType()
 export class NotificationFilterInput extends PaginationFilterInput {
@@ -20,6 +21,11 @@ export class NotificationFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsEnum(NotificationStatus)
   status?: NotificationStatus
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsEnum(UserRole)
+  userTargetRole?: UserRole
 
   @Field({ nullable: true })
   @IsOptional()

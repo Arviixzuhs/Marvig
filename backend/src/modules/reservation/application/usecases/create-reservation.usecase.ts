@@ -127,6 +127,7 @@ export class CreateReservationUseCase {
       title: notificationTitle,
       status: NotificationStatus.UNREAD,
       userId: user.id,
+      userTargetRole: UserRole.ADMIN,
     })
 
     const todayMidnight = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate())
