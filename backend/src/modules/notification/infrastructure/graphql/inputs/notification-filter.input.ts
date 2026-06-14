@@ -1,9 +1,9 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator'
-import { UserRole } from '@/common/enums/user-role.enum'
 
 @InputType()
 export class NotificationFilterInput extends PaginationFilterInput {

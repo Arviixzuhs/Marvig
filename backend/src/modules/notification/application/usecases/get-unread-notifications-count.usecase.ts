@@ -8,7 +8,7 @@ export class GetUnreadNotificationsCountUseCase {
     private readonly notificationRepository: NotificationRepositoryPort,
   ) {}
 
-  async execute(userId?: number): Promise<number> {
+  async execute(userId: number): Promise<number> {
     const result = await this.notificationRepository.getUnreadNotificationsCount(userId)
 
     return result
