@@ -1,4 +1,5 @@
 import { Prisma } from 'generated/prisma/client'
+import { UserRole } from '@/common/enums/user-role.enum'
 import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
 
@@ -25,6 +26,13 @@ export class NotificationSpecificationBuilder {
   withStatus(status: NotificationStatus) {
     if (status) {
       this.where.status = status
+    }
+    return this
+  }
+
+  withUserTargetRole(userTargetRole: UserRole) {
+    if (userTargetRole) {
+      this.where.userTargetRole = userTargetRole
     }
     return this
   }

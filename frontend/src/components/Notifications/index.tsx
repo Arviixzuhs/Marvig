@@ -1,4 +1,5 @@
 import React from 'react'
+import { UserRole } from '@/models/UserModel'
 import { IPageResponse } from '@/api/interfaces'
 import { getFormattedDateTime } from '@/utils/getFormattedDateTime'
 import { useMutation, useQuery } from '@apollo/client/react'
@@ -32,7 +33,9 @@ export const Notifications = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const { data, loading } = useQuery<NotificationsFeedData>(GET_NOTIFICATIONS_FEED, {
     variables: {
-      filters: {},
+      filters: {
+        userTargetRole: UserRole.ADMIN,
+      },
     },
     pollInterval: 30000,
   })
