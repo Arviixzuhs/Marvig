@@ -14,7 +14,7 @@ export class NotificationResolver {
     private readonly findNotificationsUseCase: FindNotificationsUseCase,
     private readonly markNotificationsAsReadUseCase: MarkNotificationsAsReadUseCase,
     private readonly getUnreadNotificationsCountUseCase: GetUnreadNotificationsCountUseCase,
-  ) { }
+  ) {}
 
   @Query(() => NotificationPageType)
   findNotifications(

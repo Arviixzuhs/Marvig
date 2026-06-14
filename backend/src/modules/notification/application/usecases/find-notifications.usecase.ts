@@ -12,17 +12,17 @@ export class FindNotificationsUseCase {
 
     @Inject('UserRepository')
     private readonly userRepository: UserRepositoryPort,
-  ) { }
+  ) {}
 
-  async execute(data: NotificationFilterDto, userId?: number): Promise<NotificationPage> {
-    if (userId && data.userTargetRole) {
+  async execute(filters: NotificationFilterDto, userId?: number): Promise<NotificationPage> {
+    if (userId && filters.userTargetRole) {
       const user = await this.userRepository.findUser(userId)
-      if (user.role !== data.userTargetRole) {
-        throw new ForbiddenException("No tienes permisos para ver estas notificaciones")
+      if (user.role !== filters.userTargetRole) {
+        throw new ForbiddenException('No tienes permisos para ver estas notificaciones')
       }
     }
 
-    const result = await this.notificationRepository.findNotifications(data, userId)
+    const result = await this.notificationRepository.findNotifications(filters, userId)
 
     return result
   }
