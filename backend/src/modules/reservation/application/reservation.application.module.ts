@@ -14,6 +14,7 @@ import { UpdateReservationStatusUseCase } from './usecases/update-reservation-st
 import { PrismaPaymentRepositoryAdapter } from '@/modules/payment/infrastructure/repositories/prisma.payment.repository.adapter'
 import { PrismaApartmentRepositoryAdapter } from '@/modules/apartment/infrastructure/repositories/prisma.apartment.repository.adapter'
 import { PrismaReservationRepositoryAdapter } from '@/modules/reservation/infrastructure/repositories/prisma.reservation.repository.adapter'
+import { PrismaNotificationRepositoryAdapter } from '@/modules/notification/infrastructure/repositories/prisma.notification.repository.adapter'
 
 config()
 @Module({
@@ -48,6 +49,10 @@ config()
     {
       provide: 'UserRepository',
       useClass: PrismaUserRepositoryAdapter,
+    },
+    {
+      provide: 'NotificationRepository',
+      useClass: PrismaNotificationRepositoryAdapter,
     },
   ],
   exports: [
