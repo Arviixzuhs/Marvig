@@ -62,9 +62,9 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
       if (type === 'float') {
         const dots = (sanitizedString.match(/\./g) || []).length
         if (dots > 1) return
-        processedValue = sanitizedString
+        processedValue = parseFloat(sanitizedString)
       } else {
-        processedValue = sanitizedString
+        processedValue = parseInt(sanitizedString)
       }
     }
 

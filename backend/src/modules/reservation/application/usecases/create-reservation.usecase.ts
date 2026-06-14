@@ -2,8 +2,10 @@ import { UserRole } from '@/common/enums/user-role.enum'
 import { UserModel } from '@/modules/user/domain/models/user.model'
 import { EmailService } from '@/common/utils/mail-sender.util'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
+import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
+import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
 import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
@@ -11,6 +13,7 @@ import { calcTotalByApartments } from '@/common/utils/calc-total-by-apartments.u
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
+import { NotificationRepositoryPort } from '@/modules/notification/domain/repositories/notification.repository.port'
 import {
   Inject,
   Injectable,
@@ -33,6 +36,9 @@ export class CreateReservationUseCase {
 
     @Inject('UserRepository')
     private readonly userRepository: UserRepositoryPort,
+
+    @Inject('NotificationRepository')
+    private readonly notificationRepository: NotificationRepositoryPort,
 
     private readonly emailService: EmailService,
   ) {}
@@ -107,6 +113,20 @@ export class CreateReservationUseCase {
       reference: data.payment.reference,
       description: data.payment.description,
       reservationId: createdReservation.id,
+    })
+
+    const isConfirmed = createdPayment.status === PaymentStatus.CONFIRMED
+    const notificationTitle = isConfirmed ? '¡Pago Confirmado!' : 'Pago Registrado'
+    const notificationBody = isConfirmed
+      ? `Tu pago de $${finalTotal} por la reservación #${createdReservation.id} ha sido confirmado con éxito.`
+      : `Hemos recibido tu reporte de pago por $${finalTotal} (Ref: ${data.payment.reference}). Está en proceso de verificación.`
+
+    await this.notificationRepository.createNotification({
+      body: notificationBody,
+      type: NotificationType.PAYMENT_ACTIVITY,
+      title: notificationTitle,
+      status: NotificationStatus.UNREAD,
+      userId: user.id,
     })
 
     const todayMidnight = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate())

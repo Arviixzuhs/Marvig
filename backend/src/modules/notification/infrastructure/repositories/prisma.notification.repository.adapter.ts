@@ -9,7 +9,7 @@ import { NotificationSpecificationBuilder } from '@/modules/notification/infrast
 
 @Injectable()
 export class PrismaNotificationRepositoryAdapter implements NotificationRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly notificationMapper = new NotificationMapper()
 
@@ -52,6 +52,18 @@ export class PrismaNotificationRepositoryAdapter implements NotificationReposito
     })
 
     return this.notificationMapper.modelToDomain(createdNotification)
+  }
+
+  async markNotificationsAsRead(userId: number): Promise<void> {
+    await this.prisma.notification.updateMany({
+      where: {
+        userId,
+        status: NotificationStatus.UNREAD,
+      },
+      data: {
+        status: NotificationStatus.READ,
+      },
+    })
   }
 
   async getUnreadNotificationsCount(userId?: number): Promise<number> {
