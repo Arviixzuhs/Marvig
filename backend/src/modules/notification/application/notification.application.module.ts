@@ -40,4 +40,4 @@ config()
     GetUnreadNotificationsCountUseCase,
   ],
 })
-export class NotificationApplicationModule { }
+export class NotificationApplicationModule {}

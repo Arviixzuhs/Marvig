@@ -7,5 +7,5 @@ export interface NotificationRepositoryPort {
   findNotifications(filters: NotificationFilterDto, userId?: number): Promise<NotificationPage>
   createNotification(data: CreateNotificationDto): Promise<NotificationModel>
   markNotificationsAsRead(userId: number): Promise<void>
-  getUnreadNotificationsCount(userId?: number): Promise<number>
+  getUnreadNotificationsCount(userId: number): Promise<number>
 }

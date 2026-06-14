@@ -9,7 +9,7 @@ import { NotificationSpecificationBuilder } from '@/modules/notification/infrast
 
 @Injectable()
 export class PrismaNotificationRepositoryAdapter implements NotificationRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly notificationMapper = new NotificationMapper()
 
