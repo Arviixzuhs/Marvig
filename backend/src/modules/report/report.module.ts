@@ -1,9 +1,19 @@
 import { Module } from '@nestjs/common'
-import { ReportDomainModule } from '@/modules/report/domain/report.domain.module'
-import { ReportApplicationModule } from '@/modules/report/application/report.application.module'
-import { ReportInfrastructureModule } from '@/modules/report/infrastructure/report.infrastructure.module'
+import { ReportController } from './report.controller'
+import { ReportService } from './report.service'
+import { PrismaService } from '@/prisma/prisma.service'
+import { PdfGeneratorService } from '@/common/utils/pdf-generator.service'
+import { PaymentApplicationModule } from '@/modules/payment/application/payment.application.module'
+import { ExpenseApplicationModule } from '@/modules/expense/application/expense.application.module'
+import { ReservationApplicationModule } from '@/modules/reservation/application/reservation.application.module'
 
 @Module({
-  imports: [ReportDomainModule, ReportApplicationModule, ReportInfrastructureModule],
+  imports: [
+    PaymentApplicationModule,
+    ExpenseApplicationModule,
+    ReservationApplicationModule,
+  ],
+  controllers: [ReportController],
+  providers: [ReportService, PrismaService, PdfGeneratorService],
 })
 export class ReportModule {}

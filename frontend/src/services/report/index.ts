@@ -1,87 +1,61 @@
-import { apolloClient } from '@/api/apollo-client'
-import {
-  EXPENSE_REPORT_QUERY,
-  INCOME_SUMMARY_QUERY,
-  OCCUPANCY_REPORT_QUERY,
-  PAYMENT_REPORT_QUERY,
-  RESERVATION_REPORT_QUERY,
-} from './graphql/reportQueries'
+import { api } from '@/api/axios-client'
 import {
   IExpenseReportFilter,
-  IExpenseReportPage,
-  IIncomeSummary,
   IIncomeSummaryFilter,
-  IOccupancyReport,
   IOccupancyReportFilter,
   IPaymentReportFilter,
-  IPaymentReportPage,
   IReservationReportFilter,
-  IReservationReportPage,
 } from '@/models/ReportModel'
 
 export const reportService = {
-  getPaymentReport: async (
+
+  downloadPaymentReportPdf: async (
     filters: IPaymentReportFilter,
-  ): Promise<IPaymentReportPage | null> => {
-    const { data } = await apolloClient.query<{
-      paymentReport: IPaymentReportPage
-    }>({
-      query: PAYMENT_REPORT_QUERY,
-      variables: { filters },
-      fetchPolicy: 'network-only',
+  ): Promise<Blob> => {
+    const { data } = await api.get<Blob>('/reports/payments/pdf', {
+      params: filters,
+      responseType: 'blob',
     })
-    return data?.paymentReport || null
+    return data
   },
 
-  getExpenseReport: async (
+  downloadExpenseReportPdf: async (
     filters: IExpenseReportFilter,
-  ): Promise<IExpenseReportPage | null> => {
-    const { data } = await apolloClient.query<{
-      expenseReport: IExpenseReportPage
-    }>({
-      query: EXPENSE_REPORT_QUERY,
-      variables: { filters },
-      fetchPolicy: 'network-only',
+  ): Promise<Blob> => {
+    const { data } = await api.get<Blob>('/reports/expenses/pdf', {
+      params: filters,
+      responseType: 'blob',
     })
-    return data?.expenseReport || null
+    return data
   },
 
-  getReservationReport: async (
+  downloadReservationReportPdf: async (
     filters: IReservationReportFilter,
-  ): Promise<IReservationReportPage | null> => {
-    const { data } = await apolloClient.query<{
-      reservationReport: IReservationReportPage
-    }>({
-      query: RESERVATION_REPORT_QUERY,
-      variables: { filters },
-      fetchPolicy: 'network-only',
+  ): Promise<Blob> => {
+    const { data } = await api.get<Blob>('/reports/reservations/pdf', {
+      params: filters,
+      responseType: 'blob',
     })
-    return data?.reservationReport || null
+    return data
   },
 
-  getOccupancyReport: async (
+  downloadOccupancyReportPdf: async (
     filters: IOccupancyReportFilter,
-  ): Promise<IOccupancyReport | null> => {
-    const { data } = await apolloClient.query<{
-      occupancyReport: IOccupancyReport
-    }>({
-      query: OCCUPANCY_REPORT_QUERY,
-      variables: { filters },
-      fetchPolicy: 'network-only',
+  ): Promise<Blob> => {
+    const { data } = await api.get<Blob>('/reports/occupancy/pdf', {
+      params: filters,
+      responseType: 'blob',
     })
-    return data?.occupancyReport || null
+    return data
   },
 
-  getIncomeSummary: async (
+  downloadIncomeSummaryPdf: async (
     filters: IIncomeSummaryFilter,
-  ): Promise<IIncomeSummary | null> => {
-    const { data } = await apolloClient.query<{
-      incomeSummary: IIncomeSummary
-    }>({
-      query: INCOME_SUMMARY_QUERY,
-      variables: { filters },
-      fetchPolicy: 'network-only',
+  ): Promise<Blob> => {
+    const { data } = await api.get<Blob>('/reports/income-summary/pdf', {
+      params: filters,
+      responseType: 'blob',
     })
-    return data?.incomeSummary || null
+    return data
   },
 }

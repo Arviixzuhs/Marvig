@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import GeminiLogo from '@/assets/icons/gemini_logo.png'
 import { useEffect, useRef, useState } from 'react'
-import { Plus, X, Send, Bot, User, Trash2, Maximize2, Minimize2, MessageSquare, MoreVertical } from 'lucide-react';
+import { Plus, X, Send, MessageSquare, MoreVertical } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
