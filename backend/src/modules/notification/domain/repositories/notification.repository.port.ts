@@ -6,4 +6,5 @@ import { CreateNotificationDto } from '@/modules/notification/application/dto/cr
 export interface NotificationRepositoryPort {
   findNotifications(filters: NotificationFilterDto): Promise<NotificationPage>
   createNotification(data: CreateNotificationDto): Promise<NotificationModel>
+  getUnreadNotificationsCount(userId?: number): Promise<number>
 }
