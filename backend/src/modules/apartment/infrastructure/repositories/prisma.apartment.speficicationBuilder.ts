@@ -1,5 +1,6 @@
 import { Prisma } from 'generated/prisma/client'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
 export interface ApartmentSpecificationBuild {
   where: Prisma.ApartmentWhereInput
@@ -9,10 +10,8 @@ export interface ApartmentSpecificationBuild {
   include?: Prisma.ApartmentInclude
 }
 
-export class ApartmentSpecificationBuilder {
+export class ApartmentSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.ApartmentWhereInput = {}
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.ApartmentOrderByWithRelationInput
   private include?: Prisma.ApartmentInclude
 
@@ -73,12 +72,6 @@ export class ApartmentSpecificationBuilder {
 
   withIsDeleted(isDeleted: boolean = false) {
     this.where.isDeleted = isDeleted
-    return this
-  }
-
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
     return this
   }
 

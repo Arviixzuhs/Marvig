@@ -11,7 +11,7 @@ import { PaymentSpecificationBuilder } from './prisma.payment.specificationBuild
 
 @Injectable()
 export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly paymentMapper = new PaymentMapper()
 
@@ -48,9 +48,9 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
     const query = new PaymentSpecificationBuilder()
       .withSearch(filters.search)
       .withStatus(filters.status)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withReservationId(filters.reservationId)
-      .withCreatedAtBetween(filters.fromDate, filters.toDate)
+      .withDateBetween(filters.fromDate, filters.toDate)
       .withOrderBy({ createdAt: 'desc' })
       .withInclude({ reservation: { include: { apartments: true } } })
       .build()
@@ -65,7 +65,7 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
       totalItems,
       totalPages: Math.ceil(totalItems / query.take),
       currentPage: filters.page,
-      rowsPerPage: query.take
+      rowsPerPage: query.take,
     }
   }
 

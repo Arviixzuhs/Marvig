@@ -32,7 +32,7 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
       .withSearch(filters.search)
       .withName(filters.name)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 

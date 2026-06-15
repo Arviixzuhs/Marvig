@@ -20,7 +20,7 @@ export class PrismaNotificationRepositoryAdapter implements NotificationReposito
       .withUserId(userId)
       .withUserTargetRole(filters.userTargetRole)
       .withDateBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 

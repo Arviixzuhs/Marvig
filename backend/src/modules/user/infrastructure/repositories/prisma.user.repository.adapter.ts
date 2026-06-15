@@ -32,7 +32,7 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
       .withName(filters.name)
       .withEmail(filters.email)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 

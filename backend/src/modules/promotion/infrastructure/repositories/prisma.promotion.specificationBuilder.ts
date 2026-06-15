@@ -1,3 +1,4 @@
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 import { Prisma } from 'generated/prisma/client'
 
 export interface PromotionSpecificationBuild {
@@ -8,10 +9,8 @@ export interface PromotionSpecificationBuild {
   include?: Prisma.PromotionInclude
 }
 
-export class PromotionSpecificationBuilder {
+export class PromotionSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.PromotionWhereInput = { isDeleted: false }
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.PromotionOrderByWithRelationInput
   private include?: Prisma.PromotionInclude
 
@@ -39,12 +38,6 @@ export class PromotionSpecificationBuilder {
         ...(toDate && { lte: new Date(toDate) }),
       }
     }
-    return this
-  }
-
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
     return this
   }
 

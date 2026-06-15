@@ -12,7 +12,7 @@ import { ReservationSpecificationBuilder } from './prisma.reservation.specificat
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly reservationMapper = new ReservationMapper()
 
@@ -28,7 +28,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withTotalPriceBetween(filters.minPrice, filters.maxPrice)
       .withIsDeleted(false)
       .withOrderBy({ createdAt: 'desc' })
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withInclude({ user: true, apartments: true, payments: true })
       .build()
 
