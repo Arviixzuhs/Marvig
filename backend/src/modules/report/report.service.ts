@@ -12,6 +12,16 @@ import { ExpenseReportQueryDto } from './dto/expense-report-query.dto'
 import { ReservationReportQueryDto } from './dto/reservation-report-query.dto'
 import { OccupancyReportQueryDto } from './dto/occupancy-report-query.dto'
 
+const CATEGORY_MAP: Record<string, string> = {
+  MAINTENANCE: 'Mantenimiento',
+  CLEANING: 'Limpieza',
+  UTILITIES: 'Servicios',
+  SUPPLIES: 'Suministros',
+  TAXES: 'Impuestos',
+  SALARIES: 'Salarios',
+  OTHER: 'Otros',
+}
+
 interface OccupancyReportInput {
   fromDate: string
   toDate: string
@@ -237,7 +247,7 @@ export class ReportService {
         e.id,
         e.date ? this.pdf.formatDate(e.date) : '—',
         this.pdf.formatCurrency(e.amount),
-        e.category.replace(/_/g, ' '),
+        CATEGORY_MAP[e.category] || e.category.replace(/_/g, ' '),
         e.description || '—',
         e.apartment ? `#${e.apartment.number} (Piso ${e.apartment.floor})` : '—',
       ]),
@@ -381,7 +391,6 @@ export class ReportService {
   async getIncomeSummaryPdf(filters: OccupancyReportQueryDto): Promise<Buffer> {
     const data = await this.getIncomeSummary(filters)
     const doc = new jsPDF()
-    const pageW = doc.internal.pageSize.getWidth()
     const subtitle = `${this.pdf.formatDate(filters.fromDate)} — ${this.pdf.formatDate(filters.toDate)}`
 
     this.pdf.addPdfHeader(doc, 'Resumen de Ingresos', subtitle)
@@ -396,30 +405,6 @@ export class ReportService {
       34,
     )
 
-    const isProfitable = data.netProfit >= 0
-    const alertBg: [number, number, number] = isProfitable ? [240, 253, 244] : [254, 242, 242]
-    const alertText: [number, number, number] = isProfitable ? [21, 128, 61] : [185, 28, 28]
-    const alertBorder: [number, number, number] = isProfitable ? [187, 247, 208] : [254, 202, 202]
-
-    doc.setFillColor(...alertBg)
-    doc.setDrawColor(...alertBorder)
-    doc.setLineWidth(0.4)
-    doc.roundedRect(14, y, pageW - 28, 12, 1, 1, 'FD')
-
-    // Add a tiny colored bar on the left of the card
-    doc.setFillColor(...alertText)
-    doc.roundedRect(14, y, 2.5, 12, 0.5, 0.5, 'F')
-
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...alertText)
-    doc.text(
-      `${isProfitable ? '✓ Rentabilidad Positiva' : '⚠ Balance de Pérdida Neta'}  •  Diferencial Operativo: ${this.pdf.formatCurrency(data.netProfit)}`,
-      19,
-      y + 8,
-    )
-    y += 18
-
     doc.setFontSize(10)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...this.pdf.BRAND_COLOR)
@@ -430,7 +415,7 @@ export class ReportService {
       startY: y,
       head: [['Categoría', 'Monto Total Desembolsado', '% del Total']],
       body: data.expensesByCategory.map((e) => [
-        e.category.replace(/_/g, ' '),
+        CATEGORY_MAP[e.category] || e.category.replace(/_/g, ' '),
         this.pdf.formatCurrency(e.amount),
         `${e.percentage.toFixed(1)}%`,
       ]),

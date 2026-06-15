@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Modal,
   ModalContent,
@@ -7,11 +7,16 @@ import {
   ModalFooter,
   Button,
   Input,
+  Select,
+  SelectItem,
+  Selection,
 } from '@heroui/react'
 import { FileDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { reportService } from '@/services/report'
 import { IOccupancyReportFilter } from '@/models/ReportModel'
+import { apartmentService } from '@/services/apartment'
+import { ApartmentModel } from '@/models/ApartmentModel'
 
 interface Props {
   isOpen: boolean
@@ -31,7 +36,32 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
     fromDate: firstDay,
     toDate: lastDay,
   })
+  const [apartments, setApartments] = useState<ApartmentModel[]>([])
+  const [selectedApartments, setSelectedApartments] = useState<Selection>(new Set([]))
+  const [loadingApartments, setLoadingApartments] = useState(false)
   const [pdfLoading, setPdfLoading] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchApartments = async () => {
+        setLoadingApartments(true)
+        try {
+          const res = await apartmentService.getAll({ page: 0, pageSize: 100 })
+          if (res && res.content) {
+            setApartments(res.content)
+          }
+        } catch (error) {
+          console.error('Error fetching apartments:', error)
+          toast.error('No se pudieron cargar los apartamentos')
+        } finally {
+          setLoadingApartments(false)
+        }
+      }
+      fetchApartments()
+    } else {
+      setSelectedApartments(new Set([]))
+    }
+  }, [isOpen])
 
   const handleExportPdf = async () => {
     if (!filters.fromDate || !filters.toDate) {
@@ -40,7 +70,15 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
     }
     setPdfLoading(true)
     try {
-      const blob = await reportService.downloadOccupancyReportPdf(filters)
+      const apartmentIds = selectedApartments === 'all'
+        ? undefined
+        : Array.from(selectedApartments).map((id) => Number(id))
+
+      const blob = await reportService.downloadOccupancyReportPdf({
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+        apartmentIds: apartmentIds && apartmentIds.length > 0 ? apartmentIds : undefined,
+      })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -93,6 +131,22 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
               value={filters.toDate}
               onValueChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
             />
+            <Select
+              label='Filtrar por Apartamento(s)'
+              placeholder='Todos los apartamentos'
+              selectionMode='multiple'
+              size='sm'
+              selectedKeys={selectedApartments}
+              onSelectionChange={setSelectedApartments}
+              isLoading={loadingApartments}
+              className='col-span-1 sm:col-span-2'
+            >
+              {apartments.map((apt) => (
+                <SelectItem key={apt.id.toString()} textValue={`#${apt.number} (Piso ${apt.floor})`}>
+                  #{apt.number} (Piso {apt.floor})
+                </SelectItem>
+              ))}
+            </Select>
           </div>
         </ModalBody>
 
