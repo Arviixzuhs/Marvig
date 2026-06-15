@@ -1,4 +1,5 @@
 import { Prisma } from 'generated/prisma/client'
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
 export interface EmployeeSpecificationBuild {
   where: Prisma.EmployeeWhereInput
@@ -7,10 +8,8 @@ export interface EmployeeSpecificationBuild {
   orderBy?: Prisma.EmployeeOrderByWithRelationInput
 }
 
-export class EmployeeSpecificationBuilder {
+export class EmployeeSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.EmployeeWhereInput = {}
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.EmployeeOrderByWithRelationInput
 
   withName(name?: string) {
@@ -67,12 +66,6 @@ export class EmployeeSpecificationBuilder {
     if (isDeleted !== undefined) {
       this.where.isDeleted = isDeleted
     }
-    return this
-  }
-
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
     return this
   }
 

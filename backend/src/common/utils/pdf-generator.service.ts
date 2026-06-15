@@ -7,11 +7,11 @@ import { jsPDF } from 'jspdf'
  */
 @Injectable()
 export class PdfGeneratorService {
-  readonly BRAND_COLOR: [number, number, number] = [15, 23, 42]      // slate-900 (Deep, elegant)
-  readonly ACCENT_COLOR: [number, number, number] = [79, 70, 229]     // Indigo-600 (Vibrant brand color)
-  readonly LIGHT_COLOR: [number, number, number] = [248, 250, 252]    // slate-50
-  readonly TEXT_MUTED: [number, number, number] = [100, 116, 139]    // slate-500
-  readonly BORDER_COLOR: [number, number, number] = [226, 232, 240]  // slate-200 (Clean, visible borders)
+  readonly BRAND_COLOR: [number, number, number] = [15, 23, 42] // slate-900 (Deep, elegant)
+  readonly ACCENT_COLOR: [number, number, number] = [79, 70, 229] // Indigo-600 (Vibrant brand color)
+  readonly LIGHT_COLOR: [number, number, number] = [248, 250, 252] // slate-50
+  readonly TEXT_MUTED: [number, number, number] = [100, 116, 139] // slate-500
+  readonly BORDER_COLOR: [number, number, number] = [226, 232, 240] // slate-200 (Clean, visible borders)
 
   formatCurrency(amount: number = 0): string {
     return amount.toLocaleString('es-AR', {
@@ -91,7 +91,11 @@ export class PdfGeneratorService {
       doc.setTextColor(...this.TEXT_MUTED)
       doc.setFontSize(7.5)
       doc.setFont('helvetica', 'normal')
-      doc.text(`Generado el ${this.formatDate(new Date())} | Servidor Corporativo Marvig`, 14, pageH - 6)
+      doc.text(
+        `Generado el ${this.formatDate(new Date())} | Servidor Corporativo Marvig`,
+        14,
+        pageH - 6,
+      )
       doc.text(`Página ${i} de ${totalPages}`, pageW - 14, pageH - 6, { align: 'right' })
     }
   }

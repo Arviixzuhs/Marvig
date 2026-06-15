@@ -16,7 +16,10 @@ type PrismaReservationWithRelations = PrismaReservation & {
   payments?: PrismaPayment[]
 }
 
-export class ReservationMapper extends BaseMapper<PrismaReservationWithRelations, ReservationModel> {
+export class ReservationMapper extends BaseMapper<
+  PrismaReservationWithRelations,
+  ReservationModel
+> {
   modelToDomain(model: PrismaReservationWithRelations): ReservationModel {
     return {
       id: model.id,
@@ -63,4 +66,3 @@ export class ReservationMapper extends BaseMapper<PrismaReservationWithRelations
     }
   }
 }
-

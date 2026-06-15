@@ -11,7 +11,7 @@ import { ExpenseSpecificationBuilder } from './prisma.expense.specificationBuild
 
 @Injectable()
 export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly expenseMapper = new ExpenseMapper()
 
@@ -38,7 +38,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
       .withIsDeleted(false)
       .withAmountBetween(filters.minAmount, filters.maxAmount)
       .withDateBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 

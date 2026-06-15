@@ -1,5 +1,6 @@
 import { Prisma } from 'generated/prisma/client'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
 export interface PaymentSpecificationBuild {
   where: Prisma.PaymentWhereInput
@@ -9,10 +10,8 @@ export interface PaymentSpecificationBuild {
   include?: Prisma.PaymentInclude
 }
 
-export class PaymentSpecificationBuilder {
+export class PaymentSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.PaymentWhereInput = {}
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.PaymentOrderByWithRelationInput
   private include?: Prisma.PaymentInclude
 
@@ -37,9 +36,9 @@ export class PaymentSpecificationBuilder {
     return this
   }
 
-  withCreatedAtBetween(fromDate?: string, toDate?: string) {
+  withDateBetween(fromDate?: string, toDate?: string) {
     if (fromDate || toDate) {
-      this.where.createdAt = {
+      this.where.date = {
         ...(fromDate && { gte: new Date(fromDate) }),
         ...(toDate && { lte: new Date(toDate) }),
       }
@@ -47,9 +46,13 @@ export class PaymentSpecificationBuilder {
     return this
   }
 
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
+  withCreatedAtBetween(fromDate?: string, toDate?: string) {
+    if (fromDate || toDate) {
+      this.where.createdAt = {
+        ...(fromDate && { gte: new Date(fromDate) }),
+        ...(toDate && { lte: new Date(toDate) }),
+      }
+    }
     return this
   }
 

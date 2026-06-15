@@ -2,6 +2,7 @@ import { Prisma } from 'generated/prisma/client'
 import { UserRole } from '@/common/enums/user-role.enum'
 import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
 export interface NotificationSpecificationBuild {
   where: Prisma.NotificationWhereInput
@@ -10,10 +11,8 @@ export interface NotificationSpecificationBuild {
   orderBy?: Prisma.NotificationOrderByWithRelationInput
 }
 
-export class NotificationSpecificationBuilder {
+export class NotificationSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.NotificationWhereInput = {}
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.NotificationOrderByWithRelationInput
 
   withType(type: NotificationType) {
@@ -51,12 +50,6 @@ export class NotificationSpecificationBuilder {
         ...(toDate && { lte: new Date(toDate) }),
       }
     }
-    return this
-  }
-
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
     return this
   }
 

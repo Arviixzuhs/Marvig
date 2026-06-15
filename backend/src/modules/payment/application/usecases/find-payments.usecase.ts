@@ -14,4 +14,3 @@ export class FindPaymentsUseCase {
     return await this.paymentRepository.findPayments(filters)
   }
 }
-
