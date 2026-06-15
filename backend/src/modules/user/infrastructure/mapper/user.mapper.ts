@@ -19,8 +19,10 @@ export class UserMapper extends BaseMapper<PrismaUserWithRelations, UserModel> {
       lastName: model.lastName,
       email: model.email,
       avatar: model.avatar,
+      phone: model.phone,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
+      hasPassword: !!model.password,
       reservations: model.reservations
         ? this.reservationMapper.modelsToDomain(model.reservations)
         : [],

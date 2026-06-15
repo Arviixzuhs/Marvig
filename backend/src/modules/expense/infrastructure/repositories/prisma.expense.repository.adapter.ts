@@ -42,19 +42,17 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
       .withOrderBy({ createdAt: 'desc' })
       .build()
 
-    const [expenses, expensesCount] = await this.prisma.$transaction([
-      this.prisma.expense.findMany({
+    const expenses = await this.prisma.expense.findMany({
         ...query,
         include: {
           apartment: true,
           employee: true,
           images: true,
         },
-      }),
-      this.prisma.expense.count({
+      })
+    const expensesCount = await this.prisma.expense.count({
         where: query.where,
-      }),
-    ])
+      })
 
     return {
       content: this.expenseMapper.modelsToDomain(expenses),

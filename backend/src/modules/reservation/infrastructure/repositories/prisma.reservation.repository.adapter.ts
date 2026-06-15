@@ -29,15 +29,13 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withIsDeleted(false)
       .withOrderBy({ createdAt: 'desc' })
       .withPagination(filters.page, filters.pageSize)
-      .withInclude({ user: true, apartments: true })
+      .withInclude({ user: true, apartments: true, payments: true })
       .build()
 
-    const [reservations, reservationsCount] = await this.prisma.$transaction([
-      this.prisma.reservation.findMany(query),
-      this.prisma.reservation.count({
+    const reservations = await this.prisma.reservation.findMany(query)
+    const reservationsCount = await this.prisma.reservation.count({
         where: query.where,
-      }),
-    ])
+      })
 
     return {
       content: this.reservationMapper.modelsToDomain(reservations),

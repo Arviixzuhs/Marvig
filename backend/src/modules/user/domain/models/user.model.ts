@@ -7,8 +7,10 @@ export class UserModel {
   role: UserRole
   email?: string | null
   avatar?: string | null
+  phone?: string | null
   lastName: string
   createdAt?: Date | null
   updatedAt?: Date | null
+  hasPassword?: boolean
   reservations: ReservationModel[]
 }

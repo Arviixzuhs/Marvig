@@ -10,7 +10,7 @@ export class PaymentModel {
   reference: string
   date: Date
   createdAt?: Date | null
-  reservation: ReservationModel
+  reservation?: ReservationModel
   description?: string | null
   reservationId: number
 }

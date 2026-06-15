@@ -11,4 +11,6 @@ export interface UserRepositoryPort {
   deleteUser(userId: number): Promise<void>
   existsById(userId: number): Promise<boolean>
   updateUser(userId: number, newData: UpdateUserDto): Promise<UserModel>
+  getPasswordHash(userId: number): Promise<string | null>
+  updatePassword(userId: number, passwordHash: string): Promise<void>
 }
