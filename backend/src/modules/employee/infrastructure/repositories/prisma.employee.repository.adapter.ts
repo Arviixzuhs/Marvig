@@ -35,10 +35,12 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
       .build()
 
-    const employees = await this.prisma.employee.findMany(query)
-    const employeesCount = await this.prisma.employee.count({
+    const [employees, employeesCount] = await this.prisma.$transaction([
+      this.prisma.employee.findMany(query),
+      this.prisma.employee.count({
         where: query.where,
-      })
+      }),
+    ])
 
     return {
       content: this.employeeMapper.modelsToDomain(employees),

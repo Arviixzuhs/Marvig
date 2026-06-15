@@ -11,7 +11,7 @@ import { PaymentSpecificationBuilder } from './prisma.payment.specificationBuild
 
 @Injectable()
 export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   private readonly paymentMapper = new PaymentMapper()
 
@@ -45,7 +45,7 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
   }
 
   async findPayments(filters: PaymentFilterDto): Promise<PaymentPage> {
-    const builder = new PaymentSpecificationBuilder()
+    const query = new PaymentSpecificationBuilder()
       .withSearch(filters.search)
       .withStatus(filters.status)
       .withPagination(filters.page, filters.pageSize)
@@ -55,17 +55,17 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
       .withInclude({ reservation: { include: { apartments: true } } })
       .build()
 
-    const payments = await this.prisma.payment.findMany(builder)
-    const totalItems = await this.prisma.payment.count({ where: builder.where })
-
-    const rowsPerPage = builder.take || 10
+    const [payments, totalItems] = await this.prisma.$transaction([
+      this.prisma.payment.findMany(query),
+      this.prisma.payment.count({ where: query.where }),
+    ])
 
     return {
       content: this.paymentMapper.modelsToDomain(payments),
       totalItems,
-      totalPages: Math.ceil(totalItems / rowsPerPage),
+      totalPages: Math.ceil(totalItems / query.take),
       currentPage: filters.page,
-      rowsPerPage: rowsPerPage,
+      rowsPerPage: query.take
     }
   }
 

@@ -12,7 +12,7 @@ import { ReservationSpecificationBuilder } from './prisma.reservation.specificat
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   private readonly reservationMapper = new ReservationMapper()
 
@@ -32,10 +32,12 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withInclude({ user: true, apartments: true, payments: true })
       .build()
 
-    const reservations = await this.prisma.reservation.findMany(query)
-    const reservationsCount = await this.prisma.reservation.count({
+    const [reservations, reservationsCount] = await this.prisma.$transaction([
+      this.prisma.reservation.findMany(query),
+      this.prisma.reservation.count({
         where: query.where,
-      })
+      }),
+    ])
 
     return {
       content: this.reservationMapper.modelsToDomain(reservations),

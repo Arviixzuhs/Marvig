@@ -11,7 +11,7 @@ import { ExpenseSpecificationBuilder } from './prisma.expense.specificationBuild
 
 @Injectable()
 export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   private readonly expenseMapper = new ExpenseMapper()
 
@@ -42,17 +42,19 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
       .withOrderBy({ createdAt: 'desc' })
       .build()
 
-    const expenses = await this.prisma.expense.findMany({
+    const [expenses, expensesCount] = await this.prisma.$transaction([
+      this.prisma.expense.findMany({
         ...query,
         include: {
           apartment: true,
           employee: true,
           images: true,
         },
-      })
-    const expensesCount = await this.prisma.expense.count({
+      }),
+      this.prisma.expense.count({
         where: query.where,
-      })
+      }),
+    ])
 
     return {
       content: this.expenseMapper.modelsToDomain(expenses),
