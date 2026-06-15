@@ -16,7 +16,6 @@ import { ChangePasswordUseCase } from '@/modules/user/application/usecases/chang
 import { ChangePasswordInput } from '@/modules/user/infrastructure/graphql/inputs/change-password.input'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
-
 @Resolver(() => UserType)
 export class UserResolver {
   constructor(

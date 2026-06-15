@@ -34,4 +34,3 @@ export class CreateUserInput {
   @IsOptional()
   avatar?: string
 }
-

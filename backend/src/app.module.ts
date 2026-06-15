@@ -26,8 +26,6 @@ import { VerificationCodeModule } from '@/modules/verificationCode/verificationC
 import { ReportModule } from '@/modules/report/report.module'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 
-
-
 config()
 @Module({
   imports: [
@@ -45,7 +43,6 @@ config()
     VerificationCodeModule,
     ReportModule,
     ThrottlerModule.forRoot({
-
       throttlers: [
         {
           ttl: 60000,

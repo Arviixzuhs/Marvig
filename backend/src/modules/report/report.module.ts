@@ -8,12 +8,8 @@ import { ExpenseApplicationModule } from '@/modules/expense/application/expense.
 import { ReservationApplicationModule } from '@/modules/reservation/application/reservation.application.module'
 
 @Module({
-  imports: [
-    PaymentApplicationModule,
-    ExpenseApplicationModule,
-    ReservationApplicationModule,
-  ],
+  imports: [PaymentApplicationModule, ExpenseApplicationModule, ReservationApplicationModule],
   controllers: [ReportController],
   providers: [ReportService, PrismaService, PdfGeneratorService],
 })
-export class ReportModule { }
+export class ReportModule {}

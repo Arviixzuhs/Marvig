@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { ChangePasswordDto } from '@/modules/user/application/dto/change-password.dto'
 import { UserRepositoryPort } from '@/modules/user/domain/repositories/user.repository.port'
 import { PasswordHasherPort } from '@/modules/user/domain/ports/password-hasher.port'
@@ -29,14 +35,19 @@ export class ChangePasswordUseCase {
       throw new BadRequestException('La nueva contraseña y su confirmación no coinciden.')
     }
 
-    const isCurrentPasswordValid = await this.passwordHasher.compare(data.currentPassword, currentPasswordHash)
+    const isCurrentPasswordValid = await this.passwordHasher.compare(
+      data.currentPassword,
+      currentPasswordHash,
+    )
     if (!isCurrentPasswordValid) {
       throw new UnauthorizedException('La contraseña actual es incorrecta.')
     }
 
     const isSamePassword = await this.passwordHasher.compare(data.newPassword, currentPasswordHash)
     if (isSamePassword) {
-      throw new BadRequestException('La nueva contraseña no puede ser igual a la contraseña actual.')
+      throw new BadRequestException(
+        'La nueva contraseña no puede ser igual a la contraseña actual.',
+      )
     }
 
     const hashedPassword = await this.passwordHasher.hash(data.newPassword)

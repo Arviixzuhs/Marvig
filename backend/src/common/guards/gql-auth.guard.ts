@@ -50,7 +50,6 @@ export class GqlAuthGuard implements CanActivate {
         throw new UnauthorizedException('No token provided')
       }
 
-
       const decoded = await new Promise<User>((resolve, reject) => {
         jwt.verify(token, process.env.SECRET_KEY as string, (error, decodedToken) => {
           if (error) {

@@ -42,7 +42,12 @@ export class AuthService {
     })
 
     const token = jwt.sign(
-      { userId: createdUser.id, username: createdUser.name, email: createdUser.email, role: createdUser.role },
+      {
+        userId: createdUser.id,
+        username: createdUser.name,
+        email: createdUser.email,
+        role: createdUser.role,
+      },
       process.env.SECRET_KEY,
     )
 
@@ -54,7 +59,10 @@ export class AuthService {
     if (!user) throw new HttpException('Usuario no encontrado.', HttpStatus.NOT_FOUND)
 
     if (!user.password)
-      throw new HttpException('Este usuario no tiene contraseña. Inicia sesión con Google.', HttpStatus.UNAUTHORIZED)
+      throw new HttpException(
+        'Este usuario no tiene contraseña. Inicia sesión con Google.',
+        HttpStatus.UNAUTHORIZED,
+      )
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password)
     if (!isPasswordValid)

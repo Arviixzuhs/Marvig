@@ -5,4 +5,3 @@ export class UpdateUserDto {
   lastName?: string
   phone?: string
 }
-

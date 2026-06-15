@@ -15,12 +15,24 @@ export class GetPaymentsPerformanceUseCase {
   ) {}
 
   async execute(filters: PaymentFilterDto) {
-    const currentData = await this.paymentRepository.findPayments(filters)
-    const currentExpensesData = await this.expenseRepository.findExpenses(filters)
+    const currentData = await this.paymentRepository.findPayments({
+      ...filters,
+      isUnpaged: true,
+    })
+    const currentExpensesData = await this.expenseRepository.findExpenses({
+      ...filters,
+      isUnpaged: true,
+    })
 
     const previousFilters = this.getPreviousPeriod(filters)
-    const previousData = await this.paymentRepository.findPayments(previousFilters)
-    const previousExpensesData = await this.expenseRepository.findExpenses(previousFilters)
+    const previousData = await this.paymentRepository.findPayments({
+      ...previousFilters,
+      isUnpaged: true,
+    })
+    const previousExpensesData = await this.expenseRepository.findExpenses({
+      ...previousFilters,
+      isUnpaged: true,
+    })
 
     const currentPayments = currentData.content
     const currentExpenses = currentExpensesData.content
