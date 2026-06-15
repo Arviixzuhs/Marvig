@@ -15,7 +15,13 @@ export const NavbarUserOptions = () => {
     return (
       <Dropdown>
         <DropdownTrigger>
-          <Avatar as='button' size='sm' color='primary' className='transition-transform' />
+          <Avatar
+            as='button'
+            size='sm'
+            color='primary'
+            className='transition-transform'
+            src={user.avatar}
+          />
         </DropdownTrigger>
         <DropdownMenu aria-label='Profile Actions' variant='flat'>
           <DropdownItem key='profile' className='h-14 gap-2 default-text-color'>
