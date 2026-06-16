@@ -493,7 +493,7 @@ export class ReportService {
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...alertText)
     doc.text(
-      `${isProfitable ? '✓ Rentabilidad Positiva' : '⚠ Balance de Pérdida Neta'}  •  Diferencial Operativo: ${this.pdf.formatCurrency(data.netProfit)}`,
+      `${isProfitable ? 'Rentabilidad Positiva' : 'Balance de Pérdida Neta'}  •  Diferencial Operativo: ${this.pdf.formatCurrency(data.netProfit)}`,
       19,
       y + 8,
     )
