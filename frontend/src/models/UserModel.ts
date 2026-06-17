@@ -18,7 +18,6 @@ export interface UpdateMyProfileResponse {
   updateMyProfile: UserModel
 }
 
-
 export interface GetUsersResponseDto {
   users: IPageResponse<UserModel>
 }

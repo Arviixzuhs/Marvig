@@ -1,3 +1,4 @@
+import { chatbotSlice } from '@/features/chatbotSlice'
 import { manageUserSlice } from '@/features/userSlice'
 import { manageCheckoutSlice } from '@/features/checkoutSlice'
 import { manageAppTableSlice } from '@/features/appTableSlice'
@@ -6,6 +7,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 const appReducer = combineReducers({
   user: manageUserSlice.reducer,
+  chatbot: chatbotSlice.reducer,
   checkout: manageCheckoutSlice.reducer,
   appTable: manageAppTableSlice.reducer,
   apartment: manageApartmentSlice.reducer,

@@ -1,0 +1,25 @@
+import { gql } from '@apollo/client'
+
+export const GET_RESERVATIONS = gql`
+  query FindReservations($filters: ReservationFilterInput!) {
+    findReservations(filters: $filters) {
+      content {
+        id
+        clientName
+        clientPhone
+        clientEmail
+        startDate
+        endDate
+        type
+        persons
+        status
+        totalPrice
+        userId
+      }
+      totalItems
+      totalPages
+      currentPage
+      rowsPerPage
+    }
+  }
+`
