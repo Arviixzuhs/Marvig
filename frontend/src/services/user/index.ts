@@ -96,4 +96,3 @@ export const userService = {
     return !!data?.changePassword
   },
 }
-

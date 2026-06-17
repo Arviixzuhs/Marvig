@@ -9,7 +9,13 @@ export enum NotificationStatus {
   ARCHIVED = 'ARCHIVED',
 }
 
-export type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[]
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: JsonValue }
+  | JsonValue[]
 
 export interface Notification {
   id: number
