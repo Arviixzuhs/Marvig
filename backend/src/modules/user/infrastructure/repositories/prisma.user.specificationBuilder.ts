@@ -1,3 +1,4 @@
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 import { Prisma } from 'generated/prisma/client'
 
 export interface UserSpecificationBuild {
@@ -8,10 +9,8 @@ export interface UserSpecificationBuild {
   include?: Prisma.UserInclude
 }
 
-export class UserSpecificationBuilder {
+export class UserSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.UserWhereInput = {}
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.UserOrderByWithRelationInput
   private include?: Prisma.UserInclude
 
@@ -47,12 +46,6 @@ export class UserSpecificationBuilder {
         ...(toDate && { lte: new Date(toDate) }),
       }
     }
-    return this
-  }
-
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
     return this
   }
 

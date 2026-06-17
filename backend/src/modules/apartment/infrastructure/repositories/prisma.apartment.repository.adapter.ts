@@ -36,7 +36,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
       .withStatus(filters.status)
       .withSquareMetersBetween(filters.minSquareMeters, filters.maxSquareMeters)
       .withIsDeleted(false)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .withInclude({ images: true })
       .build()

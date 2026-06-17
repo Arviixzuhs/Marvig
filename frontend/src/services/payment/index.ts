@@ -49,5 +49,5 @@ export const paymentService = {
       },
     })
     return data?.updatePaymentStatus
-  }
+  },
 }

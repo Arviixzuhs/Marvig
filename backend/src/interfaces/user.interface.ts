@@ -3,4 +3,5 @@ export interface User {
   exp: number
   sub: string
   userId: number
+  role?: string
 }

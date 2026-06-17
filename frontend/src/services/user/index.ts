@@ -3,6 +3,8 @@ import { GET_USERS } from './graphql/getUsersQuery'
 import { CREATE_USER } from './graphql/createUserMutation'
 import { UPDATE_USER } from './graphql/updateUserMutation'
 import { DELETE_USER } from './graphql/deleteUserMutation'
+import { UPDATE_MY_PROFILE } from './graphql/updateMyProfileMutation'
+import { CHANGE_PASSWORD } from './graphql/changePasswordMutation'
 import { apolloClient } from '@/api/apollo-client'
 import { IPageResponse } from '@/api/interfaces'
 import {
@@ -11,6 +13,8 @@ import {
   UpdateUserInput,
   DeleteUserResponse,
   UpdateUserResponse,
+  UpdateMyProfileResponse,
+  ChangePasswordInput,
 } from '@/models/UserModel'
 import {
   CreateUserInput,
@@ -24,6 +28,7 @@ export const userService = {
   findCurrent: async () => {
     const { data } = await apolloClient.query<{ findCurrentUser: UserModel }>({
       query: GET_CURRENT_USER,
+      fetchPolicy: 'network-only',
     })
     return data?.findCurrentUser || null
   },
@@ -71,5 +76,23 @@ export const userService = {
       variables: { id },
     })
     return !!data?.deleteUser
+  },
+  updateMyProfile: async (payload: UpdateUserInput) => {
+    const { data } = await apolloClient.mutate<UpdateMyProfileResponse>({
+      mutation: UPDATE_MY_PROFILE,
+      variables: {
+        data: payload,
+      },
+    })
+    return data?.updateMyProfile
+  },
+  changePassword: async (payload: ChangePasswordInput) => {
+    const { data } = await apolloClient.mutate<{ changePassword: boolean }>({
+      mutation: CHANGE_PASSWORD,
+      variables: {
+        data: payload,
+      },
+    })
+    return !!data?.changePassword
   },
 }

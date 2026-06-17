@@ -28,27 +28,25 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
   }
 
   async findPromotions(filters: PromotionFilterDto): Promise<PromotionPage> {
-    const builder = new PromotionSpecificationBuilder()
+    const query = new PromotionSpecificationBuilder()
       .withSearch(filters.search)
       .withName(filters.name)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 
     const [promotions, totalItems] = await this.prisma.$transaction([
-      this.prisma.promotion.findMany(builder),
-      this.prisma.promotion.count({ where: builder.where }),
+      this.prisma.promotion.findMany(query),
+      this.prisma.promotion.count({ where: query.where }),
     ])
-
-    const rowsPerPage = builder.take || 10
 
     return {
       content: this.promotionMapper.modelsToDomain(promotions),
       totalItems,
-      totalPages: Math.ceil(totalItems / rowsPerPage),
+      totalPages: Math.ceil(totalItems / query.take),
       currentPage: filters.page,
-      rowsPerPage: rowsPerPage,
+      rowsPerPage: query.take,
     }
   }
 

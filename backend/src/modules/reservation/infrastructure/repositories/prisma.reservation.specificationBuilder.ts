@@ -1,6 +1,7 @@
 import { Prisma } from 'generated/prisma/client'
 import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
 export interface ReservationSpecificationBuild {
   where: Prisma.ReservationWhereInput
@@ -10,10 +11,8 @@ export interface ReservationSpecificationBuild {
   include?: Prisma.ReservationInclude
 }
 
-export class ReservationSpecificationBuilder {
+export class ReservationSpecificationBuilder extends PaginateSpecificationBuilder {
   private where: Prisma.ReservationWhereInput = {}
-  private skip?: number
-  private take?: number
   private orderBy?: Prisma.ReservationOrderByWithRelationInput
   private include?: Prisma.ReservationInclude
 
@@ -95,12 +94,6 @@ export class ReservationSpecificationBuilder {
     if (isDeleted !== undefined) {
       this.where.isDeleted = isDeleted
     }
-    return this
-  }
-
-  withPagination(page: number = 0, pageSize: number = 10) {
-    this.skip = page * pageSize
-    this.take = pageSize
     return this
   }
 

@@ -12,9 +12,18 @@ export class PermissionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context)
-    const req = ctx.getContext().req
+    const isGraphQL = context.getType<string>() === 'graphql'
+    const req = isGraphQL
+      ? GqlExecutionContext.create(context).getContext().req
+      : context.switchToHttp().getRequest()
+
+    if (!req) return true
     const currentUser = req.user
+
+    const botApiKey = req.headers ? req.headers['x-bot-api-key'] : undefined
+    if (botApiKey && botApiKey === process.env.CHATBOT_API_KEY) {
+      return true
+    }
 
     const requiredRole = this.reflector.getAllAndOverride<UserRole>('role', [
       context.getHandler(),

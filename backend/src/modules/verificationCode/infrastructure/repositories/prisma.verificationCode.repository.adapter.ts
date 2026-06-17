@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
 import { VerificationCodeType } from '@/modules/verificationCode/domain/enums/verificationCode.enum'
 import { VerificationCodeModel } from '@/modules/verificationCode/domain/models/verificationCode.model'
+import { UpdateVerificationDto } from '@/modules/verificationCode/application/dto/update-verification-code.dto'
 import { VerificationCodeMapper } from '@/modules/verificationCode/infrastructure/mapper/verificationCode.mapper'
 import { VerificationCodeRepositoryPort } from '@/modules/verificationCode/domain/repositories/verificationCode.repository.port'
-import { UpdateVerificationDto } from '../../application/dto/update-verification-code.dto'
 
 @Injectable()
 export class PrismaVerificationCodeRepositoryAdapter implements VerificationCodeRepositoryPort {

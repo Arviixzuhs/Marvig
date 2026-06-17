@@ -30,6 +30,12 @@ export class GqlAuthGuard implements CanActivate {
     const ctx = GqlExecutionContext.create(context)
     const { req } = ctx.getContext()
 
+    const botApiKey = req.headers['x-bot-api-key']
+    if (botApiKey && botApiKey === process.env.CHATBOT_API_KEY) {
+      req.user = { userId: -1, role: 'ADMIN' }
+      return true
+    }
+
     try {
       let token = req.cookies?.accessToken
 

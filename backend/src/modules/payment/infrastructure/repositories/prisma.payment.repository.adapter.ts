@@ -45,28 +45,27 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
   }
 
   async findPayments(filters: PaymentFilterDto): Promise<PaymentPage> {
-    const builder = new PaymentSpecificationBuilder()
+    const query = new PaymentSpecificationBuilder()
       .withSearch(filters.search)
       .withStatus(filters.status)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withReservationId(filters.reservationId)
-      .withCreatedAtBetween(filters.fromDate, filters.toDate)
+      .withDateBetween(filters.fromDate, filters.toDate)
       .withOrderBy({ createdAt: 'desc' })
+      .withInclude({ reservation: { include: { apartments: true } } })
       .build()
 
     const [payments, totalItems] = await this.prisma.$transaction([
-      this.prisma.payment.findMany(builder),
-      this.prisma.payment.count({ where: builder.where }),
+      this.prisma.payment.findMany(query),
+      this.prisma.payment.count({ where: query.where }),
     ])
-
-    const rowsPerPage = builder.take || 10
 
     return {
       content: this.paymentMapper.modelsToDomain(payments),
       totalItems,
-      totalPages: Math.ceil(totalItems / rowsPerPage),
+      totalPages: Math.ceil(totalItems / query.take),
       currentPage: filters.page,
-      rowsPerPage: rowsPerPage,
+      rowsPerPage: query.take,
     }
   }
 

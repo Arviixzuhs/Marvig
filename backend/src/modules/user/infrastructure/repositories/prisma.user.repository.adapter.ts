@@ -32,14 +32,12 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
       .withName(filters.name)
       .withEmail(filters.email)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
       .build()
 
-    const [users, totalItems] = await this.prisma.$transaction([
-      this.prisma.user.findMany(query),
-      this.prisma.user.count({ where: query.where }),
-    ])
+    const users = await this.prisma.user.findMany(query)
+    const totalItems = await this.prisma.user.count({ where: query.where })
 
     return {
       content: this.userMapper.modelsToDomain(users),
@@ -79,5 +77,20 @@ export class PrismaUserRepositoryAdapter implements UserRepositoryPort {
 
     if (!user) return null
     return this.userMapper.modelToDomain(user)
+  }
+
+  async getPasswordHash(userId: number): Promise<string | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { password: true },
+    })
+    return user?.password || null
+  }
+
+  async updatePassword(userId: number, passwordHash: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: passwordHash },
+    })
   }
 }

@@ -31,7 +31,7 @@ export class PrismaEmployeeRepositoryAdapter implements EmployeeRepositoryPort {
       .withOrderBy({ createdAt: 'desc' })
       .withLastName(filters.lastName)
       .withIsDeleted(false)
-      .withPagination(filters.page, filters.pageSize)
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
       .build()
 

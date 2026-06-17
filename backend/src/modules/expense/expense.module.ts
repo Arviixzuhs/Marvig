@@ -7,5 +7,6 @@ import { ExpenseInfrastructureModule } from './infrastructure/expense.infrastruc
   imports: [ExpenseDomainModule, ExpenseApplicationModule, ExpenseInfrastructureModule],
   controllers: [],
   providers: [],
+  exports: [ExpenseApplicationModule],
 })
 export class ExpenseModule {}

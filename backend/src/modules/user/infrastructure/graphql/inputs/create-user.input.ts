@@ -27,5 +27,10 @@ export class CreateUserInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  phone?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   avatar?: string
 }

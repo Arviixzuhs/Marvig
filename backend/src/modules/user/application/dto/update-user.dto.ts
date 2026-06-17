@@ -3,5 +3,5 @@ export class UpdateUserDto {
   email?: string
   avatar?: string
   lastName?: string
-  password?: string
+  phone?: string
 }

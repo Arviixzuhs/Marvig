@@ -81,8 +81,10 @@ export const Notifications = () => {
           aria-label='Notificaciones del sistema'
           closeOnSelect={false}
           emptyContent={loading ? 'Cargando...' : <EmptyNotifications />}
+          classNames={{
+            list: 'max-h-[400px] p-1 overflow-y-auto hoverScrollbar',
+          }}
           itemClasses={{
-            base: 'gap-3 py-3',
             title: 'font-semibold text-small',
             description: 'text-tiny text-default-400 whitespace-normal',
           }}

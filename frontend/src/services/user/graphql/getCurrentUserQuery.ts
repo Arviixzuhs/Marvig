@@ -8,7 +8,10 @@ export const GET_CURRENT_USER = gql`
       lastName
       role
       email
+      avatar
+      phone
       createdAt
+      hasPassword
     }
   }
 `

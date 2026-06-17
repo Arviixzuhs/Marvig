@@ -28,8 +28,8 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withTotalPriceBetween(filters.minPrice, filters.maxPrice)
       .withIsDeleted(false)
       .withOrderBy({ createdAt: 'desc' })
-      .withPagination(filters.page, filters.pageSize)
-      .withInclude({ user: true, apartments: true })
+      .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
+      .withInclude({ user: true, apartments: true, payments: true })
       .build()
 
     const [reservations, reservationsCount] = await this.prisma.$transaction([

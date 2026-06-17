@@ -8,6 +8,17 @@ export const authApi = axios.create({
   withCredentials: true,
 })
 
+export const marvigIA = axios.create({
+  baseURL: ENV['VITE_CHATBOT_API'],
+  withCredentials: true,
+  paramsSerializer: (params) =>
+    qs.stringify(params, {
+      encode: false,
+      allowDots: true,
+      arrayFormat: 'repeat',
+    }),
+})
+
 export const api = axios.create({
   baseURL: ENV['VITE_SERVER_API'],
   withCredentials: true,
