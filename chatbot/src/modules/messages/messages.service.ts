@@ -41,37 +41,35 @@ export class MessageService {
         id: chatId,
         isDeleted: false,
       },
-      include: { user: true },
+      include: {
+        user: true,
+      },
     })
 
-    if (!chat) {
-      throw new NotFoundException('Chat not found')
-    }
+    if (!chat) throw new NotFoundException('Chat not found')
 
-    if (chat.user.userId !== user.userId) {
+    if (chat.user.userId !== user.userId)
       throw new NotFoundException('You do not have access to this chat')
-    }
 
-    // Obtener el total de mensajes para calcular el offset correcto
     const totalMessages = await this.prisma.message.count({
-      where: { chatId },
+      where: {
+        chatId,
+      },
     })
 
-    // Calcular cuántos mensajes saltar desde el final
-    // Para la página 1, queremos los últimos 'size' mensajes
-    // Para la página 2, queremos los 'size' mensajes anteriores a esos, etc.
     const messagesFromEnd = page * size
     const skip = Math.max(0, totalMessages - messagesFromEnd)
     const take = Math.min(size, totalMessages - (page - 1) * size)
 
-    if (take <= 0) {
-      return []
-    }
+    if (take <= 0) return []
 
-    // Obtener los mensajes en orden ascendente (cronológico)
     const messages = await this.prisma.message.findMany({
-      where: { chatId },
-      orderBy: { createdAt: 'asc' },
+      where: {
+        chatId,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
       skip,
       take,
     })
