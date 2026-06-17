@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  chats  Chat[]
+  userId Int    @unique
+}
+
+enum AuthorType {
+  USER
+  CHATBOT
+}
+
+model Message {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  chat       Chat       @relation(fields: [chatId], references: [id])
+  chatId     String     @db.ObjectId
+  content    String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  authorType AuthorType
+}
+
+model Chat {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id])
+  title     String
+  userId    String    @db.ObjectId
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  summary      String?
+  messageCount Int     @default(0)
+}
