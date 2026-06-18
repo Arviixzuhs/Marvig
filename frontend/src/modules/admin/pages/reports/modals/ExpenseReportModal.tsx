@@ -63,12 +63,7 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size='2xl'
-      scrollBehavior='inside'
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size='2xl' scrollBehavior='inside'>
       <ModalContent>
         <ModalHeader className='flex items-center gap-3'>
           <div className='p-2 rounded-xl bg-default-100'>
@@ -121,14 +116,15 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
           </div>
         </ModalBody>
 
-        <ModalFooter className='flex-wrap gap-2'>
-          <Button variant='flat' onPress={onClose}>
+        <ModalFooter className='flex gap-2'>
+          <Button variant='flat' onPress={onClose} className='w-full'>
             Cerrar
           </Button>
           <Button
-            color='success'
+            color='primary'
             onPress={handleExportPdf}
             isLoading={pdfLoading}
+            className='w-full'
             startContent={!pdfLoading && <FileDown className='w-4 h-4' />}
           >
             Descargar PDF
