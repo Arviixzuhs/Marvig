@@ -96,14 +96,15 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
           </div>
         </ModalBody>
 
-        <ModalFooter className='flex-wrap gap-2'>
-          <Button variant='flat' onPress={onClose}>
+        <ModalFooter className='flex gap-2'>
+          <Button variant='flat' onPress={onClose} className='w-full'>
             Cerrar
           </Button>
           <Button
-            color='success'
+            color='primary'
             onPress={handleExportPdf}
             isLoading={pdfLoading}
+            className='w-full'
             startContent={!pdfLoading && <FileDown className='w-4 h-4' />}
           >
             Descargar PDF
