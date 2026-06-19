@@ -51,4 +51,14 @@ export class ApartmentFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsNumber()
   maxSquareMeters?: number
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  minPrice?: number
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  maxPrice?: number
 }

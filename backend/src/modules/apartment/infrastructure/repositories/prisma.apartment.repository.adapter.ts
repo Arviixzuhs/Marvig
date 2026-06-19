@@ -34,6 +34,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
       .withSearch(filters.search)
       .withNumber(filters.number)
       .withStatus(filters.status)
+      .withPricePerDayBetween(filters.minPrice, filters.maxPrice)
       .withSquareMetersBetween(filters.minSquareMeters, filters.maxSquareMeters)
       .withIsDeleted(false)
       .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
