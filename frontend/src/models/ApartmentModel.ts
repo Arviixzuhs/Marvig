@@ -40,4 +40,6 @@ export interface IApartmentFilter extends IPaginationFilter {
   bathrooms?: number
   minSquareMeters?: number
   maxSquareMeters?: number
+  minPrice?: number
+  maxPrice?: number
 }

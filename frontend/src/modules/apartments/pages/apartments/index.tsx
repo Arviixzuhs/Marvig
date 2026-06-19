@@ -1,150 +1,237 @@
 import React from 'react'
-import { useState } from 'react'
+import { Search } from 'lucide-react'
+import { useQuery } from '@apollo/client/react'
+import { useDebounce } from 'use-debounce'
+import { inputStyles } from '@/styles'
 import { ApartmentCard } from '@/modules/apartments/components/ApartmentCard'
+import { IPageResponse } from '@/api/interfaces'
 import { ApartmentModel } from '@/models/ApartmentModel'
-import { apartmentService } from '@/services/apartment'
-import { Check, Filter, Search } from 'lucide-react'
+import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
+import { IApartmentFilter } from '@/models/ApartmentModel'
+import { Pagination, Slider, Input, Button, ButtonGroup } from '@heroui/react'
 
 export const ApartmentsPage = () => {
-  const [selectedCities, setSelectedCities] = useState<string[]>([])
-  const [rooms, setRooms] = useState(0)
-  const [apartments, setApartments] = React.useState<ApartmentModel[]>([])
+  const INITIAL_PRICE_RANGE = [20, 2000]
 
-  const loadData = async () => {
-    const response = await apartmentService.getAll({
+  const [filters, setFilters] = React.useState<IApartmentFilter>({
+    page: 0,
+    pageSize: 12,
+    search: '',
+    number: '',
+    floor: undefined,
+    bedrooms: undefined,
+    bathrooms: undefined,
+    minPrice: INITIAL_PRICE_RANGE[0],
+    maxPrice: INITIAL_PRICE_RANGE[1],
+  })
+
+  const [debouncedFilters] = useDebounce(filters, 350)
+
+  const { data, loading } = useQuery<{
+    findApartments: IPageResponse<ApartmentModel>
+  }>(GET_APARTMENTS, {
+    variables: {
+      filters: {
+        ...debouncedFilters,
+      },
+    },
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const apartments = data?.findApartments.content || []
+  const totalPages = data?.findApartments.totalPages || 1
+
+  const handleFilterChange = (key: keyof IApartmentFilter, value: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value === '' || value === undefined ? undefined : value,
       page: 0,
-      pageSize: 20,
-    })
-    if (response?.content) {
-      setApartments(response?.content)
+    }))
+  }
+
+  const handleToggleFilter = (key: 'bedrooms' | 'bathrooms', value: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: prev[key] === value ? undefined : value,
+      page: 0,
+    }))
+  }
+
+  const handlePriceRangeChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      setFilters((prev) => ({
+        ...prev,
+        minPrice: value[0],
+        maxPrice: value[1],
+        page: 0,
+      }))
     }
   }
 
-  React.useEffect(() => {
-    loadData()
-  }, [])
+  const handlePagination = (page: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      page: page - 1,
+    }))
+  }
 
-  const toggleCity = (c: string) =>
-    setSelectedCities((sc) => (sc.includes(c) ? sc.filter((x) => x !== c) : [...sc, c]))
+  const resetFilters = () => {
+    setFilters({
+      page: 0,
+      pageSize: 12,
+      search: '',
+      number: '',
+      floor: undefined,
+      status: undefined,
+      bedrooms: undefined,
+      bathrooms: undefined,
+      minSquareMeters: undefined,
+      maxSquareMeters: undefined,
+      minPrice: INITIAL_PRICE_RANGE[0],
+      maxPrice: INITIAL_PRICE_RANGE[1],
+    })
+  }
 
   return (
-    <div className='min-h-screen bg-background'>
-      {/* Search header */}
-      <div className='border-b border-border bg-card px-6 py-4'>
-        <div className='max-w-6xl mx-auto flex items-center gap-3'>
-          <div className='flex-1 flex items-center gap-2 bg-muted rounded-lg px-3 py-2.5 border border-border'>
-            <Search size={15} className='text-muted-foreground shrink-0' />
-            <input
-              className='flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground'
-              placeholder='Buscar por ciudad, barrio o nombre...'
-            />
+    <div className='min-h-screen bg-background text-foreground'>
+      <div className='max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row gap-7'>
+        <aside className='w-full md:w-64 shrink-0 space-y-6 bg-card p-5 rounded-2xl  h-fit'>
+          <div className='flex justify-between items-center pb-2 border-b border-border'>
+            <h3 className='font-bold text-xs tracking-wide text-muted-foreground'>
+              Filtros Avanzados
+            </h3>
+            <Button
+              size='sm'
+              variant='light'
+              color='danger'
+              onPress={resetFilters}
+              className='h-auto p-1 min-w-0 text-xs'
+            >
+              Limpiar todo
+            </Button>
           </div>
-          <button className='flex items-center gap-2 border border-border rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-muted transition bg-card'>
-            <Filter size={14} /> Filtros
-          </button>
-        </div>
-      </div>
-
-      <div className='max-w-6xl mx-auto px-6 py-6 flex gap-7'>
-        {/* Sidebar */}
-        <aside className='hidden md:block w-52 shrink-0 space-y-7'>
-          <div>
-            <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
-              Ciudad
-            </h4>
-            <div className='space-y-2'>
-              {['Bogotá', 'Medellín', 'Cali', 'Cartagena', 'Bucaramanga'].map((c) => (
-                <label key={c} className='flex items-center gap-2 cursor-pointer'>
-                  <div
-                    className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedCities.includes(c) ? 'border-foreground bg-foreground' : 'border-border hover:border-foreground/50'}`}
-                    onClick={() => toggleCity(c)}
-                  >
-                    {selectedCities.includes(c) && <Check size={10} className='text-white' />}
-                  </div>
-                  <span className='text-sm'>{c}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
           <div>
             <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
               Habitaciones
             </h4>
-            <div className='flex gap-2 flex-wrap'>
-              {[0, 1, 2, 3, 4].map((n) => (
-                <button
+            <ButtonGroup size='sm' variant='flat' className='w-full flex'>
+              {[1, 2, 3, 4].map((n) => (
+                <Button
                   key={n}
-                  onClick={() => setRooms(n)}
-                  className={`h-9 px-2 rounded-md border text-sm font-medium transition-colors ${rooms === n ? 'bg-foreground text-white border-foreground' : 'border-border hover:bg-muted'}`}
+                  onPress={() => handleToggleFilter('bedrooms', n)}
+                  className={`flex-1 min-w-0 transition-colors ${
+                    filters.bedrooms === n ? 'bg-foreground text-background font-semibold' : ''
+                  }`}
                 >
-                  {n === 0 ? 'Todas' : n === 4 ? '4+' : n}
-                </button>
+                  {n}
+                </Button>
               ))}
-            </div>
+            </ButtonGroup>
           </div>
-
           <div>
             <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
-              Precio / mes
+              Baños
             </h4>
-            <div className='text-sm mb-2 font-medium'>$1.2M – $4.5M</div>
-            <div className='h-1.5 bg-muted rounded-full relative'>
-              <div
-                className='absolute left-[10%] right-[5%] top-0 h-1.5 rounded-full'
-                style={{ background: '#2B4FFF' }}
-              />
-              <div
-                className='absolute left-[10%] -top-1 w-3 h-3 bg-white border-2 rounded-full'
-                style={{ borderColor: '#2B4FFF' }}
-              />
-              <div
-                className='absolute right-[5%] -top-1 w-3 h-3 bg-white border-2 rounded-full'
-                style={{ borderColor: '#2B4FFF' }}
-              />
-            </div>
-          </div>
-
-          <div>
-            <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
-              Amenidades
-            </h4>
-            <div className='space-y-2'>
-              {[
-                'Parqueadero',
-                'Gimnasio',
-                'Piscina',
-                'Seguridad 24/7',
-                'Wifi incluido',
-                'Terraza',
-              ].map((a) => (
-                <label key={a} className='flex items-center gap-2 cursor-pointer'>
-                  <div className='w-4 h-4 rounded border border-border hover:border-foreground/50 transition-colors' />
-                  <span className='text-sm'>{a}</span>
-                </label>
+            <ButtonGroup size='sm' variant='flat' className='w-full flex'>
+              {[1, 2, 3].map((n) => (
+                <Button
+                  key={n}
+                  onPress={() => handleToggleFilter('bathrooms', n)}
+                  className={`flex-1 min-w-0 transition-colors ${
+                    filters.bathrooms === n ? 'bg-foreground text-background font-semibold' : ''
+                  }`}
+                >
+                  {n}
+                </Button>
               ))}
-            </div>
+            </ButtonGroup>
+          </div>
+          <div className='pt-2'>
+            <Slider
+              label='Precio / mes'
+              size='sm'
+              step={20}
+              minValue={20}
+              maxValue={2000}
+              value={[
+                filters.minPrice ?? INITIAL_PRICE_RANGE[0],
+                filters.maxPrice ?? INITIAL_PRICE_RANGE[1],
+              ]}
+              onChange={handlePriceRangeChange}
+              formatOptions={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}
+              classNames={{
+                label: 'text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
+                value: 'text-xs font-medium text-foreground',
+              }}
+            />
+          </div>
+          <div className='grid grid-cols-2 gap-2'>
+            <Input
+              type='number'
+              label='Piso'
+              labelPlacement='outside'
+              placeholder='Ej. 3'
+              size='sm'
+              variant='bordered'
+              value={filters.floor?.toString() || ''}
+              onValueChange={(val) => handleFilterChange('floor', val)}
+            />
+            <Input
+              type='text'
+              label='Número Apt'
+              labelPlacement='outside'
+              placeholder='Ej. 102'
+              size='sm'
+              variant='bordered'
+              value={filters.number || ''}
+              onValueChange={(val) => handleFilterChange('number', val)}
+            />
           </div>
         </aside>
-
-        {/* Results */}
-        <div className='flex-1 min-w-0'>
-          <div className='flex items-center justify-between mb-5'>
-            <span className='text-sm text-muted-foreground'>
-              <strong className='text-foreground font-semibold'>6</strong> apartamentos encontrados
-            </span>
-            <select className='text-sm border border-border rounded-lg px-3 py-2 bg-card outline-none cursor-pointer'>
-              <option>Más relevantes</option>
-              <option>Precio: menor a mayor</option>
-              <option>Mejor valorados</option>
-              <option>Más recientes</option>
-            </select>
-          </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
-            {apartments.map((apt, index) => (
-              <ApartmentCard key={apt.id} apartment={apt} index={index} />
-            ))}
-          </div>
+        <div className='flex-1 flex flex-col gap-5'>
+          <Input
+            size='md'
+            variant='flat'
+            isClearable
+            radius='lg'
+            classNames={inputStyles}
+            placeholder='Buscar por ciudad, barrio o nombre...'
+            startContent={<Search size={16} className='text-muted-foreground' />}
+            value={filters.search || ''}
+            onValueChange={(val) => handleFilterChange('search', val)}
+            onClear={() => handleFilterChange('search', '')}
+          />
+          {loading ? (
+            <div className='flex justify-center items-center py-24 text-sm text-muted-foreground animate-pulse'>
+              Buscando propiedades...
+            </div>
+          ) : apartments.length === 0 ? (
+            <div className='flex flex-col justify-center items-center py-24 text-sm text-muted-foreground bg-card rounded-2xl border border-dashed border-border gap-2'>
+              <span>No se encontraron apartamentos con estos filtros.</span>
+              <Button size='sm' variant='flat' onClick={resetFilters}>
+                Restablecer búsqueda
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
+                {apartments.map((apt, index) => (
+                  <ApartmentCard key={apt.id} apartment={apt} index={index} />
+                ))}
+              </div>
+              <div className='flex justify-center'>
+                <Pagination
+                  page={(filters?.page || 0) + 1}
+                  total={totalPages}
+                  variant='light'
+                  onChange={handlePagination}
+                  isCompact
+                  showControls
+                  color='primary'
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

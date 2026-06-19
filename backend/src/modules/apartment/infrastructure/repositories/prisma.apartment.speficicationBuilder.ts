@@ -60,6 +60,16 @@ export class ApartmentSpecificationBuilder extends PaginateSpecificationBuilder 
     return this
   }
 
+  withPricePerDayBetween(min?: number, max?: number) {
+    if (min !== undefined || max !== undefined) {
+      this.where.pricePerDay = {
+        ...(min !== undefined && { gte: min }),
+        ...(max !== undefined && { lte: max }),
+      }
+    }
+    return this
+  }
+
   withSquareMetersBetween(min?: number, max?: number) {
     if (min !== undefined || max !== undefined) {
       this.where.squareMeters = {
