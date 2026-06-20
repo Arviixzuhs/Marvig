@@ -1,4 +1,5 @@
 import { Prisma } from 'generated/prisma/client'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
@@ -78,6 +79,36 @@ export class ApartmentSpecificationBuilder extends PaginateSpecificationBuilder 
       }
     }
     return this
+  }
+
+  withValidDate(fromDate?: string, toDate?: string) {
+    if (!fromDate || !toDate) return this;
+
+    this.where.reservations = {
+      none: {
+        isDeleted: false,
+        status: { in: [ReservationStatus.CONFIRMED, ReservationStatus.PENDING] },
+        AND: [
+          {
+            OR: [
+              {
+                startDate: { lte: fromDate },
+                endDate: { gt: fromDate },
+              },
+              {
+                startDate: { lt: toDate },
+                endDate: { gte: toDate },
+              },
+              {
+                startDate: { gte: fromDate },
+                endDate: { lte: toDate },
+              },
+            ],
+          },
+        ],
+      },
+    };
+    return this;
   }
 
   withIsDeleted(isDeleted: boolean = false) {
