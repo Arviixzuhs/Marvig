@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Button } from '@heroui/react'
 import { useState } from 'react'
 import { ApartmentsGrid } from './components/Apartments'
-import { ArrowRight, Bot, Calendar, MessageCircle, Search, Send, X } from 'lucide-react'
+import { ApartmentSearchFields } from './components/ApartmentSearchFields'
+import { ArrowRight, Bot, MessageCircle, Send, X } from 'lucide-react'
 
 interface ChatMessage {
   from: string
@@ -54,19 +54,8 @@ export const LandingPage = () => {
             Encuentra, reserva y gestiona tu apartamento en minutos. Transparencia total, sin
             intermediarios.
           </p>
-          <div className='flex flex-col md:flex-row gap-2'>
-            <div className='flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-muted min-w-[130px]'>
-              <Calendar size={15} className='text-muted-foreground shrink-0' />
-              <span className='text-sm text-muted-foreground'>Fecha entrada</span>
-            </div>
-            <div className='flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-muted min-w-[130px]'>
-              <Calendar size={15} className='text-muted-foreground shrink-0' />
-              <span className='text-sm text-muted-foreground'>Fecha salida</span>
-            </div>
-            <Button color='primary'>
-              <Search size={15} /> Buscar
-            </Button>
-          </div>
+
+          <ApartmentSearchFields />
         </div>
       </section>
 

@@ -9,9 +9,24 @@ import { ApartmentModel } from '@/models/ApartmentModel'
 import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { IApartmentFilter } from '@/models/ApartmentModel'
 import { Pagination, Slider, Input, Button, ButtonGroup } from '@heroui/react'
+import { useSearchParams } from 'react-router-dom'
 
 export const ApartmentsPage = () => {
   const INITIAL_PRICE_RANGE = [20, 2000]
+  const [searchParams, _setSearchParams] = useSearchParams()
+  const startDate = searchParams.get('startDate')
+  const endDate = searchParams.get('endDate')
+
+  const isValidParamDate = (dateStr: string | null): boolean => {
+    if (!dateStr) return false
+    const regex = /^\d{4}-\d{2}-\d{2}$/
+    if (!regex.test(dateStr)) return false
+    const date = new Date(dateStr)
+    return !isNaN(date.getTime())
+  }
+
+  const validFromDate = isValidParamDate(startDate) ? startDate! : ''
+  const validToDate = isValidParamDate(endDate) ? endDate! : ''
 
   const [filters, setFilters] = React.useState<IApartmentFilter>({
     page: 0,
@@ -21,6 +36,8 @@ export const ApartmentsPage = () => {
     floor: undefined,
     bedrooms: undefined,
     bathrooms: undefined,
+    fromDate: validFromDate,
+    toDate: validToDate,
     minPrice: INITIAL_PRICE_RANGE[0],
     maxPrice: INITIAL_PRICE_RANGE[1],
   })
@@ -195,7 +212,7 @@ export const ApartmentsPage = () => {
             isClearable
             radius='lg'
             classNames={inputStyles}
-            placeholder='Buscar por ciudad, barrio o nombre...'
+            placeholder='Buscar...'
             startContent={<Search size={16} className='text-muted-foreground' />}
             value={filters.search || ''}
             onValueChange={(val) => handleFilterChange('search', val)}

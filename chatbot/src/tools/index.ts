@@ -134,7 +134,7 @@ const listApartmentsTool = defineTool({
     description: `
       Returns a paginated and filtered list of apartments/rooms available in the vacation posada.
       Use this tool whenever the user asks to see available rooms, room prices, features (bathrooms/bedrooms), 
-      or wants to filter by a specific status or room size.
+      or wants to filter by a specific status, room size, price range, or check availability for specific dates.
     `,
     parameters: {
       type: Type.OBJECT,
@@ -168,6 +168,22 @@ const listApartmentsTool = defineTool({
         bathrooms: {
           type: Type.INTEGER,
           description: 'Number of bathrooms required.',
+        },
+        minPrice: {
+          type: Type.NUMBER,
+          description: 'Minimum price per day filter.',
+        },
+        maxPrice: {
+          type: Type.NUMBER,
+          description: 'Maximum price per day filter.',
+        },
+        fromDate: {
+          type: Type.STRING,
+          description: 'The check-in/start date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+        },
+        toDate: {
+          type: Type.STRING,
+          description: 'The check-out/end date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
         },
         minSquareMeters: {
           type: Type.INTEGER,

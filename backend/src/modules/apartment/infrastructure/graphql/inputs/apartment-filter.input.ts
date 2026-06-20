@@ -1,7 +1,8 @@
-import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
-import { InputType, Field, Int, Float } from '@nestjs/graphql'
-import { IsOptional, IsString, IsInt, Min, IsEnum, IsNumber } from 'class-validator'
+import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
+import { Field, Float, InputType, Int } from '@nestjs/graphql'
+import { Transform } from 'class-transformer'
+import { IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 @InputType()
 export class ApartmentFilterInput extends PaginationFilterInput {
@@ -61,4 +62,20 @@ export class ApartmentFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsNumber()
   maxPrice?: number
+
+  @Field({ nullable: true })
+  @Transform(({ value }) => {
+    if (!value || String(value).trim() === '') return undefined
+    return new Date(value).toISOString()
+  })
+  @IsDateString({}, { message: 'La fecha de entrada debe tener un formato ISO válido' })
+  fromDate: string
+
+  @Field({ nullable: true })
+  @Transform(({ value }) => {
+    if (!value || String(value).trim() === '') return undefined
+    return new Date(value).toISOString()
+  })
+  @IsDateString({}, { message: 'La fecha de salida debe tener un formato ISO válido' })
+  toDate: string
 }

@@ -42,4 +42,6 @@ export interface IApartmentFilter extends IPaginationFilter {
   maxSquareMeters?: number
   minPrice?: number
   maxPrice?: number
+  fromDate?: string
+  toDate?: string
 }
