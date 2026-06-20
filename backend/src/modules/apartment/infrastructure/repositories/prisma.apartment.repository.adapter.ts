@@ -12,7 +12,7 @@ import { ApartmentSpecificationBuilder } from './prisma.apartment.speficicationB
 
 @Injectable()
 export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   private readonly apartmentMapper = new ApartmentMapper()
 
@@ -34,6 +34,7 @@ export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort
       .withSearch(filters.search)
       .withNumber(filters.number)
       .withStatus(filters.status)
+      .withValidDate(filters.fromDate, filters.toDate)
       .withPricePerDayBetween(filters.minPrice, filters.maxPrice)
       .withSquareMetersBetween(filters.minSquareMeters, filters.maxSquareMeters)
       .withIsDeleted(false)

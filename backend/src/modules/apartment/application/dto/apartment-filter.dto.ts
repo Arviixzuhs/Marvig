@@ -7,6 +7,8 @@ export class ApartmentFilterDto extends PaginationFilterDto {
   search?: string
   number?: string
   status?: ApartmentStatusEnum
+  toDate?: string
+  fromDate?: string
   bedrooms?: number
   minPrice?: number
   maxPrice?: number
