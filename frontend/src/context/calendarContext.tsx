@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { DateValue, RangeValue } from '@heroui/react'
 import { getLocalTimeZone } from '@internationalized/date'
+import { useLocation } from 'react-router-dom'
 
 interface CalendarContextType {
   date: RangeValue<DateValue> | null | undefined
@@ -13,6 +14,7 @@ interface CalendarContextType {
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined)
 
 export const CalendarProvider = ({ children }: { children: ReactNode }) => {
+  const location = useLocation()
   const [date, setDate] = useState<RangeValue<DateValue> | null | undefined>(null)
   const [refresh, setRefress] = useState<boolean>(false)
   const [nights, setNights] = useState<number>(0)
@@ -24,6 +26,12 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
   React.useEffect(() => {
     setNights(totalDays)
   }, [totalDays])
+
+  React.useEffect(() => {
+    if (/apartment|checkout/.test(location.pathname)) return
+    setDate(null)
+    setNights(0)
+  }, [location.pathname])
 
   const refreshCalendar = () => {
     setRefress(!refresh)

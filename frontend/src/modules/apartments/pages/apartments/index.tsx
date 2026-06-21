@@ -11,12 +11,13 @@ import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { useSearchParams } from 'react-router-dom'
 import { IApartmentFilter } from '@/models/ApartmentModel'
 import { useCalendarContext } from '@/context/calendarContext'
-import { getLocalTimeZone, today } from '@internationalized/date'
+import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
 import {
   Input,
   Slider,
   Button,
   DateValue,
+  RangeValue,
   Pagination,
   ButtonGroup,
   RangeCalendar,
@@ -26,6 +27,34 @@ export const ApartmentsPage = () => {
   const INITIAL_PRICE_RANGE = [20, 2000]
   const [searchParams, setSearchParams] = useSearchParams()
   const { date, setDate } = useCalendarContext()
+
+  React.useEffect(() => {
+    const start = searchParams.get('startDate')
+    const end = searchParams.get('endDate')
+
+    if (isValidParamDate(start) && isValidParamDate(end)) {
+      if (date?.start?.toString() !== start || date?.end?.toString() !== end) {
+        setDate({
+          start: parseDate(start!),
+          end: parseDate(end!),
+        })
+      }
+    }
+  }, [searchParams, setDate])
+
+  const handleCalendarChange = (newDate: RangeValue<DateValue>) => {
+    setDate(newDate)
+
+    const params = new URLSearchParams(searchParams)
+    if (newDate?.start && newDate?.end) {
+      params.set('startDate', newDate.start.toString())
+      params.set('endDate', newDate.end.toString())
+    } else {
+      params.delete('startDate')
+      params.delete('endDate')
+    }
+    setSearchParams(params)
+  }
 
   const isValidParamDate = (dateStr: string | null): boolean => {
     if (!dateStr) return false
@@ -152,7 +181,7 @@ export const ApartmentsPage = () => {
                 value={date}
                 isDateUnavailable={isDateUnavailable}
                 aria-label='Date (Controlled)'
-                onChange={setDate}
+                onChange={(e) => handleCalendarChange(e)}
                 errorMessage='Selecciona una fecha disponible'
                 classNames={{
                   base: 'shadow-none ',
