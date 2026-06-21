@@ -26,6 +26,7 @@ export interface ChatState {
   messages: MessageModel[]
   isLoading: boolean
   currentPage: number
+  isOpenModal: boolean
   isOpenSidebar: boolean
   isLoadingMore: boolean
   pendingMessage: string | null
@@ -37,6 +38,7 @@ const initialState: ChatState = {
   value: '',
   myChats: [],
   messages: [],
+  isOpenModal: false,
   isLoading: false,
   currentPage: 1,
   isOpenSidebar: false,
@@ -50,6 +52,9 @@ export const chatbotSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
+    setIsOpenModal: (state, action: PayloadAction<boolean>) => {
+      state.isOpenModal = action.payload
+    },
     setValue: (state, action: PayloadAction<string>) => {
       state.value = action.payload
     },
@@ -132,6 +137,7 @@ export const {
   setLoading,
   setCurrentPage,
   setIsOpenSidebar,
+  setIsOpenModal,
   setIsLoadingMore,
   setPendingMessage,
   setHasMoreMessages,
