@@ -51,6 +51,7 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
   async findAvailableReservations(apartmentIds: number[]) {
     const result = await this.prisma.reservation.findMany({
       where: {
+        isDeleted: false,
         apartments: {
           some: {
             id: { in: apartmentIds },
