@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Calendar, Search } from 'lucide-react'
 import { CalendarDate, getLocalTimeZone, parseDate, today } from '@internationalized/date'
 import { Button, DateRangePicker, type DateValue, type RangeValue } from '@heroui/react'
+import { I18nProvider } from '@react-aria/i18n'
 
 export const ApartmentSearchFields = () => {
   const navigate = useNavigate()
@@ -49,19 +50,21 @@ export const ApartmentSearchFields = () => {
     <div className='w-full max-w-md sm:max-w-xl mx-auto'>
       <div className='flex flex-col sm:flex-row gap-2 items-center p-1.5 shadow-md rounded-xl sm:rounded-full backdrop-blur-md'>
         <div className='w-full sm:flex-1'>
-          <DateRangePicker
-            labelPlacement='outside-left'
-            value={getDateValue()}
-            onChange={handleChangeDate}
-            minValue={todayDate}
-            aria-label='Rango de fechas para reserva'
-            startContent={
-              <Calendar size={14} className='text-default-400 dark:text-default-500 shrink-0' />
-            }
-            variant='flat'
-            radius='full'
-            className='w-full'
-          />
+          <I18nProvider locale='es'>
+            <DateRangePicker
+              labelPlacement='outside-left'
+              value={getDateValue()}
+              onChange={handleChangeDate}
+              minValue={todayDate}
+              aria-label='Rango de fechas para reserva'
+              startContent={
+                <Calendar size={14} className='text-default-400 dark:text-default-500 shrink-0' />
+              }
+              variant='flat'
+              radius='full'
+              className='w-full'
+            />
+          </I18nProvider>
         </div>
         <div className='flex items-center gap-1.5 w-full sm:w-auto shrink-0'>
           <Button
