@@ -35,14 +35,17 @@ export class MarvigAIService {
     userMessage: string
   }) {
     const decodedUserMessage = decodeURIComponent(userMessage)
+    this.logger.log(`=========================================`)
+    this.logger.log(`🚀 [ASK INICIADO] ChatId: ${chatId} | Usuario: ${user.userId}`)
+    this.logger.log(`💬 Mensaje del usuario: "${decodedUserMessage}"`)
 
     const chat = await this.chatService.findBy(chatId, user.userId)
 
-    // Obtener historial corto
     const shortContext = await this.messageService.findLastContextMessages(
       chatId,
       this.SHORT_CONTEXT_SIZE,
     )
+    this.logger.log(`📚 Contexto cargado: ${shortContext.length} mensajes previos encontrados.`)
 
     const contents: ContentListUnion = shortContext.map((m) => ({
       role: m.authorType === AuthorType.USER ? 'user' : 'model',
@@ -56,64 +59,86 @@ export class MarvigAIService {
 
     const systemInstruction = await this.buildSystemInstruction(chat.summary)
 
-    const response = await this.ai.models.generateContent({
-      model: process.env['GEMINI_MODEL'],
-      contents,
-      config: {
-        tools: apiTools,
-        maxOutputTokens: 400,
-        systemInstruction,
-      },
+    setDynamicHeaders({
+      Authorization: `Bearer ${accessToken}`,
     })
 
-    const functionCall = response.functionCalls?.[0]
+    let loopCount = 0
+    const MAX_LOOPS = 5
 
-    if (functionCall) {
-      contents.push(response.candidates[0].content)
+    while (loopCount < MAX_LOOPS) {
+      loopCount++
+      this.logger.log(`\n🤖 [BUCLE AGENTE] Paso #${loopCount} - Enviando contexto a Gemini...`)
 
-      const tool = tools.find((t) => t.name === functionCall.name)
-      if (!tool) {
-        throw new ConflictException(`Función no registrada: ${functionCall.name}`)
-      }
-
-      setDynamicHeaders({
-        Authorization: `Bearer ${accessToken}`,
+      const response = await this.ai.models.generateContent({
+        model: process.env['GEMINI_MODEL'],
+        contents,
+        config: {
+          tools: apiTools,
+          systemInstruction,
+        },
       })
 
-      let result: unknown
+      const functionCalls = response.functionCalls
 
-      try {
-        result = await tool.execute(functionCall.args ?? {})
-      } catch (error) {
-        this.logger.error(error)
+      if (!functionCalls || functionCalls.length === 0) {
+        this.logger.log(`✨ [BUCLE AGENTE] El modelo decidió no usar herramientas en el paso #${loopCount}. Saliendo al stream final.`);
+        break
+      }
+
+      this.logger.warn(`🛠️ [TOOL CALL] Gemini solicitó ejecutar (${functionCalls.length}) herramienta(s):`)
+
+      contents.push(response.candidates[0].content)
+
+      const functionResponses: any[] = []
+
+      for (const call of functionCalls) {
+        this.logger.log(`✨ Ejecutando: "${call.name}" | ID: ${call.id}`)
+        this.logger.debug(`📦 Argumentos recibidos: ${JSON.stringify(call.args)}`)
+
+        const tool = tools.find((t) => t.name === call.name)
+        if (!tool) {
+          this.logger.error(`❌ Función no registrada en el sistema: ${call.name}`)
+          throw new ConflictException(`Función no registrada: ${call.name}`)
+        }
+
+        let result: unknown
+        try {
+          result = await tool.execute(call.args ?? {})
+          this.logger.log(`✅ [SUCCESS] Tool "${call.name}" ejecutada con éxito.`)
+          this.logger.debug(`📤 Resultado de la Tool: ${JSON.stringify(result).substring(0, 500)}...`)
+        } catch (error: any) {
+          this.logger.error(`❌ [ERROR] Falló la ejecución de la tool "${call.name}":`, error)
+          result = { error: error.message || 'Error interno de la herramienta' }
+        }
+
+        functionResponses.push({
+          name: call.name,
+          id: call.id,
+          response: { result },
+        })
       }
 
       contents.push({
         role: 'user',
-        parts: [
-          {
-            functionResponse: {
-              name: functionCall.name,
-              response: {
-                result,
-              },
-            },
-          },
-        ],
+        parts: functionResponses.map((fRes) => ({ functionResponse: fRes })),
       })
     }
 
-    // Guardar mensaje del usuario
+    if (loopCount >= MAX_LOOPS) {
+      this.logger.error(`⚠️ [GUARDRAIL] Se alcanzó el límite máximo de bucles (${MAX_LOOPS}). Rompiendo ciclo por seguridad.`);
+    }
+
     await this.messageService.create({
       chatId,
       content: decodedUserMessage,
       authorType: AuthorType.USER,
     })
 
-    // Manejo de resumen asíncrono
+    this.logger.log(`📝 Mensaje del usuario guardado en base de datos. Generando stream de respuesta...`)
+
     this.handleSummary(chatId, chat.messageCount)
 
-    // Streaming final con la instrucción maestra
     return this.streamExplanation(chatId, contents, systemInstruction)
   }
 

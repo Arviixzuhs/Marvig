@@ -12,6 +12,26 @@ import { reservationService } from '@/services/reservation'
 import { ToolListUnion, Type } from '@google/genai'
 import { RentalType, ReservationStatus } from '@/models/ReservationModel'
 
+const todayTool = defineTool({
+  schema: {
+    name: 'get_today',
+    description: "Returns today date",
+  },
+  execute() {
+    return new Date()
+  },
+})
+
+const userContextTool = defineTool({
+  schema: {
+    name: 'get_user_context',
+    description: 'Returns the current authenticated user profile, full name, system role, email, phone and createdAt.',
+  },
+  execute() {
+    userService.findCurrent()
+  },
+});
+
 const paymentFilterProperties = {
   search: {
     type: Type.STRING,
@@ -455,6 +475,8 @@ const getExpensesPerformanceTool = defineTool({
   },
 })
 
+
+
 const listUsersTool = defineTool({
   schema: {
     name: 'list_users',
@@ -504,7 +526,9 @@ const listUsersTool = defineTool({
 })
 
 export const tools = [
+  todayTool,
   listUsersTool,
+  userContextTool,
   listPaymentsTool,
   listExpensesTool,
   listEmployeesTool,
