@@ -7,9 +7,9 @@ import { formatCalendarDate } from '@/utils/formatCalendarDate'
 import { calcTotalByApartmentAndNights } from '@/utils/calcTotalByApartmentAndNights'
 
 export const Success = () => {
-  const checkout = useSelector((state: RootState) => state.checkout)
+  const { date, nights } = useCalendarContext()
   const apartment = useSelector((state: RootState) => state.apartment)
-  const { date } = useCalendarContext()
+
   if (!apartment) return null
 
   return (
@@ -41,7 +41,7 @@ export const Success = () => {
           <span className='text-foreground'>
             {formatCurrency(
               calcTotalByApartmentAndNights({
-                nights: checkout.nights,
+                nights,
                 pricePerDay: apartment.pricePerDay,
                 ...(apartment.promotion && {
                   promotion: {

@@ -1,25 +1,16 @@
 import React from 'react'
 import { RootState } from '@/store'
+import { useSelector } from 'react-redux'
 import { I18nProvider } from '@react-aria/i18n'
-import { useDispatch, useSelector } from 'react-redux'
-import { RangeCalendar, RangeValue } from '@heroui/react'
-import { setNights } from '@/features/checkoutSlice'
+import { RangeCalendar } from '@heroui/react'
 import { reservationService } from '@/services/reservation'
 import { useCalendarContext } from '@/context/calendarContext'
 import { CalendarDate, DateValue, getLocalTimeZone, today } from '@internationalized/date'
 
 export const ApartmentCalendarDateRange = () => {
-  const dispatch = useDispatch()
   const apartment = useSelector((state: RootState) => state.apartment)
   const [invalidDates, setInvalidDates] = React.useState<CalendarDate[]>([])
   const { date, setDate, refresh } = useCalendarContext()
-  const startMs = date?.start.toDate(getLocalTimeZone()).getTime() ?? 0
-  const endMs = date?.end.toDate(getLocalTimeZone()).getTime() ?? 0
-  const totalDays = date ? Math.round((endMs - startMs) / (1000 * 60 * 60 * 24)) : 0
-
-  React.useEffect(() => {
-    dispatch(setNights(totalDays))
-  }, [totalDays, dispatch])
 
   React.useEffect(() => {
     if (!apartment?.id) return
@@ -49,16 +40,12 @@ export const ApartmentCalendarDateRange = () => {
     return invalidDates.some((invalidDate) => date.compare(invalidDate) === 0)
   }
 
-  const onChange = (e: RangeValue<DateValue>) => {
-    setDate(e)
-  }
-
   return (
     <I18nProvider locale='es'>
       <RangeCalendar
         value={date}
         aria-label='Date (Controlled)'
-        onChange={onChange}
+        onChange={setDate}
         errorMessage='Selecciona una fecha disponible'
         isDateUnavailable={isDateUnavailable}
         classNames={{

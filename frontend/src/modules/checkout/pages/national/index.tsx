@@ -19,7 +19,7 @@ export const NationalCheckoutPage = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
   const [isLoading, setLoading] = React.useState(false)
   const [showConfetti, setShowConfetti] = React.useState(false)
-  const { date, refreshCalendar } = useCalendarContext()
+  const { date, refreshCalendar, nights } = useCalendarContext()
   const [windowDimension, setWindowDimension] = React.useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -77,7 +77,7 @@ export const NationalCheckoutPage = () => {
       endDate: date?.end.toString(),
       startDate: date?.start.toString(),
       clientName: rest.clientName + ' ' + clientLastname,
-      totalPrice: apartment.pricePerDay * checkout.nights,
+      totalPrice: apartment.pricePerDay * nights,
       apartmentIds: [apartment.id],
       payment: {
         date: paymentDate,
