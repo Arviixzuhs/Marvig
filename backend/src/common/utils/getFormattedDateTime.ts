@@ -13,7 +13,10 @@ export const getFormattedDateTime = ({
   try {
     const dateObj = typeof value === 'string' ? new Date(value) : value
     if (dateObj instanceof Date && !isNaN(dateObj.getTime())) {
-      formatted = dateObj.toLocaleDateString('es-AR', format)
+      formatted = dateObj.toLocaleDateString('es-AR', {
+        ...format,
+        timeZone: 'UTC'
+      })
     }
   } catch {
     formatted = value

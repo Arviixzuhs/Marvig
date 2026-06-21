@@ -5,13 +5,12 @@ import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { Bath, Bed, Square } from 'lucide-react'
 import { useCalendarContext } from '@/context/calendarContext'
-import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
 import { formatCalendarDate } from '@/utils/formatCalendarDate'
+import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
 
 export const Summary = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
-  const checkout = useSelector((state: RootState) => state.checkout)
-  const { date } = useCalendarContext()
+  const { date, nights } = useCalendarContext()
   if (!apartment) return
 
   return (
@@ -55,14 +54,13 @@ export const Summary = () => {
                 : 'Seleccione fechas'}
             </span>
             <span className='text-muted-foreground font-bold'>
-              {checkout.nights}{' '}
-              <span className='font-normal'>{pluralize(checkout.nights, 'noche', 'noches')}</span>
+              {nights} <span className='font-normal'>{pluralize(nights, 'noche', 'noches')}</span>
             </span>
           </div>
           <Divider />
           <div className='flex justify-between font-bold text-base w-full'>
             <span>Total</span>
-            <span>{formatCurrency(apartment.pricePerDay * checkout.nights)}</span>
+            <span>{formatCurrency(apartment.pricePerDay * nights)}</span>
           </div>
         </div>
       </div>

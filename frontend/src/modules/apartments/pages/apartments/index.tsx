@@ -3,19 +3,29 @@ import { Search } from 'lucide-react'
 import { useQuery } from '@apollo/client/react'
 import { useDebounce } from 'use-debounce'
 import { inputStyles } from '@/styles'
+import { I18nProvider } from '@react-aria/i18n'
 import { ApartmentCard } from '@/modules/apartments/components/ApartmentCard'
 import { IPageResponse } from '@/api/interfaces'
 import { ApartmentModel } from '@/models/ApartmentModel'
 import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
-import { IApartmentFilter } from '@/models/ApartmentModel'
-import { Pagination, Slider, Input, Button, ButtonGroup } from '@heroui/react'
 import { useSearchParams } from 'react-router-dom'
+import { IApartmentFilter } from '@/models/ApartmentModel'
+import { useCalendarContext } from '@/context/calendarContext'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import {
+  Input,
+  Slider,
+  Button,
+  DateValue,
+  Pagination,
+  ButtonGroup,
+  RangeCalendar,
+} from '@heroui/react'
 
 export const ApartmentsPage = () => {
   const INITIAL_PRICE_RANGE = [20, 2000]
-  const [searchParams, _setSearchParams] = useSearchParams()
-  const startDate = searchParams.get('startDate')
-  const endDate = searchParams.get('endDate')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { date, setDate } = useCalendarContext()
 
   const isValidParamDate = (dateStr: string | null): boolean => {
     if (!dateStr) return false
@@ -25,8 +35,11 @@ export const ApartmentsPage = () => {
     return !isNaN(date.getTime())
   }
 
-  const validFromDate = isValidParamDate(startDate) ? startDate! : ''
-  const validToDate = isValidParamDate(endDate) ? endDate! : ''
+  const startParam = date?.start?.toString() || searchParams.get('startDate') || ''
+  const endParam = date?.end?.toString() || searchParams.get('endDate') || ''
+
+  const validFromDate = isValidParamDate(startParam) ? startParam : ''
+  const validToDate = isValidParamDate(endParam) ? endParam : ''
 
   const [filters, setFilters] = React.useState<IApartmentFilter>({
     page: 0,
@@ -36,8 +49,6 @@ export const ApartmentsPage = () => {
     floor: undefined,
     bedrooms: undefined,
     bathrooms: undefined,
-    fromDate: validFromDate,
-    toDate: validToDate,
     minPrice: INITIAL_PRICE_RANGE[0],
     maxPrice: INITIAL_PRICE_RANGE[1],
   })
@@ -50,6 +61,8 @@ export const ApartmentsPage = () => {
     variables: {
       filters: {
         ...debouncedFilters,
+        fromDate: validFromDate,
+        toDate: validToDate,
       },
     },
     notifyOnNetworkStatusChange: true,
@@ -93,6 +106,8 @@ export const ApartmentsPage = () => {
   }
 
   const resetFilters = () => {
+    setDate(null)
+    setSearchParams('')
     setFilters({
       page: 0,
       pageSize: 12,
@@ -109,10 +124,14 @@ export const ApartmentsPage = () => {
     })
   }
 
+  const isDateUnavailable = (date: DateValue) => {
+    return date.compare(today(getLocalTimeZone())) < 0
+  }
+
   return (
     <div className='min-h-screen bg-background text-foreground flex justify-center'>
       <div className='w-full max-w-7xl px-6 py-6 flex flex-col md:flex-row gap-7'>
-        <aside className='w-full md:w-64 shrink-0 space-y-6 bg-card p-5 rounded-2xl  h-fit'>
+        <aside className='w-fit shrink-0 space-y-6 bg-card p-5 rounded-2xl  h-fit'>
           <div className='flex justify-between items-center pb-2 border-b border-border'>
             <h3 className='font-bold text-xs tracking-wide text-muted-foreground'>
               Filtros Avanzados
@@ -126,6 +145,39 @@ export const ApartmentsPage = () => {
             >
               Limpiar todo
             </Button>
+          </div>
+          <div>
+            <I18nProvider locale='es'>
+              <RangeCalendar
+                value={date}
+                isDateUnavailable={isDateUnavailable}
+                aria-label='Date (Controlled)'
+                onChange={setDate}
+                errorMessage='Selecciona una fecha disponible'
+                classNames={{
+                  base: 'shadow-none ',
+                }}
+              />
+            </I18nProvider>
+          </div>
+          <div className='pt-2'>
+            <Slider
+              label='Precio / mes'
+              size='sm'
+              step={20}
+              minValue={20}
+              maxValue={2000}
+              value={[
+                filters.minPrice ?? INITIAL_PRICE_RANGE[0],
+                filters.maxPrice ?? INITIAL_PRICE_RANGE[1],
+              ]}
+              onChange={handlePriceRangeChange}
+              formatOptions={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}
+              classNames={{
+                label: 'text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
+                value: 'text-xs font-medium text-foreground',
+              }}
+            />
           </div>
           <div>
             <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
@@ -162,47 +214,6 @@ export const ApartmentsPage = () => {
                 </Button>
               ))}
             </ButtonGroup>
-          </div>
-          <div className='pt-2'>
-            <Slider
-              label='Precio / mes'
-              size='sm'
-              step={20}
-              minValue={20}
-              maxValue={2000}
-              value={[
-                filters.minPrice ?? INITIAL_PRICE_RANGE[0],
-                filters.maxPrice ?? INITIAL_PRICE_RANGE[1],
-              ]}
-              onChange={handlePriceRangeChange}
-              formatOptions={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}
-              classNames={{
-                label: 'text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
-                value: 'text-xs font-medium text-foreground',
-              }}
-            />
-          </div>
-          <div className='grid grid-cols-2 gap-2'>
-            <Input
-              type='number'
-              label='Piso'
-              labelPlacement='outside'
-              placeholder='Ej. 3'
-              size='sm'
-              variant='bordered'
-              value={filters.floor?.toString() || ''}
-              onValueChange={(val) => handleFilterChange('floor', val)}
-            />
-            <Input
-              type='text'
-              label='Número Apt'
-              labelPlacement='outside'
-              placeholder='Ej. 102'
-              size='sm'
-              variant='bordered'
-              value={filters.number || ''}
-              onValueChange={(val) => handleFilterChange('number', val)}
-            />
           </div>
         </aside>
         <div className='flex-1 flex flex-col gap-5'>
