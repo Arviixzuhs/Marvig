@@ -2,15 +2,15 @@ import { RootState } from '@/store'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
+import { useCalendarContext } from '@/context/calendarContext'
 import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
 import { calcTotalByApartmentAndNights } from '@/utils/calcTotalByApartmentAndNights'
 import { Card, Button, Divider, CardBody, CardFooter, CardHeader } from '@heroui/react'
 
 export const ApartmentCalendarRange = () => {
   const navigate = useNavigate()
-  const checkout = useSelector((state: RootState) => state.checkout)
   const apartment = useSelector((state: RootState) => state.apartment)
-
+  const { nights } = useCalendarContext()
   if (!apartment) return null
 
   return (
@@ -28,16 +28,14 @@ export const ApartmentCalendarRange = () => {
         </CardBody>
         <CardFooter className='flex flex-col gap-2'>
           <div className='flex flex-col gap-2 w-full'>
-            <span className='text-muted-foreground text-sm'>
-              {checkout.nights} noches seleccionadas
-            </span>
+            <span className='text-muted-foreground text-sm'>{nights} noches seleccionadas</span>
             <Divider />
             <div className='flex justify-between font-bold'>
               <span>Total</span>
               <span>
                 {formatCurrency(
                   calcTotalByApartmentAndNights({
-                    nights: checkout.nights,
+                    nights,
                     pricePerDay: apartment.pricePerDay,
                     ...(apartment.promotion && {
                       promotion: {
@@ -53,10 +51,10 @@ export const ApartmentCalendarRange = () => {
           <Button
             color='primary'
             className='w-full'
-            isDisabled={checkout.nights === 0}
+            isDisabled={nights === 0}
             onPress={() => navigate(`/checkout/national/${apartment.id}`)}
           >
-            {checkout.nights === 0 ? 'Selecciona una fecha' : 'Reservar'}
+            {nights === 0 ? 'Selecciona una fecha' : 'Reservar'}
           </Button>
         </CardFooter>
       </Card>
