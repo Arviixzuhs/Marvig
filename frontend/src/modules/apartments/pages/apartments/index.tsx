@@ -110,8 +110,8 @@ export const ApartmentsPage = () => {
   }
 
   return (
-    <div className='min-h-screen bg-background text-foreground'>
-      <div className='max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row gap-7'>
+    <div className='min-h-screen bg-background text-foreground flex justify-center'>
+      <div className='w-full max-w-7xl px-6 py-6 flex flex-col md:flex-row gap-7'>
         <aside className='w-full md:w-64 shrink-0 space-y-6 bg-card p-5 rounded-2xl  h-fit'>
           <div className='flex justify-between items-center pb-2 border-b border-border'>
             <h3 className='font-bold text-xs tracking-wide text-muted-foreground'>

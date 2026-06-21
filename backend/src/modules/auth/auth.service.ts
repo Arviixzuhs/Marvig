@@ -111,20 +111,22 @@ export class AuthService {
       )
     }
 
-    const user = await this.prisma.user.upsert({
+    let user = await this.prisma.user.findFirst({
       where: {
-        email,
-      },
-      create: {
-        email,
-        name: given_name ?? 'Usuario',
-        lastName: family_name ?? '',
-        avatar: picture ?? '',
-      },
-      update: {
-        ...(picture && { avatar: picture }),
-      },
+        email
+      }
     })
+
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          email,
+          name: given_name ?? 'Usuario',
+          lastName: family_name ?? '',
+          avatar: picture ?? '',
+        }
+      })
+    }
 
     const accessToken = jwt.sign(
       { userId: user.id, username: user.name, email: user.email, role: user.role },
