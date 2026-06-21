@@ -8,8 +8,8 @@ export const ConfigPage = () => {
   const [activeSection, setActiveSection] = React.useState('personal')
 
   return (
-    <div className='bg-background text-foreground grid items-center p-4 transition-colors duration-200'>
-      <div className='max-w-4xl w-full mx-auto flex flex-col md:flex-row gap-4 items-start'>
+    <div className='min-h-screen bg-background text-foreground flex justify-center'>
+      <div className='w-full max-w-4xl px-6 py-6 flex flex-col md:flex-row gap-7'>
         <ProfileSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
         <Card
           shadow='none'
