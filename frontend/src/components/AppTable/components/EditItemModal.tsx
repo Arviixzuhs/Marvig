@@ -29,12 +29,14 @@ export interface EditItemModalProps {
   action: () => Promise<void>
   children: React.ReactNode
   tableContent: any[]
+  modalExtensionUp?: React.ReactNode
 }
 
 export const EditItemModal: React.FC<EditItemModalProps> = ({
   action,
   children,
   tableContent,
+  modalExtensionUp,
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
@@ -132,6 +134,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
         <ModalHeader>Editar</ModalHeader>
         <Form onSubmit={onSubmit} className='overflow-auto'>
           <ModalBody className='w-full'>
+            {modalExtensionUp}
             <div className='w-full flex flex-col gap-4'>
               {filteredInputs.map((item, index) => {
                 if (item.divider) {
