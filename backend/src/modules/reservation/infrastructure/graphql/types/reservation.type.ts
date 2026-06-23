@@ -1,3 +1,4 @@
+import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
 import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
@@ -42,4 +43,7 @@ export class ReservationType {
 
   @Field({ nullable: true })
   updatedAt?: Date
+
+  @Field(() => [ApartmentType], { nullable: 'itemsAndList' })
+  apartments?: ApartmentType[]
 }

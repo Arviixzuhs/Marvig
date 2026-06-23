@@ -90,6 +90,8 @@ export interface AppTableInterface {
   isEditItemModalOpen: boolean
   currentItemToUpdate: number
   currentItemToDelete: number
+  currentItemToView: number
+  isViewItemModalOpen: boolean
   isConfirmDeleteModalOpen: boolean
 }
 
@@ -106,7 +108,9 @@ export const manageAppTableSlice = createSlice({
     isEditItemModalOpen: false,
     currentItemToDelete: -1,
     currentItemToUpdate: -1,
+    currentItemToView: -1,
     dateFilterPeriod: null,
+    isViewItemModalOpen: false,
     isConfirmDeleteModalOpen: false,
     dateFilter: {
       end: '',
@@ -164,6 +168,12 @@ export const manageAppTableSlice = createSlice({
     toggleEditItemModal: (state, _action) => {
       state.isEditItemModalOpen = !state.isEditItemModalOpen
     },
+    toggleViewItemModal: (state, _action) => {
+      state.isViewItemModalOpen = !state.isViewItemModalOpen
+    },
+    setCurrentItemToView: (state, action) => {
+      state.currentItemToView = action.payload
+    },
     setCurrentItemToDelete: (state, action) => {
       state.currentItemToDelete = action.payload
     },
@@ -195,6 +205,8 @@ export const {
   setFormData,
   clearFormData,
   setDateFilterPeriod,
+  setCurrentItemToView,
+  toggleViewItemModal,
   toggleConfirmDeleteModal,
   setCurrentItemToUpdate,
   setCurrentItemToDelete,
