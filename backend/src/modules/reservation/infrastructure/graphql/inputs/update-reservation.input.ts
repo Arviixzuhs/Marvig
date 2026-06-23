@@ -14,7 +14,8 @@ export class UpdateReservationInput {
     @IsNumber()
     persons?: number
 
-    @Field(() => Float, { nullable: false })
+    @Field(() => Float, { nullable: true })
+    @IsOptional()
     @IsNumber({}, { message: 'El precio debe ser un valor numérico' })
     @Min(0, { message: 'El precio total no puede ser negativo' })
     totalPrice?: number
