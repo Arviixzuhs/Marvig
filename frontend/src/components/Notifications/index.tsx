@@ -37,7 +37,6 @@ export const Notifications = () => {
         userTargetRole: UserRole.ADMIN,
       },
     },
-    pollInterval: 30000,
   })
 
   const [markAllAsRead] = useMutation(MARK_NOTIFICATIONS_AS_READ, {
