@@ -20,6 +20,7 @@ export interface ReservationModel {
   startDate: Date | string
   endDate: Date | string
   type: RentalType
+  persons: number
   status: ReservationStatus
   totalPrice: number
   userId: number
