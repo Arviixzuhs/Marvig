@@ -9,6 +9,7 @@ import { DifferenceCard } from './DifferenceCard'
 import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { apartmentService } from '@/services/apartment'
 import { GET_INVALID_DATES } from '@/services/reservation/graphql/getInvalidDatesQuery'
+import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 import { useCalendarContext } from '@/context/calendarContext'
 import { Divider, RangeCalendar } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,7 +25,6 @@ import {
   CalendarDate,
   getLocalTimeZone,
 } from '@internationalized/date'
-import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 
 interface IEstimationWithCalendarProps {
   setTotalCalculated: React.Dispatch<React.SetStateAction<number>>
