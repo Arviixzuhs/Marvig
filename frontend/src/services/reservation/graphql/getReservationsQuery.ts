@@ -16,19 +16,19 @@ export const GET_RESERVATIONS = gql`
         totalPrice
         userId
         apartments {
-        id
-        floor
-        number
-        status
-        images {
           id
-          url
-          isPrimary
-        }
-        bedrooms
-        bathrooms
-        pricePerDay
-        squareMeters
+          floor
+          number
+          status
+          images {
+            id
+            url
+            isPrimary
+          }
+          bedrooms
+          bathrooms
+          pricePerDay
+          squareMeters
         }
       }
       totalItems

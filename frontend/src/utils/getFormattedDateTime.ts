@@ -15,7 +15,7 @@ export const getFormattedDateTime = ({
     if (dateObj instanceof Date && !isNaN(dateObj.getTime())) {
       formatted = dateObj.toLocaleDateString('es-AR', {
         ...format,
-        timeZone: 'UTC'
+        timeZone: 'UTC',
       })
     }
   } catch {
