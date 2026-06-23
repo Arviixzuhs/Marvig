@@ -1,6 +1,5 @@
 import { ExpenseModel } from '@/modules/expense/domain/models/expense.model'
 import { PromotionModel } from '@/modules/promotion/domain/models/promotion.model'
-import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ApartmentImageModel } from '@/modules/apartment/domain/models/apartment-image.model'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 
@@ -20,5 +19,4 @@ export class ApartmentModel {
   pricePerDay: number
   squareMeters?: number | null
   promotionId?: number | null
-  reservations?: ReservationModel[] | null
 }

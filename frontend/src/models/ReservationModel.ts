@@ -1,6 +1,7 @@
 import { UserModel } from './UserModel'
 import { ApartmentModel } from './ApartmentModel'
 import { IPaginationFilter } from '@/api/interfaces'
+import { PaymentModel } from './PaymentModel'
 
 export enum ReservationStatus {
   PENDING = 'PENDING',
@@ -19,6 +20,7 @@ export interface ReservationModel {
   startDate: Date | string
   endDate: Date | string
   type: RentalType
+  persons: number
   status: ReservationStatus
   totalPrice: number
   userId: number
@@ -32,6 +34,31 @@ export interface ReservationModel {
   updatedAt?: Date | null
   user?: UserModel
   apartments?: ApartmentModel[]
+}
+
+export interface ICreateReservation {
+  type?: RentalType
+  status?: ReservationStatus
+  payment: Partial<PaymentModel>
+  endDate: string
+  persons?: number
+  startDate: string
+  totalPrice: number
+  clientName?: string
+  clientEmail?: string
+  clientPhone?: string
+  apartmentIds: number[]
+}
+
+export interface IUpdateReservation {
+  status?: ReservationStatus
+  persons?: number
+  endDate?: string
+  startDate?: string
+  clientName?: string
+  totalPrice?: number
+  clientEmail?: string
+  clientPhone?: string
 }
 
 export interface IReservationFilter extends IPaginationFilter {

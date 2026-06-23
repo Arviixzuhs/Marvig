@@ -7,9 +7,9 @@ import {
   Apartment as PrismaApartment,
   Payment as PrismaPayment,
 } from 'generated/prisma/client'
-import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
+import { ApartmentMapper } from '@/modules/apartment/infrastructure/mappers/apartment.mapper'
 
 type PrismaReservationWithRelations = PrismaReservation & {
   apartments?: PrismaApartment[]
@@ -20,6 +20,7 @@ export class ReservationMapper extends BaseMapper<
   PrismaReservationWithRelations,
   ReservationModel
 > {
+  private readonly apartmentMapper = new ApartmentMapper()
   modelToDomain(model: PrismaReservationWithRelations): ReservationModel {
     return {
       id: model.id,
@@ -35,33 +36,19 @@ export class ReservationMapper extends BaseMapper<
       totalPrice: Number(model.totalPrice),
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
-      apartments: model.apartments
-        ? model.apartments.map((apt) => ({
-            id: apt.id,
-            floor: apt.floor,
-            number: apt.number,
-            status: apt.status as ApartmentStatusEnum,
-            bedrooms: apt.bedrooms,
-            bathrooms: apt.bathrooms,
-            pricePerDay: Number(apt.pricePerDay),
-            promotionId: apt.promotionId,
-            squareMeters: apt.squareMeters,
-            createdAt: apt.createdAt,
-            updatedAt: apt.updatedAt,
-          }))
-        : [],
+      apartments: model.apartments ? this.apartmentMapper.modelsToDomain(model.apartments) : [],
       payments: model.payments
         ? model.payments.map((pay) => ({
-            id: pay.id,
-            amount: Number(pay.amount),
-            status: pay.status as PaymentStatus,
-            method: pay.method as PaymentMethod,
-            reference: pay.reference,
-            date: pay.date,
-            description: pay.description,
-            reservationId: pay.reservationId,
-            createdAt: pay.createdAt,
-          }))
+          id: pay.id,
+          amount: Number(pay.amount),
+          status: pay.status as PaymentStatus,
+          method: pay.method as PaymentMethod,
+          reference: pay.reference,
+          date: pay.date,
+          description: pay.description,
+          reservationId: pay.reservationId,
+          createdAt: pay.createdAt,
+        }))
         : undefined,
     }
   }

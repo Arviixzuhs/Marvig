@@ -34,8 +34,9 @@ export class ReservationResolver {
   })
   getInvalidDates(
     @Args('apartmentIds', { type: () => [Int] }) apartmentIds: number[],
+    @Args('reserveIdToExclude', { type: () => Int, nullable: true }) reserveIdToExclude?: number
   ): Promise<InvalidDateType[]> {
-    return this.getInvalidDatesUseCase.execute(apartmentIds)
+    return this.getInvalidDatesUseCase.execute(apartmentIds, reserveIdToExclude)
   }
 
   @Mutation(() => ReservationType, {

@@ -3,7 +3,7 @@ import { pluralize } from '@/utils/pluralize'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
-import { Bath, Bed, Square } from 'lucide-react'
+import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 import { useCalendarContext } from '@/context/calendarContext'
 import { formatCalendarDate } from '@/utils/formatCalendarDate'
 import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
@@ -15,34 +15,10 @@ export const Summary = () => {
 
   return (
     <div className='w-full'>
-      <div className='bg-card border border-border rounded-2xl p-5 sticky w-full'>
-        <h3 className='font-semibold mb-4 text-sm'>Resumen de reserva</h3>
-        <div className='flex gap-3 mb-5 w-full'>
-          <div className='w-20 h-16 rounded-xl bg-muted overflow-hidden shrink-0'>
-            <img className='w-full h-full object-cover' src={apartment.images?.[0].url} />
-          </div>
-          <div className='flex-1'>
-            <h3 className='font-semibold text-sm mb-0.5'>Suit #{apartment.number}</h3>
-            <div className='flex items-center gap-3 text-xs text-muted-foreground mb-3'>
-              <span className='flex items-center gap-1'>
-                <Bed size={11} /> {apartment.bedrooms} hab.
-              </span>
-              <span className='flex items-center gap-1'>
-                <Bath size={11} /> {apartment.bathrooms} baños
-              </span>
-              <span className='flex items-center gap-1'>
-                <Square size={11} /> {apartment.squareMeters}m²
-              </span>
-            </div>
-            <div className='flex items-center justify-between'>
-              <span className='font-bold text-sm'>
-                {formatCurrency(apartment.pricePerDay)}
-                <span className='text-muted-foreground font-normal text-xs'>/noche</span>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className='flex justify-center w-full mb-5'>
+      <div className='flex flex-col gap-3 bg-card border border-border rounded-2xl p-5 sticky w-full'>
+        <h3 className='font-semibold text-sm'>Resumen de reserva</h3>
+        <ApartmentMiniCard apartment={apartment} />
+        <div className='flex justify-center w-full'>
           <ApartmentCalendarDateRange />
         </div>
         <div className='text-sm flex flex-col gap-3 w-full'>

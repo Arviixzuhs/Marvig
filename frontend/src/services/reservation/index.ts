@@ -8,10 +8,12 @@ import { UPDATE_RESERVATION } from './graphql/updateReservationMutation'
 import { DELETE_RESERVATION } from './graphql/deleteReservationMutation'
 import { UPDATE_RESERVATION_STATUS } from './graphql/updateReservationStatusMutation'
 import {
-  ReservationModel,
-  IReservationFilter,
-  ReservationStatus,
   InvalidDate,
+  ReservationModel,
+  ReservationStatus,
+  IReservationFilter,
+  ICreateReservation,
+  IUpdateReservation,
 } from '@/models/ReservationModel'
 
 export const reservationService = {
@@ -32,7 +34,7 @@ export const reservationService = {
     })
     return data?.findReservations || null
   },
-  create: async (payload: Partial<ReservationModel>): Promise<ReservationModel | undefined> => {
+  create: async (payload: ICreateReservation): Promise<ReservationModel | undefined> => {
     const { data } = await apolloClient.mutate<{ createReservation: ReservationModel }>({
       mutation: CREATE_RESERVATION,
       variables: {
@@ -43,7 +45,7 @@ export const reservationService = {
   },
   update: async (
     id: number,
-    payload: Partial<ReservationModel>,
+    payload: IUpdateReservation,
   ): Promise<ReservationModel | undefined> => {
     const { data } = await apolloClient.mutate<{ updateReservation: ReservationModel }>({
       mutation: UPDATE_RESERVATION,
@@ -74,11 +76,15 @@ export const reservationService = {
     })
     return !!data?.deleteReservation
   },
-  getInvalidDates: async (apartmentIds: number[]): Promise<InvalidDate[] | null> => {
+  getInvalidDates: async (
+    apartmentIds: number[],
+    reserveIdToExclude?: number,
+  ): Promise<InvalidDate[] | null> => {
     const { data } = await apolloClient.query<{ getInvalidDates: InvalidDate[] }>({
       query: GET_INVALID_DATES,
       variables: {
         apartmentIds,
+        reserveIdToExclude,
       },
       fetchPolicy: 'network-only',
     })

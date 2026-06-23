@@ -128,7 +128,11 @@ export const AppTable = ({
       )}
 
       {tableActions?.update && (
-        <EditItemModal action={tableActions.update} tableContent={tableContent}>
+        <EditItemModal
+          action={tableActions.update}
+          tableContent={tableContent}
+          modalExtensionUp={modalExtensionUp}
+        >
           {modalExtension}
         </EditItemModal>
       )}
