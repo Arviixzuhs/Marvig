@@ -29,7 +29,15 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       .withIsDeleted(false)
       .withOrderBy({ createdAt: 'desc' })
       .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
-      .withInclude({ user: true, apartments: true, payments: true })
+      .withInclude({
+        user: true,
+        apartments: {
+          include: {
+            images: true
+          }
+        }, 
+        payments: true
+      })
       .build()
 
     const [reservations, reservationsCount] = await this.prisma.$transaction([
@@ -48,10 +56,15 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
     }
   }
 
-  async findAvailableReservations(apartmentIds: number[]) {
+  async findAvailableReservations(apartmentIds: number[], reserveIdToExclude?: number) {
     const result = await this.prisma.reservation.findMany({
       where: {
         isDeleted: false,
+        ...(reserveIdToExclude && {
+          id: {
+            not: reserveIdToExclude,
+          },
+        }),
         apartments: {
           some: {
             id: { in: apartmentIds },
