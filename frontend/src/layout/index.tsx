@@ -10,6 +10,10 @@ export const UserLayout = () => {
     window.scrollTo(0, 0)
   }, [pathname])
 
+  React.useEffect(() => {
+    document.body.classList = ''
+  }, [])
+
   return (
     <div className='flex flex-col min-h-screen bg-background text-foreground'>
       <UserNavbar />

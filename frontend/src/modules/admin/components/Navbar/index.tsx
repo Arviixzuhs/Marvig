@@ -1,8 +1,8 @@
-import { Search } from 'lucide-react'
+import { ThemeToggle } from './ThemeToggle'
 import { ChatbotModal } from '@/components/ChatbotModal'
 import { Notifications } from '@/components/Notifications'
 import { NavbarUserOptions } from '@/components/UserOptions'
-import { Button, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
+import { Navbar, NavbarContent, NavbarItem } from '@heroui/react'
 
 export const AdminNavbar = () => {
   return (
@@ -14,9 +14,7 @@ export const AdminNavbar = () => {
       </NavbarContent>
       <NavbarContent justify='end' className='gap-4'>
         <NavbarItem className='flex items-center gap-2'>
-          <Button isIconOnly variant='light' radius='full'>
-            <Search className='w-5 h-5 text-default-500' />
-          </Button>
+          <ThemeToggle />
           <Notifications />
         </NavbarItem>
         <NavbarItem>
