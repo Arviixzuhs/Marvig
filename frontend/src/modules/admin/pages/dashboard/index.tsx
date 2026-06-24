@@ -57,7 +57,7 @@ const StatCard = ({
   change: string
   isPositive?: boolean
 }) => (
-  <Card shadow='none' className='border-none bg-white'>
+  <Card shadow='none' className='border-none bg-card'>
     <CardBody className='p-6'>
       <div className='flex items-center justify-between'>
         <p className='text-sm text-default-500 mb-2'>{label}</p>
@@ -96,7 +96,7 @@ export const AdminDashboardPage = () => {
         paymentFilters: {
           fromDate: filters.fromDate,
           toDate: filters.toDate,
-          status: PaymentStatus.CONFIRMED
+          status: PaymentStatus.CONFIRMED,
         },
       })
 
@@ -126,7 +126,7 @@ export const AdminDashboardPage = () => {
   const categoryConfig = tableColumns.find((c) => c.uid === 'category')?.chipConfig || {}
 
   return (
-    <div className='flex flex-col gap-3 h-full'>
+    <div className='flex flex-col gap-3 h-auto w-full'>
       <div className='flex items-center justify-between'>
         <Tabs variant='solid' aria-label='Dashboard views' color='primary' radius='full'>
           <Tab key='overview' title='Todo' />
@@ -187,7 +187,7 @@ export const AdminDashboardPage = () => {
         />
       </div>
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-3'>
-        <Card shadow='none' className='lg:col-span-2'>
+        <Card shadow='none' className='lg:col-span-2 bg-card'>
           <CardBody className='p-6'>
             <div className='flex items-center justify-between mb-6'>
               <div>
@@ -225,8 +225,9 @@ export const AdminDashboardPage = () => {
                   />
                   <YAxis stroke='#9ca3af' fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip
-                    cursor={{ fill: '#f3f4f6' }}
+                    cursor={{ fill: 'var(--muted)' }}
                     contentStyle={{
+                      backgroundColor: 'var(--muted)',
                       borderRadius: '8px',
                       border: 'none',
                       boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
@@ -238,7 +239,7 @@ export const AdminDashboardPage = () => {
             </div>
           </CardBody>
         </Card>
-        <Card shadow='none'>
+        <Card shadow='none' className='bg-card'>
           <CardBody className='p-6'>
             <h2 className='text-lg mb-6 font-bold text-foreground'>Gastos por Categoría</h2>
             <div className='flex flex-wrap gap-4 mb-6'>
@@ -252,7 +253,7 @@ export const AdminDashboardPage = () => {
                 </div>
               ))}
             </div>
-            <div className='h-[300px] w-full'>
+            <div className='h-[300px] w-full overflow-hidden'>
               <ResponsiveContainer width='100%' height='100%'>
                 <LineChart data={data?.expensesPerformanceData || []}>
                   <CartesianGrid strokeDasharray='3 3' stroke='#e5e7eb' vertical={false} />
@@ -266,6 +267,7 @@ export const AdminDashboardPage = () => {
                   <YAxis stroke='#9ca3af' fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip
                     contentStyle={{
+                      backgroundColor: 'var(--muted)',
                       borderRadius: '8px',
                       border: 'none',
                       boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',

@@ -4,7 +4,11 @@ export const NotificationToast = () => {
   return (
     <Toaster
       toastOptions={{
-        className: '',
+        style: {
+          backgroundColor: 'var(--card)',
+          color: 'var(--text-default)',
+          pointerEvents: 'none',
+        },
         position: 'top-center',
         success: {
           iconTheme: {

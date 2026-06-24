@@ -17,7 +17,7 @@ export const TablePagination = ({ totalPages }: ITablePagination) => {
   }
 
   return (
-    <div className='flex justify-end bg-white items-center hoverScrollbar overflow-auto sm:bg-c-card p-2 px-4 rounded-b-2xl gap-3 min-h-[60px]'>
+    <div className='flex justify-end bg-content1 items-center hoverScrollbar overflow-auto sm:bg-c-card p-2 px-4 rounded-b-2xl gap-3 min-h-[60px]'>
       <RowsPerPage />
       <Pagination
         page={table.currentPage + 1}

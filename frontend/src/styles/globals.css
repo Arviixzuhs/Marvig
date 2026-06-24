@@ -40,39 +40,126 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+.kawaii {
+  --scrollbar-bg: oklch(0.95 0.02 0);
+  --scrollbar-bg-hover: oklch(0.9 0.04 0);
+
+  /* Superficies principales (Fresa y Crema) */
+  --background: oklch(0.97 0.015 10); /* Fondo rosa/crema ultra suave */
+  --foreground: oklch(0.32 0.07 15); /* Texto marrón/fresa oscuro muy aesthetic */
+
+  /* Componentes y Tarjetas */
+  --card: #ffffff;
+  --card-foreground: oklch(0.32 0.07 15);
+
+  --popover: oklch(0.98 0.01 10);
+  --popover-foreground: oklch(0.32 0.07 15);
+
+  /* Colores de Marca (Pink Power) */
+  --primary: #ff6b8b;
+  --primary-foreground: #ffffff;
+
+  --secondary: oklch(0.9 0.05 320); /* Lila/Pastel mágico */
+  --secondary-foreground: oklch(0.4 0.08 320);
+
+  /* Estados Muted y Desactivados */
+  --muted: oklch(0.95 0.02 10);
+  --muted-2: oklch(0.92 0.03 10);
+  --muted-foreground: oklch(0.55 0.05 15);
+
+  /* Acento (Cariño Chispeante) */
+  --accent: oklch(0.75 0.18 350); /* Rosa chicle brillante */
+  --accent-foreground: #ffffff;
+
+  /* Destructivo (Señal de alerta suave) */
+  --destructive: oklch(0.65 0.22 20); /* Rojo fresa */
+  --destructive-foreground: #ffffff;
+
+  /* Bordes e Inputs */
+  --border: oklch(0.92 0.03 10);
+  --input: oklch(0.92 0.03 10);
+  --ring: #ff6b8b;
+
+  /* Gráficos (Paleta de dulces) */
+  --chart-1: 255 107 139; /* Rosa */
+  --chart-2: 232 213 255; /* Lila */
+  --chart-3: 255 214 224; /* Pastel */
+  --chart-4: 255 184 198; /* Chicle */
+  --chart-5: 184 29 67; /* Fresa Oscuro */
+
+  /* Estructura (¡Bordes un poquito más redondeados para más ternura!) */
+  --radius: 1rem;
+
+  /* Sidebar Kawaii */
+  --sidebar: oklch(0.96 0.02 10);
+  --sidebar-foreground: oklch(0.32 0.07 15);
+  --sidebar-primary: #ff6b8b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: oklch(0.93 0.04 10);
+  --sidebar-accent-foreground: oklch(0.32 0.07 15);
+  --sidebar-border: oklch(0.9 0.03 10);
+  --sidebar-ring: #ff6b8b;
+}
+
 .dark {
-  --background: oklch(0.12 0.02 240);
-  --foreground: oklch(0.98 0.005 240);
-  --card: oklch(0.15 0.02 240);
-  --card-foreground: oklch(0.98 0.005 240);
-  --popover: oklch(0.15 0.02 240);
-  --popover-foreground: oklch(0.98 0.005 240);
-  --primary: oklch(0.65 0.18 250);
-  --primary-foreground: oklch(0.99 0.005 240);
-  --secondary: oklch(0.22 0.02 240);
-  --secondary-foreground: oklch(0.98 0.005 240);
-  --muted: oklch(0.22 0.02 240);
-  --muted-foreground: oklch(0.65 0.02 240);
-  --accent: #003044;
+  --scrollbar-bg: oklch(0.25 0.02 240);
+  --scrollbar-bg-hover: oklch(0.35 0.02 240);
+
+  /* Superficies principales */
+  --background: oklch(0.12 0.015 240); /* Fondo oscuro profundo con matiz azulado */
+  --foreground: oklch(0.95 0.01 240); /* Texto principal casi blanco */
+
+  /* Componentes y Tarjetas */
+  --card: #040c13; /* Un tono más claro que el fondo para elevación */
+  --card-foreground: oklch(0.95 0.01 240);
+
+  --popover: oklch(0.16 0.015 240);
+  --popover-foreground: oklch(0.95 0.01 240);
+
+  /* Colores de Marca / Énfasis */
+  --primary: #3474eb; /* Inversión: Texto/Elementos clave ahora son claros */
+  --primary-foreground: oklch(0.12 0.015 240);
+
+  --secondary: oklch(0.22 0.02 240); /* Botones o elementos secundarios */
+  --secondary-foreground: oklch(0.9 0.01 240);
+
+  /* Estados Muted y Desactivados */
+  --muted: oklch(0.2 0.02 240);
+  --muted-2: oklch(0.25 0.04 240); /* Variación para destacar sutilmente en oscuro */
+  --muted-foreground: oklch(0.65 0.02 240); /* Texto secundario con suficiente contraste */
+
+  /* Acento (Azul Eléctrico) */
+  --accent: oklch(0.6 0.2 250); /* Ligeramente ajustado para brillar en fondo oscuro */
   --accent-foreground: oklch(0.98 0.005 240);
-  --destructive: oklch(0.396 0.141 25.723);
+
+  /* Destructivo (Errores / Alertas) */
+  --destructive: oklch(0.6 0.22 27.3); /* Rojo vibrante pero controlado */
   --destructive-foreground: oklch(0.98 0.005 240);
-  --border: oklch(0.25 0.02 240);
-  --input: oklch(0.25 0.02 240);
-  --ring: oklch(0.65 0.18 250);
-  --chart-1: 59 130 246;
-  --chart-2: 96 165 250;
-  --chart-3: 147 197 253;
-  --chart-4: 37 99 235;
-  --chart-5: 29 78 216;
-  --sidebar: oklch(0.15 0.02 240);
-  --sidebar-foreground: oklch(0.98 0.005 240);
-  --sidebar-primary: oklch(0.65 0.18 250);
+
+  /* Bordes e Inputs */
+  --border: oklch(0.24 0.015 240); /* Bordes sutiles para no ensuciar la interfaz */
+  --input: oklch(0.24 0.015 240);
+  --ring: oklch(0.6 0.2 250);
+
+  /* Gráficos (Invertidos/Ajustados para contrastar en oscuro) */
+  --chart-1: 147 197 253; /* Azul claro */
+  --chart-2: 96 165 250; /* Azul medio */
+  --chart-3: 59 130 246; /* Azul estándar */
+  --chart-4: 29 78 216; /* Azul oscuro */
+  --chart-5: 30 58 138; /* Azul muy oscuro */
+
+  /* Estructura */
+  --radius: 0.75rem;
+
+  /* Sidebar */
+  --sidebar: oklch(0.14 0.015 240); /* Ligeramente más oscuro que las cards */
+  --sidebar-foreground: oklch(0.9 0.01 240);
+  --sidebar-primary: oklch(0.6 0.2 250);
   --sidebar-primary-foreground: oklch(0.98 0.005 240);
-  --sidebar-accent: oklch(0.22 0.02 240);
-  --sidebar-accent-foreground: oklch(0.98 0.005 240);
-  --sidebar-border: oklch(0.25 0.02 240);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar-accent: oklch(0.2 0.02 240);
+  --sidebar-accent-foreground: oklch(0.95 0.01 240);
+  --sidebar-border: oklch(0.22 0.015 240);
+  --sidebar-ring: oklch(0.6 0.2 250);
 }
 
 @theme inline {
@@ -156,7 +243,7 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: black;
+  background: var(--scrollbar-bg);
   border-radius: 10px;
 }
 
@@ -178,16 +265,16 @@
 .chat-typing-container {
   display: flex;
   column-gap: 0.25rem;
-  margin-top: 0.5rem; 
+  margin-top: 0.5rem;
   align-items: center;
-  height: 1.5rem;     
+  height: 1.5rem;
   padding-left: 0.25rem;
 }
 
 .typing-dot {
-  width: 0.375rem;   
-  height: 0.375rem;  
-  background-color: currentColor; 
+  width: 0.375rem;
+  height: 0.375rem;
+  background-color: currentColor;
   border-radius: 9999px;
   animation: chatWavePulse 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
@@ -201,14 +288,45 @@
 }
 
 @keyframes chatWavePulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(4px);
     opacity: 0.3;
   }
   50% {
-    transform: translateY(-8px); 
-    opacity: 1;                  
+    transform: translateY(-8px);
+    opacity: 1;
   }
 }
 @config "../../tailwind.config.js";
 
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  mask: url('../assets/images/shigure-ui-smol.gif') center / 0 no-repeat;
+  -webkit-mask: url('../assets/images/shigure-ui-smol.gif') center / 0 no-repeat;
+
+  animation: mask-expand 1.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes mask-expand {
+  0% {
+    -webkit-mask-size: 0px;
+    mask-size: 0px;
+  }
+
+  40% {
+    -webkit-mask-size: 200px;
+    mask-size: 200px;
+  }
+
+  100% {
+    -webkit-mask-size: 2000px;
+    mask-size: 2000px;
+  }
+}

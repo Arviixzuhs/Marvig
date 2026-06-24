@@ -16,13 +16,7 @@ import { ReservationReportModal } from './modals/ReservationReportModal'
 import { OccupancyReportModal } from './modals/OccupancyReportModal'
 import { IncomeSummaryModal } from './modals/IncomeSummaryModal'
 
-type ReportKey =
-  | 'payment'
-  | 'expense'
-  | 'reservation'
-  | 'occupancy'
-  | 'income'
-  | null
+type ReportKey = 'payment' | 'expense' | 'reservation' | 'occupancy' | 'income' | null
 
 interface IReportCard {
   key: Exclude<ReportKey, null>
@@ -41,7 +35,7 @@ const REPORT_CARDS: IReportCard[] = [
       'Historial de todos los pagos registrados. Filtra por estado, fecha y cliente. Incluye el apartamento y la reserva relacionada.',
     icon: CreditCard,
     metrics: ['Todos los estados', 'Rango de fechas', 'Por cliente'],
-    accentClass: 'text-blue-600 bg-blue-50',
+    accentClass: 'text-accent bg-[#eff6ff] dark:bg-[#141f36]',
   },
   {
     key: 'expense',
@@ -50,7 +44,7 @@ const REPORT_CARDS: IReportCard[] = [
       'Análisis de egresos por categoría como mantenimiento, limpieza, impuestos y más. Filtra por apartamento o rango de fechas.',
     icon: Receipt,
     metrics: ['Por categoría', 'Por apartamento', 'Rango de fechas'],
-    accentClass: 'text-red-600 bg-red-50',
+    accentClass: 'text-destructive bg-[#fee2e2] dark:bg-[#2c1616]',
   },
   {
     key: 'reservation',
@@ -59,7 +53,7 @@ const REPORT_CARDS: IReportCard[] = [
       'Estado de cobros de cada reserva: total cobrado, pendiente y pagos asociados. Incluye información de cliente y apartamentos.',
     icon: CalendarCheck,
     metrics: ['Cobrado vs pendiente', 'Pagos asociados', 'Por estado'],
-    accentClass: 'text-emerald-600 bg-emerald-50',
+    accentClass: 'text-[#047857] dark:text-[#6ee7b7] bg-[#d1fae5] dark:bg-[#13271d]',
   },
   {
     key: 'occupancy',
@@ -68,7 +62,7 @@ const REPORT_CARDS: IReportCard[] = [
       'Tabla de ocupación por apartamento: noches disponibles, ocupadas y bloqueadas con porcentaje de ocupación e ingresos generados.',
     icon: Building2,
     metrics: ['Noches ocupadas', '% Ocupación', 'Ingresos por apt.'],
-    accentClass: 'text-violet-600 bg-violet-50',
+    accentClass: 'text-[#6d28d9] dark:text-[#a78bfa] bg-[#ede9fe] dark:bg-[#201933]',
   },
   {
     key: 'income',
@@ -77,7 +71,7 @@ const REPORT_CARDS: IReportCard[] = [
       'Vista ejecutiva con ingresos confirmados, total de gastos, ganancia neta y desglose de egresos por categoría.',
     icon: TrendingUp,
     metrics: ['Ingresos totales', 'Gastos totales', 'Ganancia neta'],
-    accentClass: 'text-amber-600 bg-amber-50',
+    accentClass: 'text-[#b45309] dark:text-[#fcd34d] bg-[#fef3c7] dark:bg-[#282015]',
   },
 ]
 
@@ -93,9 +87,7 @@ export const AdminReportsPage = () => {
             <FileBarChart2 className='w-5 h-5' />
           </div>
           <div>
-            <h1 className='text-lg font-semibold leading-tight'>
-              Reportes del Sistema
-            </h1>
+            <h1 className='text-lg font-semibold leading-tight'>Reportes del Sistema</h1>
             <p className='text-sm text-default-500'>
               Selecciona un módulo para generar y exportar reportes
             </p>
@@ -116,7 +108,7 @@ export const AdminReportsPage = () => {
               >
                 <Card
                   shadow='none'
-                  className='h-full rounded-2xl border border-default-200 hover:border-default-300 hover:shadow-sm transition-all duration-200 cursor-pointer group'
+                  className='h-full rounded-2xl  hover:shadow-sm transition-all duration-200 cursor-pointer group'
                   isPressable
                   onPress={() => setActiveReport(report.key)}
                 >
@@ -128,9 +120,7 @@ export const AdminReportsPage = () => {
                         <Icon className='w-5 h-5' />
                       </div>
                       <div>
-                        <h3 className='text-base font-semibold leading-tight'>
-                          {report.title}
-                        </h3>
+                        <h3 className='text-base font-semibold leading-tight'>{report.title}</h3>
                       </div>
                     </div>
                   </CardHeader>
