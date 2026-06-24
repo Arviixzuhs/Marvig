@@ -131,9 +131,9 @@ export const EstimationWithCalendar = ({
           icon={ShieldAlert}
           title='Diferencia: Faltante'
           description={`Monto a pagar: ${formatCurrency(difference)}`}
-          bgColor='bg-amber-50'
-          borderColor='border-amber-200'
-          textColor='text-amber-800'
+          bgColor='bg-amber-50 dark:bg-[#251f15]'
+          borderColor='border-amber-200 dark:border-[#42331c]'
+          textColor='text-amber-800 dark:text-[#fcd34d]'
         />
       )
     }
@@ -144,9 +144,9 @@ export const EstimationWithCalendar = ({
           icon={CheckCircle2}
           title='Diferencia: Sobrante'
           description={`Saldo a favor: ${formatCurrency(Math.abs(difference))}`}
-          bgColor='bg-emerald-50'
-          borderColor='border-emerald-200'
-          textColor='text-emerald-800'
+          bgColor='bg-emerald-50 dark:bg-[#14221a]'
+          borderColor='border-emerald-200 dark:border-[#1e3d2b]'
+          textColor='text-emerald-800 dark:text-[#6ee7b7]'
         />
       )
     }
@@ -156,9 +156,9 @@ export const EstimationWithCalendar = ({
         icon={RefreshCw}
         title='Sin diferencia'
         description='El cambio de fechas no altera el costo original de la reserva.'
-        bgColor='bg-neutral-50'
-        borderColor='border-neutral-200'
-        textColor='text-neutral-600'
+        bgColor='bg-neutral-50 dark:bg-content2'
+        borderColor='border-neutral-200 dark:border-[#252128]'
+        textColor='text-neutral-600 dark:text-muted-foreground'
       />
     )
   }

@@ -91,7 +91,7 @@ export const ChatBotSidebar = () => {
 
   return (
     <>
-      <div className='w-[260px] hidden md:flex flex-col dark:bg-white/5 border-r border-black/5 dark:border-white/10 p-4'>
+      <div className='w-[260px] hidden md:flex flex-col border-r border-black/5 dark:border-white/10 p-4'>
         <Button
           variant='flat'
           className='mb-4 font-medium'
