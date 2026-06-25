@@ -1,3 +1,4 @@
+import BgImage from '@/assets/images/bg-image.jpg'
 import { Link } from 'react-router-dom'
 import { ChatBot } from './components/ChatBot'
 import { ArrowRight } from 'lucide-react'
@@ -10,7 +11,7 @@ export const LandingPage = () => {
       <section className='relative bg-[#000000] text-white h-screen px-6 overflow-hidden'>
         <div className='absolute inset-0'>
           <img
-            src='https://wallpapers.com/images/hd/sunset-with-palm-tree-silhouette-ona9bfv5lepgjwse.jpg'
+            src={BgImage}
             alt='Atardecer playa en Margarita'
             className='w-full h-full object-cover'
           />
