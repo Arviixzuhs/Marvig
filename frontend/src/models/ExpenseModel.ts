@@ -35,7 +35,13 @@ export interface IExpenseFilter extends IPaginationFilter {
   toDate?: string
 }
 
-export interface IExpensePerformance {
+export interface IExpenseImage {
+  id: number
+  url: string
+  expenseId: number
+}
+
+export interface IExpenseMonthlyPerformance {
   month: string
   MAINTENANCE: number
   UTILITIES: number
@@ -45,8 +51,18 @@ export interface IExpensePerformance {
   OTHER: number
 }
 
-export interface IExpenseImage {
-  id: number
-  url: string
-  expenseId: number
+export interface IExpenseMetricItem {
+  amount: string
+  percentage: string
+  isPositive: boolean
+}
+
+export interface IExpenseMetricsSummary {
+  totalExpenses: IExpenseMetricItem
+  dailyExpenses: IExpenseMetricItem
+}
+
+export interface IExpensePerformance {
+  expenses: IExpenseMonthlyPerformance[]
+  metrics: IExpenseMetricsSummary
 }

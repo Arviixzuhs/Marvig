@@ -113,11 +113,11 @@ export class ReportService {
     const where = {
       ...(filters.fromDate || filters.toDate
         ? {
-          createdAt: {
-            ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
-            ...(filters.toDate && { lte: new Date(filters.toDate) }),
-          },
-        }
+            createdAt: {
+              ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
+              ...(filters.toDate && { lte: new Date(filters.toDate) }),
+            },
+          }
         : {}),
     }
 

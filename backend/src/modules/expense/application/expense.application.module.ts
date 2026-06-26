@@ -8,7 +8,7 @@ import { CreateExpenseUseCase } from './usecases/create-expense.usecase'
 import { UpdateExpenseUseCase } from './usecases/update-expense.usecase'
 import { DeleteExpenseUseCase } from './usecases/delete-expense.usecase'
 import { UpdateExpenseImagesUseCase } from './usecases/update-expense-image.usecase'
-import { GetExpensesPerformanceUseCase } from './usecases/get-expense-performance-by-category.usecase'
+import { GetExpensesPerformanceUseCase } from './usecases/get-expense-performance.usecase'
 import { PrismaExpenseRepositoryAdapter } from '@/modules/expense/infrastructure/repositories/prisma.expense.repository.adapter'
 import { PrismaExpenseImageRepositoryAdapter } from '@/modules/expense/infrastructure/repositories/prisma.expense-image.repository.adapter'
 

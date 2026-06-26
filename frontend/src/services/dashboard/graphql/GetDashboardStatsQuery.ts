@@ -5,7 +5,6 @@ export const GET_DASHBOARD_PERFORMANCE = gql`
     $paymentFilters: PaymentFilterInput!
     $expenseFilters: ExpenseFilterInput!
   ) {
-    # Query de Pagos
     payments: getPaymentsPerformance(filters: $paymentFilters) {
       salesPerformanceData {
         name
@@ -35,15 +34,28 @@ export const GET_DASHBOARD_PERFORMANCE = gql`
       }
     }
 
-    # Query de Gastos
-    expenses: getExpensesPerformance(filters: $expenseFilters) {
-      month
-      MAINTENANCE
-      UTILITIES
-      CLEANING
-      TAXES
-      SUPPLIES
-      OTHER
+    expensesData: getExpensesPerformance(filters: $expenseFilters) {
+      expenses {
+        month
+        MAINTENANCE
+        UTILITIES
+        CLEANING
+        TAXES
+        SUPPLIES
+        OTHER
+      }
+      metrics {
+        totalExpenses {
+          amount
+          percentage
+          isPositive
+        }
+        dailyExpenses {
+          amount
+          percentage
+          isPositive
+        }
+      }
     }
   }
 `

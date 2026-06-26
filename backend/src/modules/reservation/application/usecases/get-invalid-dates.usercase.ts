@@ -13,7 +13,10 @@ export class GetInvalidDatesUseCase {
     private readonly reservationRepository: ReservationRepositoryPort,
   ) {}
 
-  async execute(apartmentIds: number[], reserveIdToExclude?: number): Promise<InvalidDateResponseDto[]> {
+  async execute(
+    apartmentIds: number[],
+    reserveIdToExclude?: number,
+  ): Promise<InvalidDateResponseDto[]> {
     const apartments = await this.apartmentRepository.findApartments({
       ids: apartmentIds,
     })
@@ -22,7 +25,10 @@ export class GetInvalidDatesUseCase {
       throw new NotFoundException('Algunos de los apartamentos no existen')
     }
 
-    const reservations = await this.reservationRepository.findAvailableReservations(apartmentIds, reserveIdToExclude)
+    const reservations = await this.reservationRepository.findAvailableReservations(
+      apartmentIds,
+      reserveIdToExclude,
+    )
 
     const invalidDates = []
 

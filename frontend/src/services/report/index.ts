@@ -7,44 +7,45 @@ import {
   IReservationReportFilter,
 } from '@/models/ReportModel'
 
+const downloadPdf = async <T>(endpoint: string, filename: string, filters: T) => {
+  const { data } = await api.get<Blob>(endpoint, {
+    params: filters,
+    responseType: 'blob',
+  })
+
+  const url = URL.createObjectURL(data)
+
+  const link = document.createElement('a')
+
+  link.href = url
+  link.download = `${filename}-${Date.now()}.pdf`
+
+  document.body.appendChild(link)
+  link.click()
+
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(url)
+}
+
 export const reportService = {
-  downloadPaymentReportPdf: async (filters: IPaymentReportFilter): Promise<Blob> => {
-    const { data } = await api.get<Blob>('/reports/payments/pdf', {
-      params: filters,
-      responseType: 'blob',
-    })
-    return data
+  downloadPaymentReportPdf(filters: IPaymentReportFilter) {
+    return downloadPdf('/reports/payments/pdf', 'reporte-pagos', filters)
   },
 
-  downloadExpenseReportPdf: async (filters: IExpenseReportFilter): Promise<Blob> => {
-    const { data } = await api.get<Blob>('/reports/expenses/pdf', {
-      params: filters,
-      responseType: 'blob',
-    })
-    return data
+  downloadExpenseReportPdf(filters: IExpenseReportFilter) {
+    return downloadPdf('/reports/expenses/pdf', 'reporte-gastos', filters)
   },
 
-  downloadReservationReportPdf: async (filters: IReservationReportFilter): Promise<Blob> => {
-    const { data } = await api.get<Blob>('/reports/reservations/pdf', {
-      params: filters,
-      responseType: 'blob',
-    })
-    return data
+  downloadReservationReportPdf(filters: IReservationReportFilter) {
+    return downloadPdf('/reports/reservations/pdf', 'reporte-reservas', filters)
   },
 
-  downloadOccupancyReportPdf: async (filters: IOccupancyReportFilter): Promise<Blob> => {
-    const { data } = await api.get<Blob>('/reports/occupancy/pdf', {
-      params: filters,
-      responseType: 'blob',
-    })
-    return data
+  downloadOccupancyReportPdf(filters: IOccupancyReportFilter) {
+    return downloadPdf('/reports/occupancy/pdf', 'reporte-ocupacion', filters)
   },
 
-  downloadIncomeSummaryPdf: async (filters: IIncomeSummaryFilter): Promise<Blob> => {
-    const { data } = await api.get<Blob>('/reports/income-summary/pdf', {
-      params: filters,
-      responseType: 'blob',
-    })
-    return data
+  downloadIncomeSummaryPdf(filters: IIncomeSummaryFilter) {
+    return downloadPdf('/reports/income-summary/pdf', 'resumen-ingresos', filters)
   },
 }
