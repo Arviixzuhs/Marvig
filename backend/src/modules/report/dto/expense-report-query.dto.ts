@@ -1,12 +1,8 @@
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
-import { IsOptional, IsString, IsInt, IsEnum, IsNumber } from 'class-validator'
+import { IsOptional, IsString, IsInt, IsEnum, IsNumber, IsDateString } from 'class-validator'
 import { Type } from 'class-transformer'
 
-/**
- * Extiende ExpenseFilterDto agregando validaciones de class-validator.
- * No redefine lógica de filtrado; reutiliza los campos del dominio.
- */
 export class ExpenseReportQueryDto extends ExpenseFilterDto {
   @IsOptional()
   @Type(() => Number)
@@ -19,11 +15,11 @@ export class ExpenseReportQueryDto extends ExpenseFilterDto {
   override pageSize?: number
 
   @IsOptional()
-  @IsString()
+  @IsDateString({}, { message: 'Debe ser una fecha válida en formato ISO (YYYY-MM-DD)' })
   override fromDate?: string
 
   @IsOptional()
-  @IsString()
+  @IsDateString({}, { message: 'Debe ser una fecha válida en formato ISO (YYYY-MM-DD)' })
   override toDate?: string
 
   @IsOptional()

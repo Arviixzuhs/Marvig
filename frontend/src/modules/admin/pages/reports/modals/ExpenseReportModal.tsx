@@ -1,20 +1,25 @@
-import { useState } from 'react'
+import { ExpenseCategory } from '@/models/ExpenseModel'
+import { IExpenseReportFilter } from '@/models/ReportModel'
+import { reportService } from '@/services/report'
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
+  DateRangePicker,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Select,
   SelectItem,
+  type DateValue,
+  type RangeValue,
 } from '@heroui/react'
+import { CalendarDate, parseDate } from '@internationalized/date'
+import { I18nProvider } from '@react-aria/i18n'
 import { FileDown } from 'lucide-react'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { reportService } from '@/services/report'
-import { IExpenseReportFilter } from '@/models/ReportModel'
-import { ExpenseCategory } from '@/models/ExpenseModel'
 
 const CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   MAINTENANCE: 'Mantenimiento',
@@ -31,13 +36,35 @@ interface Props {
 }
 
 export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
+  const [pdfLoading, setPdfLoading] = useState(false)
   const [filters, setFilters] = useState<IExpenseReportFilter>({
     fromDate: '',
     toDate: '',
     category: undefined,
     search: '',
   })
-  const [pdfLoading, setPdfLoading] = useState(false)
+
+  const getDateRangeValue = (): RangeValue<CalendarDate> | undefined => {
+    if (filters.fromDate && filters.toDate) {
+      return {
+        start: parseDate(filters.fromDate),
+        end: parseDate(filters.toDate),
+      }
+    }
+    return undefined
+  }
+
+  const handleChangeDateRange = (value: RangeValue<DateValue> | null) => {
+    if (!value || !value.start || !value.end) {
+      setFilters((f) => ({ ...f, fromDate: '', toDate: '' }))
+      return
+    }
+    setFilters((f) => ({
+      ...f,
+      fromDate: value.start.toString(),
+      toDate: value.end.toString(),
+    }))
+  }
 
   const handleExportPdf = async () => {
     setPdfLoading(true)
@@ -76,23 +103,20 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
             </p>
           </div>
         </ModalHeader>
-
         <ModalBody>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4'>
-            <Input
-              label='Desde'
-              type='date'
-              size='sm'
-              value={filters.fromDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
-            />
-            <Input
-              label='Hasta'
-              type='date'
-              size='sm'
-              value={filters.toDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
-            />
+            <div className='col-span-1 sm:col-span-2'>
+              <I18nProvider locale='es'>
+                <DateRangePicker
+                  label='Rango de fechas'
+                  size='sm'
+                  value={getDateRangeValue()}
+                  onChange={handleChangeDateRange}
+                  aria-label='Rango de fechas para reporte de gastos'
+                  className='w-full'
+                />
+              </I18nProvider>
+            </div>
             <Select
               label='Categoría'
               size='sm'
@@ -115,7 +139,6 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
             />
           </div>
         </ModalBody>
-
         <ModalFooter className='flex gap-2'>
           <Button variant='flat' onPress={onClose} className='w-full'>
             Cerrar

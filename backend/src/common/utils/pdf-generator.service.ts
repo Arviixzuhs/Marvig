@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { jsPDF } from 'jspdf'
+import { getFormattedDateTime } from './getFormattedDateTime'
 
 /**
  * Shared service with PDF layout helpers (header, footer, summary box,
@@ -19,16 +20,6 @@ export class PdfGeneratorService {
       currency: 'ARS',
       minimumFractionDigits: 2,
     })
-  }
-
-  formatDate(dateStr?: string | Date | null): string {
-    if (!dateStr) return '—'
-    try {
-      const d = typeof dateStr === 'string' ? new Date(dateStr) : dateStr
-      return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
-    } catch {
-      return String(dateStr)
-    }
   }
 
   /**
@@ -92,11 +83,12 @@ export class PdfGeneratorService {
       doc.setFontSize(7.5)
       doc.setFont('helvetica', 'normal')
       doc.text(
-        `Generado el ${this.formatDate(new Date())} | Servidor Corporativo Marvig`,
+        `Generado el ${getFormattedDateTime({ value: new Date() })
+        } | Servidor Corporativo Marvig`,
         14,
         pageH - 6,
       )
-      doc.text(`Página ${i} de ${totalPages}`, pageW - 14, pageH - 6, { align: 'right' })
+      doc.text(`Página ${i} de ${totalPages} `, pageW - 14, pageH - 6, { align: 'right' })
     }
   }
 

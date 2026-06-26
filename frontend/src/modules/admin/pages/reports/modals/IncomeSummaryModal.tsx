@@ -1,17 +1,21 @@
+import toast from 'react-hot-toast'
 import { useState } from 'react'
+import { I18nProvider } from '@react-aria/i18n'
+import { reportService } from '@/services/report'
+import { FileDown, DollarSign } from 'lucide-react'
+import { IIncomeSummaryFilter } from '@/models/ReportModel'
+import { CalendarDate, parseDate } from '@internationalized/date'
 import {
   Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  Input,
+  ModalBody,
+  ModalHeader,
+  type DateValue,
+  type RangeValue,
+  ModalFooter,
+  ModalContent,
+  DateRangePicker,
 } from '@heroui/react'
-import { FileDown, DollarSign } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { reportService } from '@/services/report'
-import { IIncomeSummaryFilter } from '@/models/ReportModel'
 
 interface Props {
   isOpen: boolean
@@ -22,12 +26,33 @@ export const IncomeSummaryModal = ({ isOpen, onClose }: Props) => {
   const today = new Date()
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
   const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
-
+  const [pdfLoading, setPdfLoading] = useState(false)
   const [filters, setFilters] = useState<IIncomeSummaryFilter>({
     fromDate: firstDay,
     toDate: lastDay,
   })
-  const [pdfLoading, setPdfLoading] = useState(false)
+
+  const getDateRangeValue = (): RangeValue<CalendarDate> | undefined => {
+    if (filters.fromDate && filters.toDate) {
+      return {
+        start: parseDate(filters.fromDate),
+        end: parseDate(filters.toDate),
+      }
+    }
+    return undefined
+  }
+
+  const handleChangeDateRange = (value: RangeValue<DateValue> | null) => {
+    if (!value || !value.start || !value.end) {
+      setFilters((f) => ({ ...f, fromDate: '', toDate: '' }))
+      return
+    }
+    setFilters((f) => ({
+      ...f,
+      fromDate: value.start.toString(),
+      toDate: value.end.toString(),
+    }))
+  }
 
   const handleExportPdf = async () => {
     if (!filters.fromDate || !filters.toDate) {
@@ -65,28 +90,21 @@ export const IncomeSummaryModal = ({ isOpen, onClose }: Props) => {
             </p>
           </div>
         </ModalHeader>
-
         <ModalBody>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4'>
-            <Input
-              label='Desde *'
-              type='date'
-              size='sm'
-              isRequired
-              value={filters.fromDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
-            />
-            <Input
-              label='Hasta *'
-              type='date'
-              size='sm'
-              isRequired
-              value={filters.toDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
-            />
+          <div className='w-full mb-4'>
+            <I18nProvider locale='es'>
+              <DateRangePicker
+                label='Rango del reporte'
+                size='sm'
+                isRequired
+                value={getDateRangeValue()}
+                onChange={handleChangeDateRange}
+                aria-label='Rango de fechas para el resumen de ingresos'
+                className='w-full'
+              />
+            </I18nProvider>
           </div>
         </ModalBody>
-
         <ModalFooter className='flex gap-2'>
           <Button variant='flat' onPress={onClose} className='w-full'>
             Cerrar
