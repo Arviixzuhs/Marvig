@@ -215,7 +215,7 @@ export const AdminDashboardPage = () => {
             <div className='h-[300px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
                 <BarChart data={data?.salesPerformanceData.salesPerformanceData || []}>
-                  <CartesianGrid strokeDasharray='3 3' stroke='#e5e7eb' vertical={false} />
+                  <CartesianGrid strokeDasharray='3 3' stroke='var(--muted-2)' vertical={false} />
                   <XAxis
                     dataKey='name'
                     stroke='#9ca3af'
@@ -256,7 +256,7 @@ export const AdminDashboardPage = () => {
             <div className='h-[300px] w-full overflow-hidden'>
               <ResponsiveContainer width='100%' height='100%'>
                 <LineChart data={data?.expensesPerformanceData || []}>
-                  <CartesianGrid strokeDasharray='3 3' stroke='#e5e7eb' vertical={false} />
+                  <CartesianGrid strokeDasharray='3 3' stroke='var(--muted-2)' vertical={false} />
                   <XAxis
                     dataKey='month'
                     stroke='#9ca3af'
