@@ -5,6 +5,7 @@ import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/pay
 import { ExpenseRepositoryPort } from '@/modules/expense/domain/repositories/expense.repository.port'
 
 @Injectable()
+@Injectable()
 export class GetPaymentsPerformanceUseCase {
   constructor(
     @Inject('PaymentRepository')
@@ -15,35 +16,25 @@ export class GetPaymentsPerformanceUseCase {
   ) {}
 
   async execute(filters: PaymentFilterDto) {
-    const currentData = await this.paymentRepository.findPayments({
-      ...filters,
-      isUnpaged: true,
-    })
-    const currentExpensesData = await this.expenseRepository.findExpenses({
-      ...filters,
-      isUnpaged: true,
-    })
+    const [currentData, currentExpensesData] = await Promise.all([
+      this.paymentRepository.findPayments({ ...filters, isUnpaged: true }),
+      this.expenseRepository.findExpenses({ ...filters, isUnpaged: true }),
+    ])
 
     const previousFilters = this.getPreviousPeriod(filters)
-    const previousData = await this.paymentRepository.findPayments({
-      ...previousFilters,
-      isUnpaged: true,
-    })
-    const previousExpensesData = await this.expenseRepository.findExpenses({
-      ...previousFilters,
-      isUnpaged: true,
-    })
+    const [previousData, previousExpensesData] = await Promise.all([
+      this.paymentRepository.findPayments({ ...previousFilters, isUnpaged: true }),
+      this.expenseRepository.findExpenses({ ...previousFilters, isUnpaged: true }),
+    ])
 
     const currentPayments = currentData.content
     const currentExpenses = currentExpensesData.content
-
     const previousPayments = previousData.content
     const previousExpenses = previousExpensesData.content
 
-    // 3. Agrupar para el gráfico recortado al mes actual
-    const salesPerformanceData = this.mapToMonthly(currentPayments)
+    const salesPerformanceData = this.mapToMonthly(currentPayments, filters)
 
-    // 4. Cálculos de Totales
+    // Totales
     const currentIncome = currentPayments.reduce((acc, p) => acc + Number(p.amount), 0)
     const currentOutgo = currentExpenses.reduce((acc, e) => acc + Number(e.amount), 0)
     const currentProfit = currentIncome - currentOutgo
@@ -52,18 +43,21 @@ export class GetPaymentsPerformanceUseCase {
     const previousOutgo = previousExpenses.reduce((acc, e) => acc + Number(e.amount), 0)
     const previousProfit = previousIncome - previousOutgo
 
+    // Calcular días reales del periodo para promedios exactos
+    const daysAmount = this.getDaysDifference(filters.fromDate, filters.toDate) || 30
+
     return {
       salesPerformanceData,
       metrics: {
         weeklySales: {
-          amount: currentIncome / 4,
-          percentage: this.getDiff(currentIncome / 4, previousIncome / 4),
-          isPositive: currentIncome / 4 >= previousIncome / 4,
+          amount: (currentIncome / daysAmount) * 7,
+          percentage: this.getDiff(currentIncome, previousIncome),
+          isPositive: currentIncome >= previousIncome,
         },
         dailySales: {
-          amount: currentIncome / 30,
-          percentage: this.getDiff(currentIncome / 30, previousIncome / 30),
-          isPositive: currentIncome / 30 >= previousIncome / 30,
+          amount: currentIncome / daysAmount,
+          percentage: this.getDiff(currentIncome, previousIncome),
+          isPositive: currentIncome >= previousIncome,
         },
         totalSales: {
           count: currentPayments.length,
@@ -73,7 +67,7 @@ export class GetPaymentsPerformanceUseCase {
         profit: {
           amount: currentProfit,
           percentage: this.getDiff(currentProfit, previousProfit),
-          isPositive: currentProfit >= previousProfit && previousProfit > 0,
+          isPositive: currentProfit >= previousProfit,
         },
       },
     }
@@ -81,22 +75,31 @@ export class GetPaymentsPerformanceUseCase {
 
   private getDiff(curr: number, prev: number): string {
     if (prev === 0) return curr > 0 ? '100' : '0'
-    const diff = ((curr - prev) / prev) * 100
+    const diff = ((curr - prev) / Math.abs(prev)) * 100
     return Math.abs(diff).toFixed(1)
   }
 
-  private mapToMonthly(payments: PaymentModel[]) {
-    const currentMonthIndex = new Date().getMonth() + 1
+  private getDaysDifference(from?: string, to?: string): number {
+    if (!from || !to) return 30
+    const diff = new Date(to).getTime() - new Date(from).getTime()
+    return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+  }
 
-    const months = Array.from({ length: currentMonthIndex }, (_, i) =>
-      (i + 1).toString().padStart(2, '0'),
-    )
+  private mapToMonthly(payments: PaymentModel[], filters: PaymentFilterDto) {
+    const targetYear = filters.fromDate
+      ? new Date(filters.fromDate).getUTCFullYear()
+      : new Date().getUTCFullYear()
+    const currentYear = new Date().getUTCFullYear()
+
+    const maxMonth = targetYear === currentYear ? new Date().getUTCMonth() + 1 : 12
 
     const map: Record<string, number> = {}
-    months.forEach((m) => (map[m] = 0))
+    for (let i = 1; i <= maxMonth; i++) {
+      map[i.toString().padStart(2, '0')] = 0
+    }
 
     payments.forEach((p) => {
-      const m = (new Date(p.date).getMonth() + 1).toString().padStart(2, '0')
+      const m = (new Date(p.date).getUTCMonth() + 1).toString().padStart(2, '0')
       if (map[m] !== undefined) map[m] += Number(p.amount)
     })
 
