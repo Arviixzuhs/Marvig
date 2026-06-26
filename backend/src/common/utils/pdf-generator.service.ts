@@ -83,8 +83,7 @@ export class PdfGeneratorService {
       doc.setFontSize(7.5)
       doc.setFont('helvetica', 'normal')
       doc.text(
-        `Generado el ${getFormattedDateTime({ value: new Date() })
-        } | Servidor Corporativo Marvig`,
+        `Generado el ${getFormattedDateTime({ value: new Date() })} | Servidor Corporativo Marvig`,
         14,
         pageH - 6,
       )

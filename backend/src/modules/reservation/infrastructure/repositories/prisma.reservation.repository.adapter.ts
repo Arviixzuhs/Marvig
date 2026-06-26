@@ -33,10 +33,10 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
         user: true,
         apartments: {
           include: {
-            images: true
-          }
-        }, 
-        payments: true
+            images: true,
+          },
+        },
+        payments: true,
       })
       .build()
 

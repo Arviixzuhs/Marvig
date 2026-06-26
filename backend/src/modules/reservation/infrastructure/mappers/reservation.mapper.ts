@@ -39,16 +39,16 @@ export class ReservationMapper extends BaseMapper<
       apartments: model.apartments ? this.apartmentMapper.modelsToDomain(model.apartments) : [],
       payments: model.payments
         ? model.payments.map((pay) => ({
-          id: pay.id,
-          amount: Number(pay.amount),
-          status: pay.status as PaymentStatus,
-          method: pay.method as PaymentMethod,
-          reference: pay.reference,
-          date: pay.date,
-          description: pay.description,
-          reservationId: pay.reservationId,
-          createdAt: pay.createdAt,
-        }))
+            id: pay.id,
+            amount: Number(pay.amount),
+            status: pay.status as PaymentStatus,
+            method: pay.method as PaymentMethod,
+            reference: pay.reference,
+            date: pay.date,
+            description: pay.description,
+            reservationId: pay.reservationId,
+            createdAt: pay.createdAt,
+          }))
         : undefined,
     }
   }

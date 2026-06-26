@@ -12,7 +12,7 @@ import { ApartmentSpecificationBuilder } from './prisma.apartment.speficicationB
 
 @Injectable()
 export class PrismaApartmentRepositoryAdapter implements ApartmentRepositoryPort {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private readonly apartmentMapper = new ApartmentMapper()
 

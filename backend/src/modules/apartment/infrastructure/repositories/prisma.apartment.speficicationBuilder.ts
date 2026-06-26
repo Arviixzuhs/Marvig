@@ -82,7 +82,7 @@ export class ApartmentSpecificationBuilder extends PaginateSpecificationBuilder 
   }
 
   withValidDate(fromDate?: string, toDate?: string) {
-    if (!fromDate || !toDate) return this;
+    if (!fromDate || !toDate) return this
 
     this.where.reservations = {
       none: {
@@ -107,8 +107,8 @@ export class ApartmentSpecificationBuilder extends PaginateSpecificationBuilder 
           },
         ],
       },
-    };
-    return this;
+    }
+    return this
   }
 
   withIsDeleted(isDeleted: boolean = false) {
