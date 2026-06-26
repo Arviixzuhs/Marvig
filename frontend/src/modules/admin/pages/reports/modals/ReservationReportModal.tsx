@@ -67,18 +67,12 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
   const handleExportPdf = async () => {
     setPdfLoading(true)
     try {
-      const blob = await reportService.downloadReservationReportPdf({
+      await reportService.downloadReservationReportPdf({
         startDate: filters.startDate || undefined,
         endDate: filters.endDate || undefined,
         status: filters.status || undefined,
         search: filters.search || undefined,
       })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `reporte-reservas-${Date.now()}.pdf`
-      a.click()
-      URL.revokeObjectURL(url)
       toast.success('PDF descargado correctamente')
     } catch {
       toast.error('Error al generar el PDF')

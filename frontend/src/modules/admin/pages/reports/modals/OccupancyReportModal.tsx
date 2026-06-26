@@ -62,13 +62,7 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
     }
     setPdfLoading(true)
     try {
-      const blob = await reportService.downloadOccupancyReportPdf(filters)
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `reporte-ocupacion-${Date.now()}.pdf`
-      a.click()
-      URL.revokeObjectURL(url)
+      await reportService.downloadOccupancyReportPdf(filters)
       toast.success('PDF descargado correctamente')
     } catch {
       toast.error('Error al generar el PDF')
