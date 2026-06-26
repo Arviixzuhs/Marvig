@@ -177,7 +177,7 @@ export const ReservationGanttView = () => {
                 return (
                   <React.Fragment key={res.id}>
                     {/* Celda del Cliente */}
-                    <div className='border-b sticky left-0 z-20 border-r border-border flex items-center gap-2 px-3 h-14 '>
+                    <div className='bg-card border-b sticky left-0 z-20 border-r border-border flex items-center gap-2 px-3 h-14 '>
                       <User size={14} className='text-muted-foreground shrink-0' />
                       <span className='text-xs sm:text-sm font-medium text-foreground truncate'>
                         {res.clientName || 'Cliente'}

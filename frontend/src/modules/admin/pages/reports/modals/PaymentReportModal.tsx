@@ -65,6 +65,7 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={onClose}
       size='2xl'
+      backdrop='blur'
       scrollBehavior='inside'
     >
       <ModalContent>

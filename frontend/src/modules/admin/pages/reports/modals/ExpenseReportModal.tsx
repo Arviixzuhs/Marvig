@@ -63,7 +63,7 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='2xl' scrollBehavior='inside'>
+    <Modal isOpen={isOpen} onClose={onClose} size='2xl' scrollBehavior='inside' backdrop='blur'>
       <ModalContent>
         <ModalHeader className='flex items-center gap-3'>
           <div className='p-2 rounded-xl bg-default-100'>

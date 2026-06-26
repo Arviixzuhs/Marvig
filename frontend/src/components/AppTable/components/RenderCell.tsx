@@ -20,8 +20,8 @@ export const RenderCell = (props: RenderCellProps) => {
     switch (props.column.style) {
       case 'user':
         return (
-          <div className='flex items-center gap-2 text-c-text'>
-            <div className='w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white'>
+          <div className='flex items-center gap-2 text-c-text text-nowrap'>
+            <div className='min-w-7 min-h-7 rounded-full bg-primary flex items-center justify-center text-white'>
               {props.value && typeof props.value === 'string'
                 ? props.value.charAt(0).toUpperCase()
                 : 'U'}
@@ -56,7 +56,7 @@ export const RenderCell = (props: RenderCellProps) => {
         return <span className='text-blue-500'>{formatCurrency(Number(props.value))}</span>
       case 'date':
         return (
-          <>
+          <div className='text-nowrap'>
             {props.value ? (
               getFormattedDateTime({
                 value: props.value,
@@ -71,7 +71,7 @@ export const RenderCell = (props: RenderCellProps) => {
             ) : (
               <NotContent />
             )}
-          </>
+          </div>
         )
     }
   }
@@ -91,6 +91,6 @@ export const RenderCell = (props: RenderCellProps) => {
     }
 
     default:
-      return <>{String(props.value).length === 0 || !props.value ? <NotContent /> : props.value}</>
+      return <div className='text-nowrap'>{String(props.value).length === 0 || !props.value ? <NotContent /> : props.value}</div>
   }
 }
