@@ -3,8 +3,12 @@ import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filt
 import { Inject, Injectable } from '@nestjs/common'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ExpenseRepositoryPort } from '@/modules/expense/domain/repositories/expense.repository.port'
+import {
+  getDaysDifference,
+  getPercentageDiff,
+  getPreviousPeriod,
+} from '@/common/utils/dashboard-date.util'
 
-@Injectable()
 @Injectable()
 export class GetPaymentsPerformanceUseCase {
   constructor(
@@ -18,13 +22,26 @@ export class GetPaymentsPerformanceUseCase {
   async execute(filters: PaymentFilterDto) {
     const [currentData, currentExpensesData] = await Promise.all([
       this.paymentRepository.findPayments({ ...filters, isUnpaged: true }),
-      this.expenseRepository.findExpenses({ ...filters, isUnpaged: true }),
+      this.expenseRepository.findExpenses({
+        toDate: filters.toDate,
+        fromDate: filters.fromDate,
+        isUnpaged: true,
+      }),
     ])
 
-    const previousFilters = this.getPreviousPeriod(filters)
+    const previousDates = getPreviousPeriod(filters.fromDate, filters.toDate)
     const [previousData, previousExpensesData] = await Promise.all([
-      this.paymentRepository.findPayments({ ...previousFilters, isUnpaged: true }),
-      this.expenseRepository.findExpenses({ ...previousFilters, isUnpaged: true }),
+      this.paymentRepository.findPayments({
+        ...filters,
+        toDate: previousDates.toDate,
+        fromDate: previousDates.fromDate,
+        isUnpaged: true,
+      }),
+      this.expenseRepository.findExpenses({
+        toDate: previousDates.toDate,
+        fromDate: previousDates.fromDate,
+        isUnpaged: true,
+      }),
     ])
 
     const currentPayments = currentData.content
@@ -32,7 +49,8 @@ export class GetPaymentsPerformanceUseCase {
     const previousPayments = previousData.content
     const previousExpenses = previousExpensesData.content
 
-    const salesPerformanceData = this.mapToMonthly(currentPayments, filters)
+    // Simplificación: Se pasa directamente solo la fecha inicial
+    const salesPerformanceData = this.mapToMonthly(currentPayments, filters.fromDate)
 
     // Totales
     const currentIncome = currentPayments.reduce((acc, p) => acc + Number(p.amount), 0)
@@ -43,52 +61,37 @@ export class GetPaymentsPerformanceUseCase {
     const previousOutgo = previousExpenses.reduce((acc, e) => acc + Number(e.amount), 0)
     const previousProfit = previousIncome - previousOutgo
 
-    // Calcular días reales del periodo para promedios exactos
-    const daysAmount = this.getDaysDifference(filters.fromDate, filters.toDate) || 30
+    const daysAmount = getDaysDifference(filters.fromDate, filters.toDate) || 30
 
     return {
       salesPerformanceData,
       metrics: {
         weeklySales: {
           amount: (currentIncome / daysAmount) * 7,
-          percentage: this.getDiff(currentIncome, previousIncome),
+          percentage: getPercentageDiff(currentIncome, previousIncome),
           isPositive: currentIncome >= previousIncome,
         },
         dailySales: {
           amount: currentIncome / daysAmount,
-          percentage: this.getDiff(currentIncome, previousIncome),
+          percentage: getPercentageDiff(currentIncome, previousIncome),
           isPositive: currentIncome >= previousIncome,
         },
         totalSales: {
           count: currentPayments.length,
-          percentage: this.getDiff(currentPayments.length, previousPayments.length),
+          percentage: getPercentageDiff(currentPayments.length, previousPayments.length),
           isPositive: currentPayments.length >= previousPayments.length,
         },
         profit: {
           amount: currentProfit,
-          percentage: this.getDiff(currentProfit, previousProfit),
+          percentage: getPercentageDiff(currentProfit, previousProfit),
           isPositive: currentProfit >= previousProfit,
         },
       },
     }
   }
 
-  private getDiff(curr: number, prev: number): string {
-    if (prev === 0) return curr > 0 ? '100' : '0'
-    const diff = ((curr - prev) / Math.abs(prev)) * 100
-    return Math.abs(diff).toFixed(1)
-  }
-
-  private getDaysDifference(from?: string, to?: string): number {
-    if (!from || !to) return 30
-    const diff = new Date(to).getTime() - new Date(from).getTime()
-    return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)))
-  }
-
-  private mapToMonthly(payments: PaymentModel[], filters: PaymentFilterDto) {
-    const targetYear = filters.fromDate
-      ? new Date(filters.fromDate).getUTCFullYear()
-      : new Date().getUTCFullYear()
+  private mapToMonthly(payments: PaymentModel[], fromDate?: string) {
+    const targetYear = fromDate ? new Date(fromDate).getUTCFullYear() : new Date().getUTCFullYear()
     const currentYear = new Date().getUTCFullYear()
 
     const maxMonth = targetYear === currentYear ? new Date().getUTCMonth() + 1 : 12
@@ -104,17 +107,5 @@ export class GetPaymentsPerformanceUseCase {
     })
 
     return Object.entries(map).map(([name, value]) => ({ name, value }))
-  }
-
-  private getPreviousPeriod(f: PaymentFilterDto): PaymentFilterDto {
-    const pf = { ...f }
-    if (f.fromDate && f.toDate) {
-      const start = new Date(f.fromDate)
-      const end = new Date(f.toDate)
-      const diff = end.getTime() - start.getTime()
-      pf.fromDate = new Date(start.getTime() - diff).toISOString()
-      pf.toDate = new Date(start.getTime()).toISOString()
-    }
-    return pf
   }
 }
