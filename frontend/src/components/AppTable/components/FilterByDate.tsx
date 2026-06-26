@@ -10,12 +10,12 @@ import {
   Badge,
   Button,
   Tooltip,
-  ModalBody, 
+  ModalBody,
   ModalHeader,
-  ModalFooter, 
+  ModalFooter,
   ModalContent,
   useDisclosure,
-  DateRangePicker, 
+  DateRangePicker,
   type DateValue,
   type RangeValue,
 } from '@heroui/react'
@@ -112,7 +112,7 @@ export const FilterByDatePicker = () => {
           </Button>
         </Tooltip>
       </Badge>
-      <Modal isOpen={isOpen} placement='center' onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} placement='center' onOpenChange={onOpenChange} backdrop='blur'>
         <ModalContent>
           <ModalHeader className='flex flex-col gap-1 default-text-color'>
             Filtrar por fecha

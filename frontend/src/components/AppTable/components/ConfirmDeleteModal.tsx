@@ -21,18 +21,23 @@ export const ConfirmDeleteModal = ({ handleDelete }: ConfirmDeleteModalProps) =>
   }
 
   return (
-    <Modal isOpen={table.isConfirmDeleteModalOpen} onClose={toggleDeleteModal} placement='center'>
+    <Modal
+      isOpen={table.isConfirmDeleteModalOpen}
+      onClose={toggleDeleteModal}
+      placement='center'
+      backdrop='blur'
+    >
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader className='flex justify-center'>Mensaje importante</ModalHeader>
         <ModalBody className='text-center'>
           <p>¿Estas seguro que deseas eliminar este registro?</p>
           <p className='text-red-400 text-sm'>Esta acción no puede deshacerse.</p>
         </ModalBody>
-        <ModalFooter>
-          <Button variant='light' onPress={() => toggleDeleteModal()}>
+        <ModalFooter className='flex gap-2 w-full'>
+          <Button variant='flat' className='w-full' onPress={() => toggleDeleteModal()}>
             Cancelar
           </Button>
-          <Button color='danger' onPress={confirmDelete}>
+          <Button color='danger' className='w-full' onPress={confirmDelete}>
             Confirmar
           </Button>
         </ModalFooter>

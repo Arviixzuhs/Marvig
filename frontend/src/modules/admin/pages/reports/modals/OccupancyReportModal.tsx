@@ -20,12 +20,8 @@ interface Props {
 
 export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
   const today = new Date()
-  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-    .toISOString()
-    .split('T')[0]
-  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-    .toISOString()
-    .split('T')[0]
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
 
   const [filters, setFilters] = useState<IOccupancyReportFilter>({
     fromDate: firstDay,
@@ -56,12 +52,7 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size='xl'
-      scrollBehavior='inside'
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size='xl' scrollBehavior='inside' backdrop='blur'>
       <ModalContent>
         <ModalHeader className='flex items-center gap-3'>
           <div className='p-2 rounded-xl bg-default-100'>

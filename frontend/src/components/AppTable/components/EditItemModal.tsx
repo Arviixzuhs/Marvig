@@ -126,8 +126,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
       size='4xl'
       isOpen={table.isEditItemModalOpen}
       onClose={toggleModal}
-      placement='center'
       scrollBehavior='inside'
+      backdrop='blur'
       isKeyboardDismissDisabled={true}
     >
       <ModalContent>

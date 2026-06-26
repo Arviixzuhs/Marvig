@@ -109,7 +109,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
       size='4xl'
       isOpen={table.isAddItemModalOpen}
       onClose={toggleModal}
-      placement='center'
+      backdrop='blur'
       scrollBehavior='inside'
     >
       <ModalContent>

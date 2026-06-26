@@ -43,7 +43,13 @@ export const ReservationDetailModal = ({ reservation }: ReservationDetailModalPr
   const onClose = () => dispatch(toggleViewItemModal(null))
 
   return (
-    <Modal size='4xl' isOpen={table.isViewItemModalOpen} onClose={onClose} scrollBehavior='inside'>
+    <Modal
+      size='4xl'
+      isOpen={table.isViewItemModalOpen}
+      onClose={onClose}
+      scrollBehavior='inside'
+      backdrop='blur'
+    >
       <ModalContent className='bg-card text-foreground'>
         {() => (
           <>
