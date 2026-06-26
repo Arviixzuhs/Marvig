@@ -13,7 +13,7 @@ import { DeleteExpenseUseCase } from '@/modules/expense/application/usecases/del
 import { UpdateExpenseUseCase } from '@/modules/expense/application/usecases/update-expense.usecase'
 import { ExpensePerformanceType } from '@/modules/expense/infrastructure/graphql/types/expense-performance.type'
 import { UpdateExpenseImagesUseCase } from '@/modules/expense/application/usecases/update-expense-image.usecase'
-import { GetExpensesPerformanceUseCase } from '@/modules/expense/application/usecases/get-expense-performance-by-category.usecase'
+import { GetExpensesPerformanceUseCase } from '@/modules/expense/application/usecases/get-expense-performance.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
 
 @Resolver(() => ExpenseType)
@@ -68,11 +68,11 @@ export class ExpenseResolver {
     return this.updateExpenseImagesUseCase.execute(data)
   }
 
-  @Query(() => [ExpensePerformanceType])
+  @Query(() => ExpensePerformanceType)
   @RequiredRole(UserRole.ADMIN)
   async getExpensesPerformance(
     @Args('filters') filters: ExpenseFilterInput,
-  ): Promise<ExpensePerformanceType[]> {
+  ): Promise<ExpensePerformanceType> {
     return this.getExpensesPerformanceUseCase.execute(filters)
   }
 }

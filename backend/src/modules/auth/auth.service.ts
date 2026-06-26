@@ -113,8 +113,8 @@ export class AuthService {
 
     let user = await this.prisma.user.findFirst({
       where: {
-        email
-      }
+        email,
+      },
     })
 
     if (!user) {
@@ -124,7 +124,7 @@ export class AuthService {
           name: given_name ?? 'Usuario',
           lastName: family_name ?? '',
           avatar: picture ?? '',
-        }
+        },
       })
     }
 
