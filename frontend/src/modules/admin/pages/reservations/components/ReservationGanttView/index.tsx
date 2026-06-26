@@ -16,29 +16,27 @@ const statusColorMap: Record<
   { bg: string; border: string; text: string; label: string }
 > = {
   [ReservationStatus.PENDING]: {
-    bg: 'bg-[#fef3c7] dark:bg-[#282015]',
-    border: 'border-[#fde68a] dark:border-[#45331d]',
-    text: 'text-[#b45309] dark:text-[#fcd34d]',
+    bg: 'bg-custom-yellow-bg',
+    border: 'border-custom-yellow-border',
+    text: 'text-custom-yellow',
     label: 'Pendiente',
   },
   [ReservationStatus.CONFIRMED]: {
-    bg: 'bg-[#d1fae5] dark:bg-[#13271d]',
-    border: 'border-[#a7f3d0] dark:border-[#1b4332]',
-    text: 'text-[#047857] dark:text-[#6ee7b7]',
+    bg: 'bg-custom-green-bg',
+    border: 'border-custom-green-border',
+    text: 'text-custom-green',
     label: 'Confirmado',
   },
   [ReservationStatus.CANCELLED]: {
-    // Derivados sólidos de tu color destructivo oklch(0.60 0.22 27.3)
-    bg: 'bg-[#fee2e2] dark:bg-[#2c1616]',
-    border: 'border-[#fecaca] dark:border-[#4c1d1d]',
-    text: 'text-[#dc2626] dark:text-[#f87171]',
+    bg: 'bg-custom-red-bg',
+    border: 'border-custom-red-border',
+    text: 'text-custom-red',
     label: 'Cancelado',
   },
   [ReservationStatus.COMPLETED]: {
-    // Utiliza directamente los niveles de tu escala neutra default sin opacidades
-    bg: 'bg-default-200 dark:bg-default-100',
-    border: 'border-default-300 dark:border-default-200',
-    text: 'text-default-600 dark:text-default-400',
+    bg: 'bg-custom-gray-bg',
+    border: 'border-custom-gray-border',
+    text: 'text-custom-gray',
     label: 'Completado',
   },
 }
