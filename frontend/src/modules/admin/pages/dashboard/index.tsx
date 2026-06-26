@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Card, CardBody, Chip, Select, SelectItem, Tab, Tabs } from '@heroui/react'
-import { Download, TrendingUp } from 'lucide-react'
+import { Download, TrendingDown, TrendingUp } from 'lucide-react'
 import {
   Bar,
   BarChart,
@@ -67,7 +67,7 @@ const StatCard = ({
               isPositive ? 'text-success' : 'text-danger'
             }`}
           >
-            <TrendingUp className='w-4 h-4' />
+            {isPositive ? <TrendingUp className='w-4 h-4' /> : <TrendingDown className='w-4 h-4' />}
             {change}
           </div>
         </Chip>
