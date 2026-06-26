@@ -1,11 +1,11 @@
 import { apolloClient } from '@/api/apollo-client'
+import { GET_DASHBOARD_PERFORMANCE } from './graphql/GetDashboardStatsQuery'
 import { IExpenseFilter, IExpensePerformance } from '@/models/ExpenseModel'
 import { IPaymentFilter, IPaymentPerformance } from '@/models/PaymentModel'
-import { GET_DASHBOARD_PERFORMANCE } from './graphql/GetDashboardStatsQuery'
 
 export interface IDashboardStatsResponse {
   payments: IPaymentPerformance
-  expenses: IExpensePerformance[]
+  expensesData: IExpensePerformance
 }
 
 export interface IDashboardStatsResponseVariables {
@@ -27,7 +27,7 @@ export const dashboardService = {
 
     return {
       payments: data.payments,
-      expenses: data.expenses,
+      expensesData: data.expensesData,
     }
   },
 }
