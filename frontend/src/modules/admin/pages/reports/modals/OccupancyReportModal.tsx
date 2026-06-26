@@ -6,8 +6,12 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Input,
+  DateRangePicker,
+  type DateValue,
+  type RangeValue,
 } from '@heroui/react'
+import { CalendarDate, parseDate } from '@internationalized/date'
+import { I18nProvider } from '@react-aria/i18n'
 import { FileDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { reportService } from '@/services/report'
@@ -28,6 +32,28 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
     toDate: lastDay,
   })
   const [pdfLoading, setPdfLoading] = useState(false)
+
+  const getDateRangeValue = (): RangeValue<CalendarDate> | undefined => {
+    if (filters.fromDate && filters.toDate) {
+      return {
+        start: parseDate(filters.fromDate),
+        end: parseDate(filters.toDate),
+      }
+    }
+    return undefined
+  }
+
+  const handleChangeDateRange = (value: RangeValue<DateValue> | null) => {
+    if (!value || !value.start || !value.end) {
+      setFilters((f) => ({ ...f, fromDate: '', toDate: '' }))
+      return
+    }
+    setFilters((f) => ({
+      ...f,
+      fromDate: value.start.toString(),
+      toDate: value.end.toString(),
+    }))
+  }
 
   const handleExportPdf = async () => {
     if (!filters.fromDate || !filters.toDate) {
@@ -67,23 +93,18 @@ export const OccupancyReportModal = ({ isOpen, onClose }: Props) => {
         </ModalHeader>
 
         <ModalBody>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4'>
-            <Input
-              label='Desde *'
-              type='date'
-              size='sm'
-              isRequired
-              value={filters.fromDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
-            />
-            <Input
-              label='Hasta *'
-              type='date'
-              size='sm'
-              isRequired
-              value={filters.toDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
-            />
+          <div className='w-full mb-4'>
+            <I18nProvider locale='es'>
+              <DateRangePicker
+                label='Rango de ocupación'
+                size='sm'
+                isRequired
+                value={getDateRangeValue()}
+                onChange={handleChangeDateRange}
+                aria-label='Rango de fechas para el reporte de ocupación'
+                className='w-full'
+              />
+            </I18nProvider>
           </div>
         </ModalBody>
 

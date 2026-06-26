@@ -9,7 +9,12 @@ import {
   Input,
   Select,
   SelectItem,
+  DateRangePicker,
+  type DateValue,
+  type RangeValue,
 } from '@heroui/react'
+import { parseDate, CalendarDate } from '@internationalized/date'
+import { I18nProvider } from '@react-aria/i18n'
 import { FileDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { reportService } from '@/services/report'
@@ -36,6 +41,28 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
     search: '',
   })
   const [pdfLoading, setPdfLoading] = useState(false)
+
+  const getDateRangeValue = (): RangeValue<CalendarDate> | undefined => {
+    if (filters.startDate && filters.endDate) {
+      return {
+        start: parseDate(filters.startDate),
+        end: parseDate(filters.endDate),
+      }
+    }
+    return undefined
+  }
+
+  const handleChangeDateRange = (value: RangeValue<DateValue> | null) => {
+    if (!value || !value.start || !value.end) {
+      setFilters((f) => ({ ...f, startDate: '', endDate: '' }))
+      return
+    }
+    setFilters((f) => ({
+      ...f,
+      startDate: value.start.toString(),
+      endDate: value.end.toString(),
+    }))
+  }
 
   const handleExportPdf = async () => {
     setPdfLoading(true)
@@ -74,23 +101,20 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
             </p>
           </div>
         </ModalHeader>
-
         <ModalBody>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4'>
-            <Input
-              label='Fecha de entrada desde'
-              type='date'
-              size='sm'
-              value={filters.startDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, startDate: v }))}
-            />
-            <Input
-              label='Fecha de entrada hasta'
-              type='date'
-              size='sm'
-              value={filters.endDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, endDate: v }))}
-            />
+            <div className='col-span-1 sm:col-span-2'>
+              <I18nProvider locale='es'>
+                <DateRangePicker
+                  label='Rango de fechas de entrada'
+                  size='sm'
+                  value={getDateRangeValue()}
+                  onChange={handleChangeDateRange}
+                  aria-label='Rango de fechas para reporte de reservas'
+                  className='w-full'
+                />
+              </I18nProvider>
+            </div>
             <Select
               label='Estado'
               size='sm'
@@ -113,7 +137,6 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
             />
           </div>
         </ModalBody>
-
         <ModalFooter className='flex gap-2'>
           <Button variant='flat' onPress={onClose} className='w-full'>
             Cerrar
