@@ -11,6 +11,7 @@ import { PaymentReportQueryDto } from './dto/payment-report-query.dto'
 import { ExpenseReportQueryDto } from './dto/expense-report-query.dto'
 import { ReservationReportQueryDto } from './dto/reservation-report-query.dto'
 import { OccupancyReportQueryDto } from './dto/occupancy-report-query.dto'
+import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
 
 interface OccupancyReportInput {
   fromDate: string
@@ -112,11 +113,11 @@ export class ReportService {
     const where = {
       ...(filters.fromDate || filters.toDate
         ? {
-            createdAt: {
-              ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
-              ...(filters.toDate && { lte: new Date(filters.toDate) }),
-            },
-          }
+          createdAt: {
+            ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
+            ...(filters.toDate && { lte: new Date(filters.toDate) }),
+          },
+        }
         : {}),
     }
 
@@ -151,7 +152,7 @@ export class ReportService {
     const doc = new jsPDF({ orientation: 'landscape' })
     const subtitle =
       filters.fromDate && filters.toDate
-        ? `${this.pdf.formatDate(filters.fromDate)} — ${this.pdf.formatDate(filters.toDate)}`
+        ? `${getFormattedDateTime({ value: filters.fromDate })} - ${getFormattedDateTime({ value: filters.toDate })}`
         : 'Historial completo de registros conocidos'
 
     this.pdf.addPdfHeader(doc, 'Reporte de Pagos', subtitle)
@@ -171,7 +172,7 @@ export class ReportService {
       head: [['ID', 'Fecha', 'Monto', 'Estado', 'Método', 'Referencia', 'Cliente', 'Apartamento']],
       body: data.content.map((p) => [
         p.id,
-        this.pdf.formatDate(p.date),
+        getFormattedDateTime({ value: p.date }),
         this.pdf.formatCurrency(p.amount),
         p.status,
         p.method,
@@ -231,7 +232,7 @@ export class ReportService {
     const doc = new jsPDF({ orientation: 'landscape' })
     const subtitle =
       filters.fromDate && filters.toDate
-        ? `${this.pdf.formatDate(filters.fromDate)} — ${this.pdf.formatDate(filters.toDate)}`
+        ? `${getFormattedDateTime({ value: filters.fromDate })} - ${getFormattedDateTime({ value: filters.toDate })}`
         : 'Historial completo de registros conocidos'
 
     this.pdf.addPdfHeader(doc, 'Reporte de Gastos', subtitle)
@@ -251,7 +252,7 @@ export class ReportService {
       head: [['ID', 'Fecha', 'Monto', 'Categoría', 'Descripción', 'Apartamento']],
       body: data.content.map((e) => [
         e.id,
-        e.date ? this.pdf.formatDate(e.date) : '—',
+        e.date ? getFormattedDateTime({ value: e.date }) : '—',
         this.pdf.formatCurrency(e.amount),
         e.category.replace(/_/g, ' '),
         e.description || '—',
@@ -285,7 +286,7 @@ export class ReportService {
     const doc = new jsPDF({ orientation: 'landscape' })
     const subtitle =
       filters.startDate && filters.endDate
-        ? `${this.pdf.formatDate(filters.startDate)} — ${this.pdf.formatDate(filters.endDate)}`
+        ? `${getFormattedDateTime({ value: filters.startDate })} - ${getFormattedDateTime({ value: filters.endDate })}`
         : 'Historial completo de registros conocidos'
 
     this.pdf.addPdfHeader(doc, 'Reporte de Reservas', subtitle)
@@ -329,8 +330,8 @@ export class ReportService {
       ],
       body: rows.map((r) => [
         r.id,
-        this.pdf.formatDate(r.startDate),
-        this.pdf.formatDate(r.endDate),
+        getFormattedDateTime({ value: r.startDate }),
+        getFormattedDateTime({ value: r.endDate }),
         r.status,
         r.clientName || '—',
         r.apartments?.map((a) => `#${a.number}`).join(', ') || '—',
@@ -388,7 +389,7 @@ export class ReportService {
   async getOccupancyReportPdf(filters: OccupancyReportQueryDto): Promise<Buffer> {
     const data = await this.getOccupancyReport(filters)
     const doc = new jsPDF({ orientation: 'landscape' })
-    const subtitle = `${this.pdf.formatDate(data.fromDate)} — ${this.pdf.formatDate(data.toDate)}`
+    const subtitle = `${getFormattedDateTime({ value: filters.fromDate })} - ${getFormattedDateTime({ value: filters.toDate })}`
 
     this.pdf.addPdfHeader(doc, 'Reporte de Ocupación', subtitle)
 
@@ -461,7 +462,7 @@ export class ReportService {
     const data = await this.getIncomeSummary(filters)
     const doc = new jsPDF()
     const pageW = doc.internal.pageSize.getWidth()
-    const subtitle = `${this.pdf.formatDate(filters.fromDate)} — ${this.pdf.formatDate(filters.toDate)}`
+    const subtitle = `${getFormattedDateTime({ value: filters.fromDate })} - ${getFormattedDateTime({ value: filters.toDate })}`
 
     this.pdf.addPdfHeader(doc, 'Resumen de Ingresos', subtitle)
 

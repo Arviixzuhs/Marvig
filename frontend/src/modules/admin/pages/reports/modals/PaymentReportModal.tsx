@@ -9,7 +9,12 @@ import {
   Input,
   Select,
   SelectItem,
+  DateRangePicker,
+  type DateValue,
+  type RangeValue,
 } from '@heroui/react'
+import { parseDate, CalendarDate } from '@internationalized/date'
+import { I18nProvider } from '@react-aria/i18n'
 import { FileDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { reportService } from '@/services/report'
@@ -37,6 +42,28 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
   })
   const [pdfLoading, setPdfLoading] = useState(false)
 
+  const getDateRangeValue = (): RangeValue<CalendarDate> | undefined => {
+    if (filters.fromDate && filters.toDate) {
+      return {
+        start: parseDate(filters.fromDate),
+        end: parseDate(filters.toDate),
+      }
+    }
+    return undefined
+  }
+
+  const handleChangeDateRange = (value: RangeValue<DateValue> | null) => {
+    if (!value || !value.start || !value.end) {
+      setFilters((f) => ({ ...f, fromDate: '', toDate: '' }))
+      return
+    }
+    setFilters((f) => ({
+      ...f,
+      fromDate: value.start.toString(),
+      toDate: value.end.toString(),
+    }))
+  }
+
   const handleExportPdf = async () => {
     setPdfLoading(true)
     try {
@@ -61,13 +88,7 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size='2xl'
-      backdrop='blur'
-      scrollBehavior='inside'
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size='2xl' backdrop='blur' scrollBehavior='inside'>
       <ModalContent>
         <ModalHeader className='flex items-center gap-3'>
           <div className='p-2 rounded-xl bg-default-100'>
@@ -83,20 +104,18 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
 
         <ModalBody>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4'>
-            <Input
-              label='Desde'
-              type='date'
-              size='sm'
-              value={filters.fromDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, fromDate: v }))}
-            />
-            <Input
-              label='Hasta'
-              type='date'
-              size='sm'
-              value={filters.toDate}
-              onValueChange={(v) => setFilters((f) => ({ ...f, toDate: v }))}
-            />
+            <div className='col-span-1 sm:col-span-2'>
+              <I18nProvider locale='es'>
+                <DateRangePicker
+                  label='Rango de fechas'
+                  size='sm'
+                  value={getDateRangeValue()}
+                  onChange={handleChangeDateRange}
+                  aria-label='Rango de fechas para reporte de pagos'
+                  className='w-full'
+                />
+              </I18nProvider>
+            </div>
             <Select
               label='Estado'
               size='sm'
@@ -119,7 +138,6 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
             />
           </div>
         </ModalBody>
-
         <ModalFooter className='flex gap-2'>
           <Button variant='flat' onPress={onClose} className='w-full'>
             Cerrar

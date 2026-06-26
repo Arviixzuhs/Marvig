@@ -1,6 +1,6 @@
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
-import { IsOptional, IsString, IsInt, IsEnum } from 'class-validator'
+import { IsOptional, IsString, IsInt, IsEnum, IsDateString } from 'class-validator'
 import { Type } from 'class-transformer'
 
 /**
@@ -19,11 +19,11 @@ export class ReservationReportQueryDto extends ReservationFilterDto {
   override pageSize?: number
 
   @IsOptional()
-  @IsString()
+  @IsDateString({}, { message: 'Debe ser una fecha válida en formato ISO (YYYY-MM-DD)' })
   override startDate?: string
 
   @IsOptional()
-  @IsString()
+  @IsDateString({}, { message: 'Debe ser una fecha válida en formato ISO (YYYY-MM-DD)' })
   override endDate?: string
 
   @IsOptional()
