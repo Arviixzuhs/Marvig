@@ -55,12 +55,7 @@ export const Notifications = () => {
 
   return (
     <div className='relative inline-block'>
-      <Dropdown
-        placement='bottom-end'
-        className='w-80'
-        isOpen={isOpen}
-        onOpenChange={handleOpenChange}
-      >
+      <Dropdown className='w-80' isOpen={isOpen} onOpenChange={handleOpenChange}>
         <DropdownTrigger>
           <Button isIconOnly variant='light' radius='full'>
             <Badge
