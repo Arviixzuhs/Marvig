@@ -37,9 +37,15 @@ export class ApartmentSpecificationBuilder extends PaginateSpecificationBuilder 
     return this
   }
 
-  withStatus(status?: ApartmentStatusEnum) {
+  withStatus(status?: ApartmentStatusEnum | ApartmentStatusEnum[]) {
     if (status) {
-      this.where.status = status
+      if (Array.isArray(status)) {
+        if (status.length > 0) {
+          this.where.status = { in: status }
+        }
+      } else {
+        this.where.status = status
+      }
     }
     return this
   }

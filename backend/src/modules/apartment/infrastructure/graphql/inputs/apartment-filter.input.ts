@@ -1,11 +1,11 @@
-import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
+import { DateFilterInput } from '@/common/graphql/inputs/date-filter.input'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
-import { Field, Float, InputType, Int } from '@nestjs/graphql'
-import { Transform } from 'class-transformer'
-import { IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator'
+import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
+import { Field, Float, InputType, Int, IntersectionType } from '@nestjs/graphql'
+import { IsArray, IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 @InputType()
-export class ApartmentFilterInput extends PaginationFilterInput {
+export class ApartmentFilterInput extends IntersectionType(PaginationFilterInput, DateFilterInput) {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -26,10 +26,11 @@ export class ApartmentFilterInput extends PaginationFilterInput {
   @IsInt()
   floor?: number
 
-  @Field(() => ApartmentStatusEnum, { nullable: true })
+  @Field(() => [ApartmentStatusEnum], { nullable: true })
   @IsOptional()
-  @IsEnum(ApartmentStatusEnum)
-  status?: ApartmentStatusEnum
+  @IsArray({ message: 'El estado debe ser un arreglo de métodos' })
+  @IsEnum(ApartmentStatusEnum, { each: true, message: 'Cada estado debe ser un valor válido' })
+  status?: ApartmentStatusEnum[]
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
@@ -62,20 +63,4 @@ export class ApartmentFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsNumber()
   maxPrice?: number
-
-  @Field({ nullable: true })
-  @Transform(({ value }) => {
-    if (!value || String(value).trim() === '') return undefined
-    return new Date(value).toISOString()
-  })
-  @IsDateString({}, { message: 'La fecha de entrada debe tener un formato ISO válido' })
-  fromDate: string
-
-  @Field({ nullable: true })
-  @Transform(({ value }) => {
-    if (!value || String(value).trim() === '') return undefined
-    return new Date(value).toISOString()
-  })
-  @IsDateString({}, { message: 'La fecha de salida debe tener un formato ISO válido' })
-  toDate: string
 }
