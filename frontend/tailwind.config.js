@@ -52,9 +52,9 @@ export default {
         dark: {
           colors: {
             content1: '#040c13',
-content2: '#19161b', // Elevación 1: Para celdas de la tabla, inputs y bloques del Gantt
-content3: '#221e25', // Elevación 2: Para estados hover activos y bordes de componentes
-content4: '#2d2831', // Elevación 3: Para separadores destacados y líneas divisorias
+            content2: '#19161b',
+            content3: '#221e25',
+            content4: '#2d2831',
             default: {
               50: '#11131f',
               100: '#191d2d',

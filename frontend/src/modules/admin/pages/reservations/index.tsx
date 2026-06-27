@@ -13,7 +13,7 @@ export const AdminReservationPage = () => {
         <Tabs
           color='primary'
           radius='full'
-          variant='solid'
+          variant='light'
           aria-label='reservations views'
           selectedKey={activeTab}
           onSelectionChange={setActiveTab}
@@ -22,7 +22,7 @@ export const AdminReservationPage = () => {
             key='table'
             title={
               <div className='flex items-center gap-2'>
-                <TableProperties className='w-4 h-4' />
+                <TableProperties size={18} />
                 <span>Tabla</span>
               </div>
             }
@@ -31,7 +31,7 @@ export const AdminReservationPage = () => {
             key='gantt'
             title={
               <div className='flex items-center gap-2'>
-                <Calendar className='w-4 h-4' />
+                <Calendar size={18} />
                 <span>Diagrama Gantt</span>
               </div>
             }
