@@ -1,9 +1,10 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { DateFilterInput } from '@/common/graphql/inputs/date-filter.input'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
 import { IsOptional, IsString, IsEmail } from 'class-validator'
+import { InputType, Field, IntersectionType } from '@nestjs/graphql'
 
 @InputType()
-export class UserFilterInput extends PaginationFilterInput {
+export class UserFilterInput extends IntersectionType(PaginationFilterInput, DateFilterInput) {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -18,14 +19,4 @@ export class UserFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsEmail()
   email?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  fromDate?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  toDate?: string
 }
