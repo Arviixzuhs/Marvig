@@ -91,6 +91,7 @@ export interface AppTableInterface {
   currentItemToUpdate: number
   currentItemToDelete: number
   currentItemToView: number
+  filters: Record<string, string[]>
   isViewItemModalOpen: boolean
   isConfirmDeleteModalOpen: boolean
 }
@@ -112,6 +113,7 @@ export const manageAppTableSlice = createSlice({
     dateFilterPeriod: null,
     isViewItemModalOpen: false,
     isConfirmDeleteModalOpen: false,
+    filters: {},
     dateFilter: {
       end: '',
       start: '',
@@ -134,6 +136,14 @@ export const manageAppTableSlice = createSlice({
       state.rowsPerPage = rowsPerPage
       state.modalInputs = modalInputs
       state.filterValue = filterValue
+    },
+    setColumnFilter: (state, action: PayloadAction<{ uid: string; selectedValues: string[] }>) => {
+      const { uid, selectedValues } = action.payload
+      state.filters[uid] = selectedValues
+      state.currentPage = 0
+    },
+    clearAllFilters: (state) => {
+      state.filters = {}
     },
     setTableColumns: (state, action: PayloadAction<TableColumnInterface[]>) => {
       state.columns = action.payload
@@ -203,6 +213,8 @@ export const {
   toggleAddItemModal,
   setRowsPerPage,
   setFormData,
+  setColumnFilter,
+  clearAllFilters,
   clearFormData,
   setDateFilterPeriod,
   setCurrentItemToView,

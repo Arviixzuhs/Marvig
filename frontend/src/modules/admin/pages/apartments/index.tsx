@@ -32,6 +32,7 @@ export const AdminApartmentPage = () => {
         page: table.currentPage,
         search: debounceValue,
         pageSize: table.rowsPerPage,
+        status: table.filters['status']
       },
     },
     notifyOnNetworkStatusChange: true,
