@@ -16,7 +16,7 @@ import { RentalType, ReservationStatus } from '@/models/ReservationModel'
 const todayTool = defineTool({
   schema: {
     name: 'get_today',
-    description: "Returns today date",
+    description: 'Returns today date',
   },
   execute() {
     return new Date()
@@ -26,12 +26,13 @@ const todayTool = defineTool({
 const userContextTool = defineTool({
   schema: {
     name: 'get_user_context',
-    description: 'Returns the current authenticated user profile, full name, system role, email, phone and createdAt.',
+    description:
+      'Returns the current authenticated user profile, full name, system role, email, phone and createdAt.',
   },
   execute() {
     userService.findCurrent()
   },
-});
+})
 
 const paymentFilterProperties = {
   search: {
@@ -49,7 +50,8 @@ const paymentFilterProperties = {
         PaymentStatus.CANCELLED,
       ],
     },
-    description: 'Filter payments by one or multiple transaction statuses. Pass an array of values.',
+    description:
+      'Filter payments by one or multiple transaction statuses. Pass an array of values.',
   },
   method: {
     type: Type.ARRAY,
@@ -144,12 +146,10 @@ const listPromotionsTool = defineTool({
           type: Type.ARRAY,
           items: {
             type: Type.STRING,
-            enum: [
-              PromotionType.FIXED,
-              PromotionType.PERCENTAGE,
-            ],
+            enum: [PromotionType.FIXED, PromotionType.PERCENTAGE],
           },
-          description: 'Filter promotions by one or multiple types (e.g., FIXED, PERCENTAGE). Pass an array of values.',
+          description:
+            'Filter promotions by one or multiple types (e.g., FIXED, PERCENTAGE). Pass an array of values.',
         },
         name: {
           type: Type.STRING,
@@ -213,7 +213,8 @@ const listApartmentsTool = defineTool({
               ApartmentStatus.MAINTENANCE,
             ],
           },
-          description: 'Filter by one or multiple current statuses of the apartment. Pass an array of values.',
+          description:
+            'Filter by one or multiple current statuses of the apartment. Pass an array of values.',
         },
         bedrooms: {
           type: Type.INTEGER,
@@ -233,11 +234,13 @@ const listApartmentsTool = defineTool({
         },
         fromDate: {
           type: Type.STRING,
-          description: 'The check-in/start date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+          description:
+            'The check-in/start date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
         },
         toDate: {
           type: Type.STRING,
-          description: 'The check-out/end date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+          description:
+            'The check-out/end date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
         },
         minSquareMeters: {
           type: Type.INTEGER,
@@ -290,7 +293,8 @@ const listReservationsTool = defineTool({
               ReservationStatus.COMPLETED,
             ],
           },
-          description: 'Filter reservations by one or multiple operational statuses. Pass an array of values.',
+          description:
+            'Filter reservations by one or multiple operational statuses. Pass an array of values.',
         },
         type: {
           type: Type.ARRAY,
@@ -298,7 +302,8 @@ const listReservationsTool = defineTool({
             type: Type.STRING,
             enum: [RentalType.DAILY, RentalType.FIXED_SEASON],
           },
-          description: 'Filter by one or multiple rental types: DAILY or FIXED_SEASON. Pass an array of values.',
+          description:
+            'Filter by one or multiple rental types: DAILY or FIXED_SEASON. Pass an array of values.',
         },
         userId: {
           type: Type.INTEGER,
@@ -436,7 +441,8 @@ const listExpensesTool = defineTool({
               ExpenseCategory.OTHER,
             ],
           },
-          description: 'Filter expenses by one or multiple operational categories. Pass an array of values.',
+          description:
+            'Filter expenses by one or multiple operational categories. Pass an array of values.',
         },
         paymentMethod: {
           type: Type.ARRAY,
@@ -452,7 +458,8 @@ const listExpensesTool = defineTool({
               PaymentMethod.BANK_TRANSFER,
             ],
           },
-          description: 'Filter expenses by one or multiple payment methods used. Pass an array of values.',
+          description:
+            'Filter expenses by one or multiple payment methods used. Pass an array of values.',
         },
         minAmount: {
           type: Type.NUMBER,
