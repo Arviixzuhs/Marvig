@@ -1,12 +1,16 @@
 import { UserRole } from '@/common/enums/user-role.enum'
+import { DateFilterInput } from '@/common/graphql/inputs/date-filter.input'
 import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
-import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator'
+import { IsEnum, IsInt, IsOptional } from 'class-validator'
+import { Field, InputType, Int, IntersectionType } from '@nestjs/graphql'
 
 @InputType()
-export class NotificationFilterInput extends PaginationFilterInput {
+export class NotificationFilterInput extends IntersectionType(
+  PaginationFilterInput,
+  DateFilterInput,
+) {
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
@@ -26,14 +30,4 @@ export class NotificationFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsEnum(UserRole)
   userTargetRole?: UserRole
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsDateString()
-  fromDate?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsDateString()
-  toDate?: string
 }
