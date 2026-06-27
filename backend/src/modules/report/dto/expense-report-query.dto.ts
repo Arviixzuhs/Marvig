@@ -1,6 +1,14 @@
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
-import { IsOptional, IsString, IsInt, IsEnum, IsNumber, IsDateString } from 'class-validator'
+import {
+  IsOptional,
+  IsString,
+  IsInt,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsArray,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class ExpenseReportQueryDto extends ExpenseFilterDto {
@@ -23,8 +31,9 @@ export class ExpenseReportQueryDto extends ExpenseFilterDto {
   override toDate?: string
 
   @IsOptional()
-  @IsEnum(ExpenseCategory)
-  override category?: ExpenseCategory
+  @IsArray({ message: 'El estado debe ser un arreglo de estados' })
+  @IsEnum(ExpenseCategory, { each: true, message: 'Cada estado debe ser un valor válido' })
+  override category?: ExpenseCategory[]
 
   @IsOptional()
   @Type(() => Number)

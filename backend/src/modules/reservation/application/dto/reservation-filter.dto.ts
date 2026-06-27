@@ -3,10 +3,10 @@ import { ReservationStatus } from '@/modules/reservation/domain/enums/reservatio
 import { PaginationFilterDto } from '@/common/dto/pagination-filter.dto'
 
 export class ReservationFilterDto extends PaginationFilterDto {
-  type?: RentalType
+  type?: RentalType | RentalType[]
   userId?: number
   search?: string
-  status?: ReservationStatus
+  status?: ReservationStatus | ReservationStatus[]
   endDate?: string
   maxPrice?: number
   minPrice?: number

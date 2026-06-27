@@ -35,6 +35,7 @@ export class PrismaExpenseRepositoryAdapter implements ExpenseRepositoryPort {
       .withApartment(filters.apartmentId)
       .withEmployee(filters.employeeId)
       .withCategory(filters.category)
+      .withPaymentMethod(filters.paymentMethod)
       .withIsDeleted(false)
       .withAmountBetween(filters.minAmount, filters.maxAmount)
       .withDateBetween(filters.fromDate, filters.toDate)

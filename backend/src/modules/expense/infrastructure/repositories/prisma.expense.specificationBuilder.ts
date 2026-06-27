@@ -1,3 +1,4 @@
+import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
 import { Prisma } from 'generated/prisma/client'
 import { ExpenseCategory } from 'generated/prisma/client'
 
@@ -38,9 +39,28 @@ export class ExpenseSpecificationBuilder {
     return this
   }
 
-  withCategory(category?: ExpenseCategory) {
+  withCategory(category?: ExpenseCategory | ExpenseCategory[]) {
     if (category) {
-      this.where.category = category
+      if (Array.isArray(category)) {
+        if (category.length > 0) {
+          this.where.category = { in: category }
+        }
+      } else {
+        this.where.category = category
+      }
+    }
+    return this
+  }
+
+  withPaymentMethod(paymentMethod: PaymentMethod | PaymentMethod[]) {
+    if (paymentMethod) {
+      if (Array.isArray(paymentMethod)) {
+        if (paymentMethod.length > 0) {
+          this.where.paymentMethod = { in: paymentMethod }
+        }
+      } else {
+        this.where.paymentMethod = paymentMethod
+      }
     }
     return this
   }

@@ -37,7 +37,7 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
   const [filters, setFilters] = useState<IReservationReportFilter>({
     startDate: '',
     endDate: '',
-    status: undefined,
+    status: [],
     search: '',
   })
   const [pdfLoading, setPdfLoading] = useState(false)
@@ -70,7 +70,8 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
       await reportService.downloadReservationReportPdf({
         startDate: filters.startDate || undefined,
         endDate: filters.endDate || undefined,
-        status: filters.status || undefined,
+        // Enviamos el arreglo directamente o undefined si no hay nada seleccionado
+        status: filters.status && filters.status.length > 0 ? filters.status : undefined,
         search: filters.search || undefined,
       })
       toast.success('PDF descargado correctamente')
@@ -109,19 +110,22 @@ export const ReservationReportModal = ({ isOpen, onClose }: Props) => {
                 />
               </I18nProvider>
             </div>
+
             <Select
-              label='Estado'
+              label='Estados'
               size='sm'
-              selectedKeys={filters.status ? [filters.status] : []}
+              selectionMode='multiple'
+              selectedKeys={new Set(filters.status)}
               onSelectionChange={(keys) => {
-                const val = [...keys][0] as ReservationStatus | undefined
-                setFilters((f) => ({ ...f, status: val }))
+                const selectedList = Array.from(keys) as ReservationStatus[]
+                setFilters((f) => ({ ...f, status: selectedList }))
               }}
             >
               {Object.values(ReservationStatus).map((s) => (
                 <SelectItem key={s}>{STATUS_LABELS[s]}</SelectItem>
               ))}
             </Select>
+
             <Input
               label='Buscar'
               size='sm'

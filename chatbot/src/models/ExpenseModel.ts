@@ -1,6 +1,7 @@
 import { EmployeeModel } from './EmployeeModel'
 import { IPaginationFilter } from '@/api/interfaces'
 import { ApartmentModel } from './ApartmentModel'
+import { PaymentMethod } from './PaymentModel'
 
 export enum ExpenseCategory {
   MAINTENANCE = 'MAINTENANCE',
@@ -28,7 +29,8 @@ export interface IExpenseFilter extends IPaginationFilter {
   search?: string
   apartmentId?: number
   employeeId?: number
-  category?: ExpenseCategory
+  category?: ExpenseCategory[]
+  paymentMethod?: PaymentMethod[]
   minAmount?: number
   maxAmount?: number
   fromDate?: string

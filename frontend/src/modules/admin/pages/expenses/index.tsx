@@ -32,6 +32,10 @@ export const AdminExpensePage = () => {
           page: table.currentPage,
           search: debounceValue,
           pageSize: table.rowsPerPage,
+          category: table.filters['category'],
+          paymentMethod: table.filters['paymentMethod'],
+          fromDate: table.dateFilter.start,
+          toDate: table.dateFilter.end,
         },
       },
       notifyOnNetworkStatusChange: true,
@@ -95,6 +99,7 @@ export const AdminExpensePage = () => {
     <AppTable
       totalPages={data?.findExpenses.totalPages || previousData?.findExpenses.totalPages}
       tableContent={data?.findExpenses.content || []}
+      filterByDate
       modalExtension={
         <>
           <Divider />

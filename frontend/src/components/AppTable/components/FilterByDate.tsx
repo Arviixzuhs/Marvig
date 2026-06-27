@@ -1,31 +1,26 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
-import { setDateFilter, setDateFilterPeriod } from '@/features/appTableSlice'
 import { RootState } from '@/store'
+import { useLocation } from 'react-router-dom'
 import { Calendar, Trash } from 'lucide-react'
-import { parseDate, CalendarDate } from '@internationalized/date'
+import { CalendarDate, parseDate } from '@internationalized/date'
+import { DateFilterPeriodButtons } from './DateFilterPeriodButtons'
 import { useDispatch, useSelector } from 'react-redux'
+import { setDateFilter, setDateFilterPeriod } from '@/features/appTableSlice'
 import {
-  Modal,
-  Badge,
   Button,
-  Tooltip,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  ModalContent,
-  useDisclosure,
+  Popover,
   DateRangePicker,
+  PopoverContent,
+  PopoverTrigger,
   type DateValue,
   type RangeValue,
 } from '@heroui/react'
-import { DateFilterPeriodButtons } from './DateFilterPeriodButtons'
+import { I18nProvider } from '@react-aria/i18n'
 
 export const FilterByDatePicker = () => {
   const dispatch = useDispatch()
   const table = useSelector((state: RootState) => state.appTable)
   const location = useLocation()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   React.useEffect(() => {
     clearFilter()
@@ -62,8 +57,6 @@ export const FilterByDatePicker = () => {
     )
   }
 
-  const isFilterActive = table.dateFilter.start !== '' && table.dateFilter.end !== ''
-
   const getDateValue = (): RangeValue<CalendarDate> | null => {
     if (table.dateFilter.start && table.dateFilter.end) {
       return {
@@ -74,73 +67,51 @@ export const FilterByDatePicker = () => {
     return null
   }
 
-  const TooltipContent = () => {
-    return (
-      <div>
-        {isFilterActive ? (
-          <div>
-            Filtrar desde <span className='text-primary'>{table.dateFilter.start}</span> hasta{' '}
-            <span className='text-primary'>{table.dateFilter.end}</span>
-          </div>
-        ) : (
-          <span>Filtrar por fecha</span>
-        )}
-      </div>
-    )
-  }
-
   return (
-    <>
-      <Badge
-        content=''
-        color='primary'
-        shape='circle'
-        placement='bottom-right'
-        isInvisible={!isFilterActive}
-      >
-        <Tooltip content={<TooltipContent />}>
-          <Button
-            onPress={onOpen}
-            isIconOnly
-            radius='sm'
-            className='bg-c-filter text-c-filter-text'
-          >
-            <Calendar
-              size={18}
-              className='text-xl text-default-500 pointer-events-none flex-shrink-0'
-            />
-          </Button>
-        </Tooltip>
-      </Badge>
-      <Modal isOpen={isOpen} placement='center' onOpenChange={onOpenChange} backdrop='blur'>
-        <ModalContent>
-          <ModalHeader className='flex flex-col gap-1 default-text-color'>
+    <Popover placement='bottom-start'>
+      <PopoverTrigger>
+        <Button
+          variant='flat'
+          radius='lg'
+          startContent={<Calendar size={18} className='text-xl text-default-500' />}
+        >
+          Filtrar fechas
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className='p-0'>
+        <div className='flex flex-col gap-4 p-4 border border-default-100 rounded-xl bg-content1 shadow-md'>
+          <span className='text-xs font-semibold text-default-500 tracking-wider'>
             Filtrar por fecha
-          </ModalHeader>
-          <ModalBody>
-            <div className='flex flex-col gap-4'>
-              <div className='flex gap-2'>
-                <div className='w-full'>
+          </span>
+          <div className='flex flex-col gap-4'>
+            <div className='flex gap-2 items-center'>
+              <div className='w-full'>
+                <I18nProvider locale='es'>
                   <DateRangePicker
                     radius='sm'
                     value={getDateValue()}
                     onChange={handleChangeDate}
                     aria-label='Fecha'
                   />
-                </div>
-                <Button onPress={clearFilter} isIconOnly variant='flat' radius='sm'>
-                  <Trash
-                    size={18}
-                    className='text-xl text-default-500 pointer-events-none flex-shrink-0'
-                  />
-                </Button>
+                </I18nProvider>
               </div>
-              <DateFilterPeriodButtons />
+              <Button
+                onPress={clearFilter}
+                isIconOnly
+                variant='flat'
+                radius='sm'
+                className='shrink-0'
+              >
+                <Trash
+                  size={18}
+                  className='text-xl text-default-500 pointer-events-none flex-shrink-0'
+                />
+              </Button>
             </div>
-          </ModalBody>
-          <ModalFooter />
-        </ModalContent>
-      </Modal>
-    </>
+            <DateFilterPeriodButtons />
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }

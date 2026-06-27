@@ -82,11 +82,15 @@ export class MarvigAIService {
       const functionCalls = response.functionCalls
 
       if (!functionCalls || functionCalls.length === 0) {
-        this.logger.log(`✨ [BUCLE AGENTE] El modelo decidió no usar herramientas en el paso #${loopCount}. Saliendo al stream final.`);
+        this.logger.log(
+          `✨ [BUCLE AGENTE] El modelo decidió no usar herramientas en el paso #${loopCount}. Saliendo al stream final.`,
+        )
         break
       }
 
-      this.logger.warn(`🛠️ [TOOL CALL] Gemini solicitó ejecutar (${functionCalls.length}) herramienta(s):`)
+      this.logger.warn(
+        `🛠️ [TOOL CALL] Gemini solicitó ejecutar (${functionCalls.length}) herramienta(s):`,
+      )
 
       contents.push(response.candidates[0].content)
 
@@ -106,7 +110,9 @@ export class MarvigAIService {
         try {
           result = await tool.execute(call.args ?? {})
           this.logger.log(`✅ [SUCCESS] Tool "${call.name}" ejecutada con éxito.`)
-          this.logger.debug(`📤 Resultado de la Tool: ${JSON.stringify(result).substring(0, 500)}...`)
+          this.logger.debug(
+            `📤 Resultado de la Tool: ${JSON.stringify(result).substring(0, 500)}...`,
+          )
         } catch (error: any) {
           this.logger.error(`❌ [ERROR] Falló la ejecución de la tool "${call.name}":`, error)
           result = { error: error.message || 'Error interno de la herramienta' }
@@ -126,7 +132,9 @@ export class MarvigAIService {
     }
 
     if (loopCount >= MAX_LOOPS) {
-      this.logger.error(`⚠️ [GUARDRAIL] Se alcanzó el límite máximo de bucles (${MAX_LOOPS}). Rompiendo ciclo por seguridad.`);
+      this.logger.error(
+        `⚠️ [GUARDRAIL] Se alcanzó el límite máximo de bucles (${MAX_LOOPS}). Rompiendo ciclo por seguridad.`,
+      )
     }
 
     await this.messageService.create({
@@ -135,7 +143,9 @@ export class MarvigAIService {
       authorType: AuthorType.USER,
     })
 
-    this.logger.log(`📝 Mensaje del usuario guardado en base de datos. Generando stream de respuesta...`)
+    this.logger.log(
+      `📝 Mensaje del usuario guardado en base de datos. Generando stream de respuesta...`,
+    )
 
     this.handleSummary(chatId, chat.messageCount)
 

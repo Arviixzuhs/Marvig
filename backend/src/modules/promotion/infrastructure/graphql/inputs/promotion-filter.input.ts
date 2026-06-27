@@ -1,9 +1,11 @@
-import { InputType, Field } from '@nestjs/graphql'
-import { IsOptional, IsString } from 'class-validator'
+import { DateFilterInput } from '@/common/graphql/inputs/date-filter.input'
+import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator'
+import { InputType, Field, IntersectionType } from '@nestjs/graphql'
 
 @InputType()
-export class PromotionFilterInput extends PaginationFilterInput {
+export class PromotionFilterInput extends IntersectionType(PaginationFilterInput, DateFilterInput) {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -14,13 +16,9 @@ export class PromotionFilterInput extends PaginationFilterInput {
   @IsString()
   name?: string
 
-  @Field({ nullable: true })
+  @Field(() => [PromotionTypeEnum], { nullable: true })
   @IsOptional()
-  @IsString()
-  fromDate?: string
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  toDate?: string
+  @IsArray({ message: 'El tipo debe ser un arreglo de tipos de promociones' })
+  @IsEnum(PromotionTypeEnum, { each: true, message: 'Cada tipo debe ser un valor válido' })
+  type?: PromotionTypeEnum[]
 }
