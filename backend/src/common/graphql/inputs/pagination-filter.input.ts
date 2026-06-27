@@ -2,7 +2,7 @@ import { InputType, Field, Int } from '@nestjs/graphql'
 import { IsOptional, IsInt, Min } from 'class-validator'
 
 @InputType({ isAbstract: true })
-export abstract class PaginationFilterInput {
+export class PaginationFilterInput {
   @Field(() => Int, { nullable: true, defaultValue: 0 })
   @IsOptional()
   @IsInt()

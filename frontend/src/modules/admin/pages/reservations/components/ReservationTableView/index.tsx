@@ -43,7 +43,11 @@ export const ReservationTableView = () => {
       filters: {
         page: table.currentPage,
         search: debounceValue,
+        type: table.filters['type'],
+        status: table.filters['status'],
         pageSize: table.rowsPerPage,
+        startDate: table.dateFilter.start,
+        endDate: table.dateFilter.end,
       },
     },
     notifyOnNetworkStatusChange: true,
@@ -108,6 +112,7 @@ export const ReservationTableView = () => {
   return (
     <>
       <AppTable
+        filterByDate
         totalPages={data?.findReservations.totalPages || previousData?.findReservations.totalPages}
         tableContent={data?.findReservations.content || []}
         tableActions={tableActions}

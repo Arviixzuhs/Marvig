@@ -2,7 +2,7 @@ import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
 import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsOptional, IsString, IsInt, IsEnum, IsNumber } from 'class-validator'
+import { IsOptional, IsString, IsInt, IsEnum, IsNumber, IsArray } from 'class-validator'
 
 @InputType()
 export class ReservationFilterInput extends PaginationFilterInput {
@@ -16,15 +16,17 @@ export class ReservationFilterInput extends PaginationFilterInput {
   @IsInt()
   apartmentId?: number
 
-  @Field(() => ReservationStatus, { nullable: true })
+  @Field(() => [ReservationStatus], { nullable: true })
   @IsOptional()
-  @IsEnum(ReservationStatus)
-  status?: ReservationStatus
+  @IsArray({ message: 'El estado debe ser un arreglo de estados' })
+  @IsEnum(ReservationStatus, { each: true, message: 'Cada estado debe ser un valor válido' })
+  status?: ReservationStatus[]
 
-  @Field(() => RentalType, { nullable: true })
+  @Field(() => [RentalType], { nullable: true })
   @IsOptional()
-  @IsEnum(RentalType)
-  type?: RentalType
+  @IsArray({ message: 'El tipo de renta debe ser un arreglo' })
+  @IsEnum(RentalType, { each: true, message: 'Cada tipo de renta debe ser un valor válido' })
+  type?: RentalType[]
 
   @Field({ nullable: true })
   @IsOptional()

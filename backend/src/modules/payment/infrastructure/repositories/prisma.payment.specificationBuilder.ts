@@ -1,4 +1,5 @@
 import { Prisma } from 'generated/prisma/client'
+import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
@@ -29,9 +30,28 @@ export class PaymentSpecificationBuilder extends PaginateSpecificationBuilder {
     return this
   }
 
-  withStatus(status?: PaymentStatus) {
+  withStatus(status?: PaymentStatus | PaymentStatus[]) {
     if (status) {
-      this.where.status = status
+      if (Array.isArray(status)) {
+        if (status.length > 0) {
+          this.where.status = { in: status }
+        }
+      } else {
+        this.where.status = status
+      }
+    }
+    return this
+  }
+
+  withMethod(method?: PaymentMethod | PaymentMethod[]) {
+    if (method) {
+      if (Array.isArray(method)) {
+        if (method.length > 0) {
+          this.where.method = { in: method }
+        }
+      } else {
+        this.where.method = method
+      }
     }
     return this
   }

@@ -33,7 +33,8 @@ export interface PaymentModel {
 
 export interface IPaymentFilter extends IPaginationFilter {
   search?: string
-  status?: PaymentStatus
+  status?: PaymentStatus[]
+  method?: PaymentMethod[]
   toDate?: string
   fromDate?: string
   reservationId?: number

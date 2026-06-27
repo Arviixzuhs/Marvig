@@ -32,7 +32,11 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
         filters: {
           page: table.currentPage,
           search: debounceValue,
+          status: table.filters['status'],
+          method: table.filters['method'],
           pageSize: table.rowsPerPage,
+          fromDate: table.dateFilter.start,
+          toDate: table.dateFilter.end
         },
       },
       notifyOnNetworkStatusChange: true,
@@ -56,6 +60,7 @@ export const AdminPaymentPage = ({ hiddeTopContent = false }: IAdminPaymentPage)
       totalPages={data?.findPayments.totalPages || previousData?.findPayments.totalPages}
       tableContent={data?.findPayments.content || []}
       tableActions={tableActions}
+      filterByDate
       hiddeTopContent={hiddeTopContent}
       dropdownItems={[
         {

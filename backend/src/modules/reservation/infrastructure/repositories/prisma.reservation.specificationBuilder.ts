@@ -43,16 +43,28 @@ export class ReservationSpecificationBuilder extends PaginateSpecificationBuilde
     return this
   }
 
-  withStatus(status?: ReservationStatus) {
+  withStatus(status?: ReservationStatus | ReservationStatus[]) {
     if (status) {
-      this.where.status = status
+      if (Array.isArray(status)) {
+        if (status.length > 0) {
+          this.where.status = { in: status }
+        }
+      } else {
+        this.where.status = status
+      }
     }
     return this
   }
 
-  withType(type?: RentalType) {
+  withType(type?: RentalType | RentalType[]) {
     if (type) {
-      this.where.type = type
+      if (Array.isArray(type)) {
+        if (type.length > 0) {
+          this.where.type = { in: type }
+        }
+      } else {
+        this.where.type = type
+      }
     }
     return this
   }

@@ -37,7 +37,7 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
   const [filters, setFilters] = useState<IPaymentReportFilter>({
     fromDate: '',
     toDate: '',
-    status: undefined,
+    status: [], // Ya inicializado correctamente como arreglo vacío
     search: '',
   })
   const [pdfLoading, setPdfLoading] = useState(false)
@@ -110,19 +110,22 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
                 />
               </I18nProvider>
             </div>
+
             <Select
-              label='Estado'
+              label='Estados'
               size='sm'
-              selectedKeys={filters.status ? [filters.status] : []}
+              selectionMode='multiple'
+              selectedKeys={new Set(filters.status)}
               onSelectionChange={(keys) => {
-                const val = [...keys][0] as PaymentStatus | undefined
-                setFilters((f) => ({ ...f, status: val }))
+                const selectedList = Array.from(keys) as PaymentStatus[]
+                setFilters((f) => ({ ...f, status: selectedList }))
               }}
             >
               {Object.values(PaymentStatus).map((s) => (
                 <SelectItem key={s}>{STATUS_LABELS[s]}</SelectItem>
               ))}
             </Select>
+
             <Input
               label='Buscar'
               size='sm'

@@ -100,7 +100,7 @@ export const AdminDashboardPage = () => {
         paymentFilters: {
           fromDate: filters.fromDate,
           toDate: filters.toDate,
-          status: PaymentStatus.CONFIRMED,
+          status: [PaymentStatus.CONFIRMED],
         },
       })
 
@@ -146,7 +146,7 @@ export const AdminDashboardPage = () => {
         case 'sales':
           await reportService.downloadPaymentReportPdf({
             ...filters,
-            status: PaymentStatus.CONFIRMED,
+            status: [PaymentStatus.CONFIRMED,PaymentStatus.CONFIRMED],
           })
           break
         case 'expenses':

@@ -23,6 +23,7 @@ export const AdminPromotionPage = () => {
     variables: {
       filters: {
         page: table.currentPage,
+        type: table.filters['type'],
         search: debounceValue,
         pageSize: table.rowsPerPage,
       },

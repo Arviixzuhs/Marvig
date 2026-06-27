@@ -31,15 +31,17 @@ export const RenderCell = (props: RenderCellProps) => {
         )
       case 'chip':
         if (props.column && props.column.style && props.column.chipConfig) {
+          const color = props.column.chipConfig[props.value]?.color
           return (
             <Chip
               color='secondary'
               size='sm'
-              radius='sm'
+              radius='full'
               variant='flat'
               style={{
-                background: props.column.chipConfig[props.value]?.color || '#6B7280',
-                color: 'white',
+                background: color + '40' || '#6B7280',
+                color: color,
+      
               }}
             >
               {props.column.chipConfig[props.value]?.label || 'Sin contenido'}
@@ -91,6 +93,10 @@ export const RenderCell = (props: RenderCellProps) => {
     }
 
     default:
-      return <div className='text-nowrap'>{String(props.value).length === 0 || !props.value ? <NotContent /> : props.value}</div>
+      return (
+        <div className='text-nowrap'>
+          {String(props.value).length === 0 || !props.value ? <NotContent /> : props.value}
+        </div>
+      )
   }
 }

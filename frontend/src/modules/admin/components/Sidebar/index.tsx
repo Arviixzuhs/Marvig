@@ -48,11 +48,6 @@ const menuItems = [
     href: '/admin/promotions',
   },
   {
-    label: 'Usuarios',
-    icon: Users,
-    href: '/admin/users',
-  },
-  {
     label: 'Empleados',
     icon: Briefcase,
     href: '/admin/employees',
@@ -61,7 +56,12 @@ const menuItems = [
     label: 'Reportes',
     icon: Info,
     href: '/admin/reports',
-  }
+  },
+  {
+    label: 'Usuarios',
+    icon: Users,
+    href: '/admin/users',
+  },
 ]
 
 export function AdminSidebar() {

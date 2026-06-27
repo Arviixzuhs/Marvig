@@ -1,6 +1,6 @@
 import { defineTool } from '@/utils/defineTool'
 import { userService } from '@/services/user'
-import { PaymentStatus } from '@/models/PaymentModel'
+import { PromotionType } from '@/models/PromotionModel'
 import { expenseService } from '@/services/exepense'
 import { paymentService } from '@/services/payment'
 import { ExpenseCategory } from '@/models/ExpenseModel'
@@ -10,12 +10,13 @@ import { apartmentService } from '@/services/apartment'
 import { promotionService } from '@/services/promotion'
 import { reservationService } from '@/services/reservation'
 import { ToolListUnion, Type } from '@google/genai'
+import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel'
 import { RentalType, ReservationStatus } from '@/models/ReservationModel'
 
 const todayTool = defineTool({
   schema: {
     name: 'get_today',
-    description: "Returns today date",
+    description: 'Returns today date',
   },
   execute() {
     return new Date()
@@ -25,12 +26,13 @@ const todayTool = defineTool({
 const userContextTool = defineTool({
   schema: {
     name: 'get_user_context',
-    description: 'Returns the current authenticated user profile, full name, system role, email, phone and createdAt.',
+    description:
+      'Returns the current authenticated user profile, full name, system role, email, phone and createdAt.',
   },
   execute() {
     userService.findCurrent()
   },
-});
+})
 
 const paymentFilterProperties = {
   search: {
@@ -38,14 +40,34 @@ const paymentFilterProperties = {
     description: 'A generic search text to match against payment references or descriptions.',
   },
   status: {
-    type: Type.STRING,
-    enum: [
-      PaymentStatus.PENDING,
-      PaymentStatus.CONFIRMED,
-      PaymentStatus.FAILED,
-      PaymentStatus.CANCELLED,
-    ],
-    description: 'Filter payments by their current transaction status.',
+    type: Type.ARRAY,
+    items: {
+      type: Type.STRING,
+      enum: [
+        PaymentStatus.PENDING,
+        PaymentStatus.CONFIRMED,
+        PaymentStatus.FAILED,
+        PaymentStatus.CANCELLED,
+      ],
+    },
+    description:
+      'Filter payments by one or multiple transaction statuses. Pass an array of values.',
+  },
+  method: {
+    type: Type.ARRAY,
+    items: {
+      type: Type.STRING,
+      enum: [
+        PaymentMethod.CASH,
+        PaymentMethod.PAYPAL,
+        PaymentMethod.STRIPE,
+        PaymentMethod.PAGO_MOVIL,
+        PaymentMethod.DEBIT_CARD,
+        PaymentMethod.CREDID_CARD,
+        PaymentMethod.BANK_TRANSFER,
+      ],
+    },
+    description: 'Filter payments by one or multiple payment methods. Pass an array of values.',
   },
   reservationId: {
     type: Type.INTEGER,
@@ -120,6 +142,15 @@ const listPromotionsTool = defineTool({
           type: Type.STRING,
           description: 'A generic search text to match against promotion names or descriptions.',
         },
+        type: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [PromotionType.FIXED, PromotionType.PERCENTAGE],
+          },
+          description:
+            'Filter promotions by one or multiple types (e.g., FIXED, PERCENTAGE). Pass an array of values.',
+        },
         name: {
           type: Type.STRING,
           description: 'Filter specifically by the promotion name.',
@@ -172,14 +203,18 @@ const listApartmentsTool = defineTool({
           description: 'The specific floor level where the room is located.',
         },
         status: {
-          type: Type.STRING,
-          enum: [
-            ApartmentStatus.AVAILABLE,
-            ApartmentStatus.RESERVED,
-            ApartmentStatus.OCCUPIED,
-            ApartmentStatus.MAINTENANCE,
-          ],
-          description: 'Filter by current status of the apartment.',
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [
+              ApartmentStatus.AVAILABLE,
+              ApartmentStatus.RESERVED,
+              ApartmentStatus.OCCUPIED,
+              ApartmentStatus.MAINTENANCE,
+            ],
+          },
+          description:
+            'Filter by one or multiple current statuses of the apartment. Pass an array of values.',
         },
         bedrooms: {
           type: Type.INTEGER,
@@ -199,11 +234,13 @@ const listApartmentsTool = defineTool({
         },
         fromDate: {
           type: Type.STRING,
-          description: 'The check-in/start date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+          description:
+            'The check-in/start date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
         },
         toDate: {
           type: Type.STRING,
-          description: 'The check-out/end date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+          description:
+            'The check-out/end date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
         },
         minSquareMeters: {
           type: Type.INTEGER,
@@ -246,19 +283,27 @@ const listReservationsTool = defineTool({
           description: "A generic search text to match against client's name, email, or phone.",
         },
         status: {
-          type: Type.STRING,
-          enum: [
-            ReservationStatus.PENDING,
-            ReservationStatus.CONFIRMED,
-            ReservationStatus.CANCELLED,
-            ReservationStatus.COMPLETED,
-          ],
-          description: 'Filter reservations by their operational status.',
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [
+              ReservationStatus.PENDING,
+              ReservationStatus.CONFIRMED,
+              ReservationStatus.CANCELLED,
+              ReservationStatus.COMPLETED,
+            ],
+          },
+          description:
+            'Filter reservations by one or multiple operational statuses. Pass an array of values.',
         },
         type: {
-          type: Type.STRING,
-          enum: [RentalType.DAILY, RentalType.FIXED_SEASON],
-          description: 'Filter by rental type: DAILY or FIXED_SEASON.',
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [RentalType.DAILY, RentalType.FIXED_SEASON],
+          },
+          description:
+            'Filter by one or multiple rental types: DAILY or FIXED_SEASON. Pass an array of values.',
         },
         userId: {
           type: Type.INTEGER,
@@ -365,7 +410,7 @@ const listExpensesTool = defineTool({
     description: `
       Returns a paginated and filtered list of expenses recorded in the vacation posada system.
       Use this tool whenever the user asks about financial costs, spending, bills, maintenance costs,
-      purchases, or needs to audit expenses by category, date range, specific apartment, or employee.
+      purchase, or needs to audit expenses by category, date range, specific apartment, or employee.
     `,
     parameters: {
       type: Type.OBJECT,
@@ -384,16 +429,37 @@ const listExpensesTool = defineTool({
             'Filter expenses associated with a specific employee ID (who made or authorized the expense).',
         },
         category: {
-          type: Type.STRING,
-          enum: [
-            ExpenseCategory.MAINTENANCE,
-            ExpenseCategory.UTILITIES,
-            ExpenseCategory.CLEANING,
-            ExpenseCategory.TAXES,
-            ExpenseCategory.SUPPLIES,
-            ExpenseCategory.OTHER,
-          ],
-          description: 'Filter expenses by their specific operational category.',
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [
+              ExpenseCategory.MAINTENANCE,
+              ExpenseCategory.UTILITIES,
+              ExpenseCategory.CLEANING,
+              ExpenseCategory.TAXES,
+              ExpenseCategory.SUPPLIES,
+              ExpenseCategory.OTHER,
+            ],
+          },
+          description:
+            'Filter expenses by one or multiple operational categories. Pass an array of values.',
+        },
+        paymentMethod: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [
+              PaymentMethod.CASH,
+              PaymentMethod.PAYPAL,
+              PaymentMethod.STRIPE,
+              PaymentMethod.PAGO_MOVIL,
+              PaymentMethod.DEBIT_CARD,
+              PaymentMethod.CREDID_CARD,
+              PaymentMethod.BANK_TRANSFER,
+            ],
+          },
+          description:
+            'Filter expenses by one or multiple payment methods used. Pass an array of values.',
         },
         minAmount: {
           type: Type.NUMBER,
@@ -474,8 +540,6 @@ const getExpensesPerformanceTool = defineTool({
     return await expenseService.getPerformance(args)
   },
 })
-
-
 
 const listUsersTool = defineTool({
   schema: {

@@ -35,7 +35,7 @@ export interface IApartmentFilter extends IPaginationFilter {
   number?: string
   floor?: number
   ids?: number[]
-  status?: ApartmentStatus
+  status?: ApartmentStatus[]
   bedrooms?: number
   bathrooms?: number
   minSquareMeters?: number
