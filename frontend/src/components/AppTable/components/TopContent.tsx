@@ -22,17 +22,17 @@ export const TopContent = ({
   const dispatch = useDispatch()
 
   return (
-    <div className='flex flex-col lg:flex-row gap-3 w-full mb-4 justify-between items-stretch lg:items-center'>
-      <div className='flex flex-wrap gap-2 items-center w-full lg:flex-1'>
-        <div className='w-full sm:w-72 max-w-none sm:max-w-xs shrink-0'>
+    <div className='flex flex-col sm:flex-row gap-3 w-full mb-4 justify-between items-stretch sm:items-center'>
+      <div className='flex flex-wrap gap-3 items-center w-full sm:flex-1'>
+        <div className='flex gap-3 w-full max-w-none sm:max-w-lg shrink-0'>
           <Searchbar searchbarPlaceholder={searchbarPlaceholder} />
+          <ChipFilterGroup />
+          {filterByDate && <FilterByDatePicker />}
         </div>
-        <ChipFilterGroup />
-        {filterByDate && <FilterByDatePicker />}
         {topContentExtension && topContentExtension}
       </div>
-      <div className='flex items-center justify-end shrink-0'>
-        {!hiddeAdd && (
+      {!hiddeAdd && (
+        <div className='flex items-center justify-end shrink-0'>
           <Button
             onPress={() => dispatch(toggleAddItemModal(null))}
             color='primary'
@@ -41,9 +41,8 @@ export const TopContent = ({
           >
             Agregar
           </Button>
-        )}
-      </div>
-
+        </div>
+      )}
     </div>
   )
 }
