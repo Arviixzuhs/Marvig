@@ -48,6 +48,7 @@ export class PrismaPaymentRepositoryAdapter implements PaymentRepositoryPort {
     const query = new PaymentSpecificationBuilder()
       .withSearch(filters.search)
       .withStatus(filters.status)
+      .withMethod(filters.method)
       .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withReservationId(filters.reservationId)
       .withDateBetween(filters.fromDate, filters.toDate)
