@@ -40,7 +40,7 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
   const [filters, setFilters] = useState<IExpenseReportFilter>({
     fromDate: '',
     toDate: '',
-    category: undefined,
+    category: [],
     search: '',
   })
 
@@ -72,6 +72,7 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
       await reportService.downloadExpenseReportPdf({
         fromDate: filters.fromDate || undefined,
         toDate: filters.toDate || undefined,
+
         category: filters.category || undefined,
         search: filters.search || undefined,
       })
@@ -112,12 +113,13 @@ export const ExpenseReportModal = ({ isOpen, onClose }: Props) => {
               </I18nProvider>
             </div>
             <Select
-              label='Categoría'
+              label='Categorías'
               size='sm'
-              selectedKeys={filters.category ? [filters.category] : []}
+              selectionMode='multiple'
+              selectedKeys={new Set(filters.category)}
               onSelectionChange={(keys) => {
-                const val = [...keys][0] as ExpenseCategory | undefined
-                setFilters((f) => ({ ...f, category: val }))
+                const selectedList = Array.from(keys) as ExpenseCategory[]
+                setFilters((f) => ({ ...f, category: selectedList }))
               }}
             >
               {Object.values(ExpenseCategory).map((c) => (

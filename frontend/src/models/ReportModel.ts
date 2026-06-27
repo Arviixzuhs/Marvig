@@ -35,7 +35,7 @@ export interface IPaymentReportItem {
 export interface IPaymentReportFilter extends IPaginationFilter {
   fromDate?: string
   toDate?: string
-  status?: PaymentStatus
+  status?: PaymentStatus[]
   search?: string
 }
 
@@ -64,7 +64,7 @@ export interface IExpenseReportItem {
 export interface IExpenseReportFilter extends IPaginationFilter {
   fromDate?: string
   toDate?: string
-  category?: ExpenseCategory
+  category?: ExpenseCategory[]
   apartmentId?: number
   search?: string
 }
@@ -107,7 +107,7 @@ export interface IReservationReportItem {
 export interface IReservationReportFilter extends IPaginationFilter {
   startDate?: string
   endDate?: string
-  status?: ReservationStatus
+  status?: ReservationStatus[]
   search?: string
 }
 
