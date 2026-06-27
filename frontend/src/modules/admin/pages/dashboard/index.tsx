@@ -146,7 +146,7 @@ export const AdminDashboardPage = () => {
         case 'sales':
           await reportService.downloadPaymentReportPdf({
             ...filters,
-            status: [PaymentStatus.CONFIRMED,PaymentStatus.CONFIRMED],
+            status: [PaymentStatus.CONFIRMED, PaymentStatus.CONFIRMED],
           })
           break
         case 'expenses':
@@ -167,7 +167,7 @@ export const AdminDashboardPage = () => {
     <div className='flex flex-col gap-3 h-auto w-full'>
       <div className='flex items-center justify-between'>
         <Tabs
-          variant='solid'
+          variant='underlined'
           aria-label='Dashboard views'
           color='primary'
           radius='full'
