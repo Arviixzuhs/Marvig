@@ -1,6 +1,6 @@
 import { defineTool } from '@/utils/defineTool'
 import { userService } from '@/services/user'
-import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel'
+import { PromotionType } from '@/models/PromotionModel'
 import { expenseService } from '@/services/exepense'
 import { paymentService } from '@/services/payment'
 import { ExpenseCategory } from '@/models/ExpenseModel'
@@ -10,6 +10,7 @@ import { apartmentService } from '@/services/apartment'
 import { promotionService } from '@/services/promotion'
 import { reservationService } from '@/services/reservation'
 import { ToolListUnion, Type } from '@google/genai'
+import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel'
 import { RentalType, ReservationStatus } from '@/models/ReservationModel'
 
 const todayTool = defineTool({
@@ -139,6 +140,17 @@ const listPromotionsTool = defineTool({
           type: Type.STRING,
           description: 'A generic search text to match against promotion names or descriptions.',
         },
+        type: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [
+              PromotionType.FIXED,
+              PromotionType.PERCENTAGE,
+            ],
+          },
+          description: 'Filter promotions by one or multiple types (e.g., FIXED, PERCENTAGE). Pass an array of values.',
+        },
         name: {
           type: Type.STRING,
           description: 'Filter specifically by the promotion name.',
@@ -191,14 +203,17 @@ const listApartmentsTool = defineTool({
           description: 'The specific floor level where the room is located.',
         },
         status: {
-          type: Type.STRING,
-          enum: [
-            ApartmentStatus.AVAILABLE,
-            ApartmentStatus.RESERVED,
-            ApartmentStatus.OCCUPIED,
-            ApartmentStatus.MAINTENANCE,
-          ],
-          description: 'Filter by current status of the apartment.',
+          type: Type.ARRAY,
+          items: {
+            type: Type.STRING,
+            enum: [
+              ApartmentStatus.AVAILABLE,
+              ApartmentStatus.RESERVED,
+              ApartmentStatus.OCCUPIED,
+              ApartmentStatus.MAINTENANCE,
+            ],
+          },
+          description: 'Filter by one or multiple current statuses of the apartment. Pass an array of values.',
         },
         bedrooms: {
           type: Type.INTEGER,

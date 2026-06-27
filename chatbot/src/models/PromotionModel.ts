@@ -24,6 +24,7 @@ export interface IPromotionDto {
 
 export interface IPromotionFilter extends IPaginationFilter {
   name?: string
+  type?: PromotionType[]
   search?: string
   toDate?: string
   fromDate?: string
