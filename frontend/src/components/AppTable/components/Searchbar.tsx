@@ -21,7 +21,11 @@ export const Searchbar = ({ searchbarPlaceholder }: SearchbarProps) => {
       value={table.filterValue}
       onChange={handleChange}
       placeholder={searchbarPlaceholder ? searchbarPlaceholder : 'Buscar...'}
-      startContent={<Search />}
+      startContent={
+        <div>
+          <Search size={18} />
+        </div>
+      }
       className='w-full'
       classNames={{
         input: 'bg-card',
