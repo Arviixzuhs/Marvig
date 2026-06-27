@@ -1,12 +1,8 @@
-import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
-import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
-import { IsOptional, IsString, IsInt, IsEnum, IsDateString } from 'class-validator'
 import { Type } from 'class-transformer'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
+import { IsOptional, IsString, IsInt, IsEnum, IsDateString, IsArray } from 'class-validator'
 
-/**
- * Extiende ReservationFilterDto agregando validaciones de class-validator.
- * No redefine lógica de filtrado; reutiliza los campos del dominio.
- */
 export class ReservationReportQueryDto extends ReservationFilterDto {
   @IsOptional()
   @Type(() => Number)
@@ -27,8 +23,9 @@ export class ReservationReportQueryDto extends ReservationFilterDto {
   override endDate?: string
 
   @IsOptional()
-  @IsEnum(ReservationStatus)
-  override status?: ReservationStatus
+  @IsArray({ message: 'El estado debe ser un arreglo de estados' })
+  @IsEnum(ReservationStatus, { each: true, message: 'Cada estado debe ser un valor válido' })
+  override status?: ReservationStatus[]
 
   @IsOptional()
   @Type(() => Number)
