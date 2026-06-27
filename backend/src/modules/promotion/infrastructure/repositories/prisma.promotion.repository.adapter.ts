@@ -31,6 +31,7 @@ export class PrismaPromotionRepositoryAdapter implements PromotionRepositoryPort
     const query = new PromotionSpecificationBuilder()
       .withSearch(filters.search)
       .withName(filters.name)
+      .withType(filters.type)
       .withCreatedAtBetween(filters.fromDate, filters.toDate)
       .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })

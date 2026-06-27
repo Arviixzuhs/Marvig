@@ -1,5 +1,6 @@
 import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 import { Prisma } from 'generated/prisma/client'
+import { PromotionTypeEnum } from '../../domain/enums/promotion-type.enum'
 
 export interface PromotionSpecificationBuild {
   where: Prisma.PromotionWhereInput
@@ -27,6 +28,19 @@ export class PromotionSpecificationBuilder extends PaginateSpecificationBuilder 
         { name: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
       ]
+    }
+    return this
+  }
+
+  withType(type?: PromotionTypeEnum | PromotionTypeEnum[]) {
+    if (type) {
+      if (Array.isArray(type)) {
+        if (type.length > 0) {
+          this.where.type = { in: type }
+        }
+      } else {
+        this.where.type = type
+      }
     }
     return this
   }
