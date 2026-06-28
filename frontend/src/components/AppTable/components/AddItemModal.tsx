@@ -34,6 +34,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
 }: AddItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   const parseDateTime = (value: any) => {
     if (!value) return null
@@ -97,10 +98,13 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
+      setIsLoading(true)
       await action()
       toggleModal()
     } catch (error: any) {
       toast.error(error.message || 'Error al guardar el registro')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -199,7 +203,13 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
             </div>
           </ModalBody>
           <ModalFooter className='flex gap-2 w-full'>
-            <Button type='button' variant='flat' onPress={toggleModal} className='w-full'>
+            <Button
+              type='button'
+              variant='flat'
+              onPress={toggleModal}
+              className='w-full'
+              isLoading={isLoading}
+            >
               Cancelar
             </Button>
             <Button type='submit' color='primary' className='w-full'>

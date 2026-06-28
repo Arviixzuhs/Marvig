@@ -41,6 +41,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
   const currentItemToEdit = tableContent.find((item) => item.id === table.currentItemToUpdate)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   const parseDateTime = (value: any) => {
     if (!value) return null
@@ -98,10 +99,13 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
+      setIsLoading(true)
       await action()
       toggleModal()
     } catch (error: any) {
       toast.error(error.message || 'Error al guardar el registro')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -224,7 +228,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               Cancelar
             </Button>
 
-            <Button type='submit' color='primary' className='w-full'>
+            <Button type='submit' color='primary' className='w-full' isLoading={isLoading}>
               Guardar
             </Button>
           </ModalFooter>
