@@ -3,18 +3,14 @@ import toast from 'react-hot-toast'
 import { RootState } from '@/store'
 import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  setFormData,
-  clearFormData,
-  toggleEditItemModal,
-  setCurrentItemToUpdate,
-} from '@/features/appTableSlice'
+import { setFormData, toggleEditItemModal, setCurrentItemToUpdate } from '@/features/appTableSlice'
 import {
   Form,
   Modal,
   Input,
   Select,
   Button,
+  Divider,
   Textarea,
   ModalBody,
   DatePicker,
@@ -22,7 +18,6 @@ import {
   ModalHeader,
   ModalFooter,
   ModalContent,
-  Divider,
 } from '@heroui/react'
 
 export interface EditItemModalProps {
@@ -91,9 +86,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   }
 
   const toggleModal = () => {
-    dispatch(toggleEditItemModal(null))
-    dispatch(clearFormData(null))
     dispatch(setCurrentItemToUpdate(-1))
+    dispatch(toggleEditItemModal(null))
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
