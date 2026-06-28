@@ -189,6 +189,7 @@ export const manageAppTableSlice = createSlice({
     },
     setCurrentItemToUpdate: (state, action) => {
       state.currentItemToUpdate = action.payload
+      state.formData = {}
     },
     setDateFilter: (state, action) => {
       const { start, end } = action.payload
