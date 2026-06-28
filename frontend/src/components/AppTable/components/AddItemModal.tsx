@@ -4,7 +4,7 @@ import { RootState } from '@/store'
 import { I18nProvider } from '@react-aria/i18n'
 import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
-import { setFormData, clearFormData, toggleAddItemModal } from '@/features/appTableSlice'
+import { setFormData, toggleAddItemModal } from '@/features/appTableSlice'
 import {
   Form,
   Modal,
@@ -91,7 +91,6 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   }
 
   const toggleModal = () => {
-    dispatch(clearFormData(null))
     dispatch(toggleAddItemModal(null))
   }
 
