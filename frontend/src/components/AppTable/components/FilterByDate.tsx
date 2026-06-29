@@ -79,7 +79,7 @@ export const FilterByDatePicker = () => {
             isIconOnly={isMobile}
             startContent={<Calendar size={18} className='text-xl text-default-500' />}
           >
-            {!isMobile ? 'Filtrar fechas' : ''}
+            {!isMobile ? 'Filtrar Fechas' : ''}
           </Button>
         </PopoverTrigger>
         <PopoverContent className='p-0'>
