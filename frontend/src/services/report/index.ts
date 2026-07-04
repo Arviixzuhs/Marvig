@@ -7,10 +7,10 @@ import {
   IReservationReportFilter,
 } from '@/models/ReportModel'
 
-const downloadPdf = async <T>(endpoint: string, filename: string, filters: T) => {
+const downloadPdf = async <T>(endpoint: string, filename: string, filters?: T) => {
   const { data } = await api.get<Blob>(endpoint, {
-    params: filters,
     responseType: 'blob',
+    ...(filters && { params: filters }),
   })
 
   const url = URL.createObjectURL(data)
@@ -47,5 +47,9 @@ export const reportService = {
 
   downloadIncomeSummaryPdf(filters: IIncomeSummaryFilter) {
     return downloadPdf('/reports/income-summary/pdf', 'resumen-ingresos', filters)
+  },
+
+  downloadPaymentById(id: number) {
+    return downloadPdf(`/reports/payment/${id}/pdf`, 'reporte-pago')
   },
 }

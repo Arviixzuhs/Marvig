@@ -27,7 +27,7 @@ export class ReportService {
     private readonly findPaymentsUseCase: FindPaymentsUseCase,
     private readonly findExpensesUseCase: FindExpensesUseCase,
     private readonly findReservationsUseCase: FindReservationsUseCase,
-  ) {}
+  ) { }
 
   // ─── DATA METHODS ─────────────────────────────────────────────────────────────
 
@@ -113,11 +113,11 @@ export class ReportService {
     const where = {
       ...(filters.fromDate || filters.toDate
         ? {
-            createdAt: {
-              ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
-              ...(filters.toDate && { lte: new Date(filters.toDate) }),
-            },
-          }
+          createdAt: {
+            ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
+            ...(filters.toDate && { lte: new Date(filters.toDate) }),
+          },
+        }
         : {}),
     }
 
@@ -204,6 +204,89 @@ export class ReportService {
       },
       willDrawCell: (data) => {
         if (data.cell.section === 'body' && data.column.index === 3) {
+          const status = String(data.cell.raw).toUpperCase()
+          if (status.includes('CONFIRM') || status.includes('PAGADO')) {
+            data.cell.styles.textColor = [22, 163, 74]
+            data.cell.styles.fontStyle = 'bold'
+          } else if (status.includes('PEND')) {
+            data.cell.styles.textColor = [217, 119, 6]
+            data.cell.styles.fontStyle = 'bold'
+          } else if (
+            status.includes('REJECT') ||
+            status.includes('RECHAZ') ||
+            status.includes('CANCEL')
+          ) {
+            data.cell.styles.textColor = [220, 38, 38]
+            data.cell.styles.fontStyle = 'bold'
+          }
+        }
+      },
+    })
+
+    this.pdf.addPdfFooter(doc)
+    return Buffer.from(doc.output('arraybuffer') as ArrayBuffer)
+  }
+  
+  async getSinglePaymentPdf(id: number): Promise<Buffer> {
+    const payment = await this.prisma.payment.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        reservation: {
+          include: {
+            apartments: true
+          }
+        }
+      }
+    })
+
+    const doc = new jsPDF({ orientation: 'portrait' })
+
+    const subtitle = `Comprobante emitido el ${getFormattedDateTime({ value: new Date() })}`
+    this.pdf.addPdfHeader(doc, 'Detalle de Pago', subtitle)
+
+    const currentY = this.pdf.addSummaryBox(
+      doc,
+      [
+        { label: 'Referencia / Operación', value: payment.reference || '—' },
+        { label: 'Monto Total', value: this.pdf.formatCurrency(payment.amount.toNumber()) },
+      ],
+      34,
+    )
+
+    autoTable(doc, {
+      startY: currentY + 5, 
+      head: [['Concepto', 'Detalle']],
+      body: [
+        ['ID de Pago', payment.id],
+        ['Fecha de Registro', getFormattedDateTime({ value: payment.date })],
+        ['Método de Pago', payment.method],
+        ['Estado del Pago', payment.status],
+        ['Cliente', payment.reservation?.clientName || '—'],
+        ['Apartamento(s)', payment.reservation?.apartments?.map((a) => `#${a.number}`).join(', ') || '—'],
+      ],
+      theme: 'plain',
+      styles: {
+        font: 'helvetica',
+        fontSize: 9,
+        cellPadding: 6,
+        lineColor: this.pdf.BORDER_COLOR,
+        lineWidth: 0.3,
+        textColor: [51, 65, 85],
+      },
+      headStyles: {
+        fillColor: [15, 23, 42],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', textColor: [15, 23, 42] },
+        1: { halign: 'left' },
+      },
+      willDrawCell: (data) => {
+        if (data.cell.section === 'body' && data.row.index === 3 && data.column.index === 1) {
           const status = String(data.cell.raw).toUpperCase()
           if (status.includes('CONFIRM') || status.includes('PAGADO')) {
             data.cell.styles.textColor = [22, 163, 74]

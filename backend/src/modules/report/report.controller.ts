@@ -1,16 +1,16 @@
-import { Controller, Get, Query, Res } from '@nestjs/common'
 import { Response } from 'express'
-import { ReportService } from './report.service'
-import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { UserRole } from '@/common/enums/user-role.enum'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
+import { ReportService } from './report.service'
 import { PaymentReportQueryDto } from './dto/payment-report-query.dto'
 import { ExpenseReportQueryDto } from './dto/expense-report-query.dto'
-import { ReservationReportQueryDto } from './dto/reservation-report-query.dto'
 import { OccupancyReportQueryDto } from './dto/occupancy-report-query.dto'
+import { ReservationReportQueryDto } from './dto/reservation-report-query.dto'
+import { Controller, Get, Query, Res, Param, ParseIntPipe } from '@nestjs/common'
 
 @Controller('reports')
 export class ReportController {
-  constructor(private readonly reportService: ReportService) {}
+  constructor(private readonly reportService: ReportService) { }
 
   @Get('payments/pdf')
   @RequiredRole(UserRole.ADMIN)
@@ -21,6 +21,20 @@ export class ReportController {
       'Content-Disposition': `attachment; filename="reporte-pagos-${Date.now()}.pdf"`,
       'Content-Length': buffer.length,
     })
+    res.end(buffer)
+  }
+  
+  @Get('payment/:id/pdf')
+  @RequiredRole(UserRole.ADMIN)
+  async getSinglePaymentPdf(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const buffer = await this.reportService.getSinglePaymentPdf(id)
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="pago-${id}-${Date.now()}.pdf"`,
+      'Content-Length': buffer.length,
+    })
+
     res.end(buffer)
   }
 
