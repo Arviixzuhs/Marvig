@@ -212,7 +212,7 @@ export const AdminDashboardPage = () => {
         {activeTab !== 'expenses' && (
           <>
             <StatCard
-              label='Ventas diarias'
+              label='Ventas Diarias'
               value={formatCurrency(
                 Number(data?.salesPerformanceData.metrics.dailySales.amount || 0),
               )}
@@ -220,7 +220,7 @@ export const AdminDashboardPage = () => {
               isPositive={data?.salesPerformanceData.metrics.dailySales.isPositive}
             />
             <StatCard
-              label='Ventas semanales'
+              label='Ventas Semanales'
               value={formatCurrency(
                 Number(data?.salesPerformanceData.metrics.weeklySales.amount || 0),
               )}
