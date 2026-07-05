@@ -7,8 +7,17 @@ import { userService } from '@/services/user'
 import { fileService } from '@/services/file'
 import { getFormattedDateTime } from '@/utils/getFormattedDateTime'
 import { useDispatch, useSelector } from 'react-redux'
-import { Avatar, Button, Card, CardBody } from '@heroui/react'
-import { Building, Camera, LogOut, Shield } from 'lucide-react'
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@heroui/react'
+import { Building, Camera, LogOut, Shield, Trash2 } from 'lucide-react'
 
 interface ProfileSidebarProps {
   activeSection: string
@@ -19,7 +28,6 @@ export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSideb
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user)
 
-  const [isUploading, setIsUploading] = React.useState(false)
   const [avatarPreview, setAvatarPreview] = React.useState<string | null>(null)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
@@ -28,13 +36,15 @@ export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSideb
     if (!file) return
 
     setAvatarPreview(URL.createObjectURL(file))
-    setIsUploading(true)
 
     try {
       const formData = new FormData()
       formData.append('file', file)
+
       const uploadRes = await fileService.upload(formData)
-      const updatedUser = await userService.updateMyProfile({ avatar: uploadRes.fileUrl })
+      const updatedUser = await userService.updateMyProfile({
+        avatar: uploadRes.fileUrl,
+      })
 
       if (updatedUser) {
         dispatch(setMyUser(updatedUser))
@@ -43,15 +53,15 @@ export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSideb
     } catch (error: any) {
       toast.error(error.message || 'Error al subir la imagen')
       setAvatarPreview(null)
-    } finally {
-      setIsUploading(false)
     }
   }
 
   const handleDeleteAvatar = async () => {
-    setIsUploading(true)
     try {
-      const updatedUser = await userService.updateMyProfile({ avatar: '' })
+      const updatedUser = await userService.updateMyProfile({
+        avatar: '',
+      })
+
       if (updatedUser) {
         dispatch(setMyUser(updatedUser))
         setAvatarPreview(null)
@@ -59,8 +69,6 @@ export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSideb
       }
     } catch {
       toast.error('Error al eliminar la foto')
-    } finally {
-      setIsUploading(false)
     }
   }
 
@@ -70,91 +78,109 @@ export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSideb
   ]
 
   return (
-    <aside className='flex flex-col gap-4 w-full md:w-64 shrink-0'>
-      <Card
-        shadow='none'
-        className='p-5 border border-border/50 text-center relative overflow-hidden'
-      >
-        <CardBody className='p-0 items-center justify-center'>
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className='relative w-24 h-24 rounded-full mb-4 cursor-pointer overflow-hidden group/avatar shadow-sm border-2 border-border hover:border-primary transition-all duration-300'
-          >
-            <Avatar
-              src={avatarPreview || user?.avatar || undefined}
-              name={`${user?.name} ${user?.lastName}`}
-              className='w-full h-full text-large'
-              isBordered
-            />
-            <div className='absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300 z-10'>
-              <Camera size={18} className='text-white mb-0.5' />
-              <span className='text-[10px] text-white font-semibold uppercase tracking-wider'>
-                Cambiar
-              </span>
-            </div>
-          </div>
+    <Card shadow='none' className='w-full md:w-80 shrink-0 bg-content1'>
+      <CardBody className='p-6 flex flex-col gap-6'>
+        {/* HEADER */}
+        <div className='flex flex-col items-center gap-4 pb-6 border-b border-divider'>
+          <Dropdown placement='bottom'>
+            <DropdownTrigger>
+              <div className='relative group cursor-pointer'>
+                <div className='relative w-28 h-28 rounded-full overflow-hidden border-2 border-divider transition-all duration-300 group-hover:border-primary shadow-sm'>
+                  <Avatar
+                    src={avatarPreview || user?.avatar || undefined}
+                    name={`${user?.name} ${user?.lastName}`}
+                    className='w-full h-full text-2xl'
+                  />
+
+                  <div className='absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
+                    <Camera className='text-white' size={22} />
+                  </div>
+                </div>
+              </div>
+            </DropdownTrigger>
+
+            <DropdownMenu aria-label='Avatar'>
+              <DropdownItem
+                key='change'
+                startContent={<Camera size={16} />}
+                onPress={() => fileInputRef.current?.click()}
+              >
+                Cambiar foto
+              </DropdownItem>
+
+              <>
+                {(avatarPreview || user?.avatar) && (
+                  <DropdownItem
+                    key='delete'
+                    color='danger'
+                    startContent={<Trash2 size={16} />}
+                    onPress={handleDeleteAvatar}
+                  >
+                    Eliminar foto
+                  </DropdownItem>
+                )}
+              </>
+            </DropdownMenu>
+          </Dropdown>
 
           <input
-            type='file'
             ref={fileInputRef}
-            onChange={handleAvatarChange}
+            type='file'
             accept='image/*'
             className='hidden'
+            onChange={handleAvatarChange}
           />
 
-          {(avatarPreview || user?.avatar) && (
-            <Button
-              size='sm'
-              variant='light'
-              color='danger'
-              onPress={handleDeleteAvatar}
-              className='h-7 min-w-0 px-2 mb-4 text-xs font-semibold'
-              isLoading={isUploading}
-            >
-              Eliminar foto
-            </Button>
-          )}
+          {/* INFO */}
+          <div className='flex flex-col items-center gap-1'>
+            <h2 className='text-lg font-semibold text-center'>
+              {user?.name} {user?.lastName}
+            </h2>
 
-          <h3 className='font-bold text-lg truncate max-w-full'>
-            {user?.name} {user?.lastName}
-          </h3>
-          <p className='text-xs text-muted-foreground mt-0.5 truncate max-w-full'>{user?.email}</p>
-          <div className='text-[10px] font-bold tracking-wider text-muted-foreground mt-3 bg-muted px-2.5 py-1 rounded-full uppercase inline-block'>
-            {user?.role}
-          </div>
-          <div className='text-[10px] text-muted-foreground mt-4 pt-4 border-t border-border/60 w-full'>
-            Miembro desde {getFormattedDateTime({ value: user?.createdAt })}
-          </div>
-        </CardBody>
-      </Card>
+            <p className='text-sm text-default-500 text-center break-all'>{user?.email}</p>
 
-      <Card shadow='none' className='p-2 border border-border/50'>
-        <nav className='flex flex-col gap-1'>
+            <span className='mt-2 rounded-full bg-default-100 px-3 py-1 text-xs font-medium uppercase tracking-wide'>
+              {user?.role}
+            </span>
+
+            <p className='text-xs text-default-500 text-center mt-2'>
+              Miembro desde {getFormattedDateTime({ value: user?.createdAt })}
+            </p>
+          </div>
+        </div>
+
+        {/* MENU */}
+        <nav className='flex flex-col gap-2'>
           {sections.map(({ id, icon: Icon, label }) => (
             <Button
               key={id}
+              fullWidth
+              radius='lg'
               variant={activeSection === id ? 'solid' : 'light'}
               color={activeSection === id ? 'primary' : 'default'}
-              className={`justify-start font-semibold text-sm h-11 px-4 ${activeSection === id ? 'shadow-md shadow-primary/20' : 'text-muted-foreground hover:text-foreground'}`}
-              startContent={<Icon size={16} />}
+              startContent={<Icon size={18} />}
+              className='justify-start h-11 font-medium'
               onPress={() => setActiveSection(id)}
             >
               {label}
             </Button>
           ))}
-          <div className='pt-1.5 mt-1.5 border-t border-border/60'>
+
+          <div className='flex flex-col gap-2 pt-4 border-t border-divider'>
             <Button
+              fullWidth
+              radius='lg'
               variant='light'
               color='danger'
-              className='w-full justify-start font-semibold text-sm h-11 px-4'
-              startContent={<LogOut size={16} />}
+              startContent={<LogOut size={18} />}
+              className='justify-start h-11 font-medium'
               onPress={logOut}
             >
               Cerrar sesión
             </Button>
           </div>
         </nav>
-      </Card>
-    </aside>
+      </CardBody>
+    </Card>
   )
 }

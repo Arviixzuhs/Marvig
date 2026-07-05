@@ -10,7 +10,11 @@ export class FindReservationsUseCase {
     private readonly reservationRepository: ReservationRepositoryPort,
   ) {}
 
-  async execute(filters: ReservationFilterDto): Promise<ReservationPageDto> {
-    return await this.reservationRepository.findReservations(filters)
+  async execute(filters: ReservationFilterDto, userId?: number): Promise<ReservationPageDto> {
+    const reservations = await this.reservationRepository.findReservations({
+      ...filters,
+      ...(filters.mine && userId && { userId })
+    })
+    return reservations
   }
 }

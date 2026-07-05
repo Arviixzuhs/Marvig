@@ -1,5 +1,7 @@
 import { User } from '@/interfaces/user.interface'
+import { UserRole } from '@/common/enums/user-role.enum'
 import { CurrentUser } from '@/common/decorators/current-user.decorator'
+import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { ReservationType } from '@/modules/reservation/infrastructure/graphql/types/reservation.type'
 import { InvalidDateType } from '@/modules/reservation/infrastructure/graphql/types/invalid-date.type'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
@@ -46,7 +48,7 @@ export class ReservationResolver {
     @Args('data') data: CreateReservationInput,
     @CurrentUser() user: User,
   ): Promise<ReservationType> {
-    return this.createReservationUseCase.execute(data, user?.userId)
+    return this.createReservationUseCase.execute(data, user.userId)
   }
 
   @Query(() => ReservationType, { description: 'Obtiene los detalles de una reserva' })
@@ -55,11 +57,12 @@ export class ReservationResolver {
   }
 
   @Query(() => ReservationPageType, { description: 'Obtiene el listado histórico de reservas' })
-  findReservations(@Args('filters') filters: ReservationFilterInput): Promise<ReservationPageType> {
-    return this.findReservationsUseCase.execute(filters)
+  findReservations(@Args('filters') filters: ReservationFilterInput, @CurrentUser() user: User): Promise<ReservationPageType> {
+    return this.findReservationsUseCase.execute(filters, user.userId)
   }
 
   @Mutation(() => ReservationType, { description: 'Actualiza los datos generales de una reserva' })
+  @RequiredRole(UserRole.ADMIN)
   updateReservation(
     @Args('id', { type: () => Int }) id: number,
     @Args('data') data: UpdateReservationInput,
@@ -70,6 +73,7 @@ export class ReservationResolver {
   @Mutation(() => ReservationType, {
     description: 'Cambia el estado de la reserva (Confirmar, Cancelar, etc)',
   })
+  @RequiredRole(UserRole.ADMIN)
   updateReservationStatus(
     @Args('id', { type: () => Int }) id: number,
     @Args('status') status: ReservationStatus,
@@ -78,6 +82,7 @@ export class ReservationResolver {
   }
 
   @Mutation(() => Boolean, { description: 'Elimina una reserva del sistema' })
+  @RequiredRole(UserRole.ADMIN)
   async deleteReservation(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
     await this.deleteReservationUseCase.execute(id)
     return true

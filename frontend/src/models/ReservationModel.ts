@@ -63,6 +63,7 @@ export interface IUpdateReservation {
 
 export interface IReservationFilter extends IPaginationFilter {
   userId?: number
+  mine?: boolean
   apartmentId?: number
   status?: ReservationStatus[]
   type?: RentalType[]

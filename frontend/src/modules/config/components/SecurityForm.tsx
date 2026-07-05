@@ -1,11 +1,12 @@
-import { Button, Card, CardBody, Input, Progress } from '@heroui/react'
-import { Eye, EyeOff, Lock } from 'lucide-react'
-import { useState, useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/store'
+import { FormActions } from '@/components/FormActions'
 import { userService } from '@/services/user'
-import toast from 'react-hot-toast'
+import { RootState } from '@/store'
 import { inputStyles } from '@/styles'
+import { Card, CardBody, Input, Progress } from '@heroui/react'
+import { Eye, EyeOff, Lock } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
 
 export const SecurityForm = () => {
   const user = useSelector((state: RootState) => state.user)
@@ -76,6 +77,16 @@ export const SecurityForm = () => {
         </CardBody>
       </Card>
     )
+  }
+
+  const hasChanges = useMemo(() => {
+    return currentPassword.length > 0 || newPassword.length > 0 || confirmPassword.length > 0
+  }, [currentPassword, newPassword, confirmPassword])
+
+  const handleCancel = () => {
+    setCurrentPassword('')
+    setNewPassword('')
+    setConfirmPassword('')
   }
 
   return (
@@ -168,14 +179,13 @@ export const SecurityForm = () => {
         }
       />
 
-      <Button
-        type='submit'
-        color='primary'
-        isLoading={isChanging}
-        isDisabled={!newPassword || newPassword !== confirmPassword}
-      >
-        Actualizar contraseña
-      </Button>
+      <FormActions
+        visible={hasChanges}
+        isSaving={isChanging}
+        onCancel={handleCancel}
+        submitText='Actualizar contraseña'
+        cancelText='Cancelar'
+      />
     </form>
   )
 }

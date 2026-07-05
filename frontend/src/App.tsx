@@ -16,6 +16,7 @@ import { IsAdminMiddleware } from '@/modules/admin/middlewares/IsAdminMiddleware
 import { AdminPromotionPage } from '@/modules/admin/pages/promotion'
 import { AdminApartmentPage } from '@/modules/admin/pages/apartments'
 import { AdminDashboardPage } from '@/modules/admin/pages/dashboard'
+import { MyReservationsPage } from './modules/reservations'
 import { AdminReservationPage } from '@/modules/admin/pages/reservations'
 import { NationalCheckoutPage } from '@/modules/checkout/pages/national'
 import { Navigate, Route, Routes } from 'react-router-dom'
@@ -33,6 +34,7 @@ function App() {
           <Route element={<AuthMiddleware />}>
             <Route element={<ConfigPage />} path='/config' />
           </Route>
+          <Route element={<MyReservationsPage />} path='/reservations'></Route>
           <Route element={<LandingPage />} path='/' />
           <Route element={<LoadCurrentApartmentMiddleware />}>
             <Route element={<NationalCheckoutPage />} path='/checkout/national/:apartmentId' />

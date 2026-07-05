@@ -7,6 +7,7 @@ import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import { PaymentInfo } from './components/PaymentInfo'
 import { useNavigate } from 'react-router-dom'
+import { PaymentMethod } from '@/models/PaymentModel'
 import { Stepper, StepItem } from '@/components/Stepper'
 import { reservationService } from '@/services/reservation'
 import { PersonalInformation } from './components/PersonalInformation'
@@ -74,16 +75,16 @@ export const NationalCheckoutPage = () => {
     } = checkout.formData
     return {
       ...rest,
-      endDate: date?.end.toString(),
-      startDate: date?.start.toString(),
+      endDate: date?.end.toString() || '',
+      startDate: date?.start.toString() || '',
       clientName: rest.clientName + ' ' + clientLastname,
       totalPrice: apartment.pricePerDay * nights,
       apartmentIds: [apartment.id],
       payment: {
-        date: paymentDate,
-        method: paymentMethod,
-        reference: paymentReference,
-        description: paymentDescription,
+        date: paymentDate as Date,
+        method: paymentMethod as PaymentMethod,
+        reference: paymentReference as string,
+        description: paymentDescription as string,
       },
     }
   }

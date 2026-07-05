@@ -2,7 +2,7 @@ import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
 import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsOptional, IsString, IsInt, IsEnum, IsNumber, IsArray } from 'class-validator'
+import { IsOptional, IsString, IsInt, IsBoolean, IsEnum, IsNumber, IsArray } from 'class-validator'
 
 @InputType()
 export class ReservationFilterInput extends PaginationFilterInput {
@@ -10,6 +10,11 @@ export class ReservationFilterInput extends PaginationFilterInput {
   @IsOptional()
   @IsInt({ message: 'El ID del usuario debe ser un número entero' })
   userId?: number
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean({ message: 'El atributo mine debe ser un booleano' })
+  mine?: boolean
 
   @Field(() => Int, { nullable: true })
   @IsOptional()
