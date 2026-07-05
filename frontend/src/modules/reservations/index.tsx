@@ -28,6 +28,7 @@ export const MyReservationsPage = () => {
 
   const [searchFilter, setSearchFilter] = React.useState('')
   const [currentPage, setCurrentPage] = React.useState(1)
+
   const [debounceSearch] = useDebounce(searchFilter, 200)
 
   const rowsPerPage = 8
@@ -37,7 +38,7 @@ export const MyReservationsPage = () => {
   }>(GET_RESERVATIONS, {
     variables: {
       filters: {
-        page: currentPage,
+        page: currentPage - 1,
         search: debounceSearch,
         pageSize: rowsPerPage,
         mine: true,
@@ -71,27 +72,31 @@ export const MyReservationsPage = () => {
               Gestiona y visualiza el estado de tus estadías
             </p>
           </div>
+
           <Input
             size='md'
             variant='flat'
             isClearable
             className='w-full sm:max-w-xs'
             placeholder='Buscar reserva...'
-            startContent={<Search size={16} className='text-muted-foreground' />}
+            startContent={<Search size={16} />}
             value={searchFilter}
             classNames={inputStyles}
             onValueChange={setSearchFilter}
           />
         </div>
+
         {loading ? (
           <div className='flex justify-center items-center h-64'>
             <Spinner size='lg' label='Cargando tus reservas...' color='primary' />
           </div>
         ) : reservations.length === 0 ? (
-          <div className='flex flex-col justify-center items-center h-64 text-center border-2 border-dashed border-default-200 rounded-2xl p-8'>
-            <Calendar size={48} className='text-default-300 mb-2' />
-            <p className='text-default-500 font-medium'>No encontramos reservas activas</p>
-            <p className='text-xs text-default-400'>
+          <div className='flex flex-col items-center justify-center pt-30 w-full text-center'>
+            <Calendar size={48} className='text-default-300' />
+
+            <p className='text-default-500 font-medium mt-3'>No encontramos reservas activas</p>
+
+            <p className='text-xs text-default-400 mt-1'>
               Si realizaste una compra recientemente, espera unos minutos.
             </p>
           </div>
@@ -106,10 +111,11 @@ export const MyReservationsPage = () => {
                   onPress={() => handleOpenDetails(reservation.id)}
                 >
                   <CardBody className='flex flex-col gap-4 p-4'>
-                    <div className='flex justify-between items-center w-full'>
+                    <div className='flex justify-between items-center'>
                       <span className='text-xs font-bold text-default-400'>
                         #RSV-{reservation.id}
                       </span>
+
                       <Chip
                         size='sm'
                         variant='flat'
@@ -119,8 +125,8 @@ export const MyReservationsPage = () => {
                       </Chip>
                     </div>
 
-                    <div className='flex items-start gap-3 bg-default-50 dark:bg-default-100/50 p-2.5 rounded-xl'>
-                      <Calendar size={18} className='text-primary mt-0.5' />
+                    <div className='flex items-start gap-3 bg-default-50 p-2.5 rounded-xl'>
+                      <Calendar size={18} className='text-primary' />
                       <div className='flex flex-col text-xs'>
                         <span className='text-default-400 font-medium'>Estadía</span>
                         <span className='font-semibold text-default-700'>
@@ -129,17 +135,18 @@ export const MyReservationsPage = () => {
                         </span>
                       </div>
                     </div>
-                    <div className='grid grid-cols-2 gap-2 text-xs'>
-                      <div className='flex items-center gap-2 text-default-500'>
-                        <Users size={15} />
-                        <span>{reservation.persons || 0} Huéspedes</span>
-                      </div>
+
+                    <div className='flex items-center gap-2 text-xs text-default-500'>
+                      <Users size={15} />
+                      <span>{reservation.persons || 0} Huéspedes</span>
                     </div>
                   </CardBody>
+
                   <CardFooter className='flex justify-between items-center border-t border-default-100 px-4 py-3'>
-                    <span className='text-base font-bold text-success-600 dark:text-success'>
+                    <span className='text-base font-bold text-success-600'>
                       {formatCurrency(reservation.totalPrice)}
                     </span>
+
                     <Button
                       size='sm'
                       variant='light'
@@ -153,6 +160,7 @@ export const MyReservationsPage = () => {
                 </Card>
               ))}
             </div>
+
             {totalPages > 1 && (
               <div className='flex justify-center mt-6'>
                 <Pagination
@@ -162,12 +170,13 @@ export const MyReservationsPage = () => {
                   color='primary'
                   page={currentPage}
                   total={totalPages}
-                  onChange={(page) => setCurrentPage(page)}
+                  onChange={setCurrentPage}
                 />
               </div>
             )}
           </>
         )}
+
         <ReservationDetailModal reservation={currentReservationView} />
       </div>
     </UserPageLayout>
