@@ -4,6 +4,7 @@ import { PaginationFilterDto } from '@/common/dto/pagination-filter.dto'
 
 export class ReservationFilterDto extends PaginationFilterDto {
   type?: RentalType | RentalType[]
+  mine?: boolean
   userId?: number
   search?: string
   status?: ReservationStatus | ReservationStatus[]
