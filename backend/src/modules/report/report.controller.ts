@@ -6,16 +6,16 @@ import { PaymentReportQueryDto } from './dto/payment-report-query.dto'
 import { ExpenseReportQueryDto } from './dto/expense-report-query.dto'
 import { OccupancyReportQueryDto } from './dto/occupancy-report-query.dto'
 import { ReservationReportQueryDto } from './dto/reservation-report-query.dto'
-import { Controller, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common'
+import { Controller, Get, Query, Res, Param, ParseIntPipe } from '@nestjs/common'
 
 @Controller('reports')
 export class ReportController {
   constructor(private readonly reportService: ReportService) { }
 
-  @Post('payments/pdf')
+  @Get('payments/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getPaymentReportPdf(@Body() body: PaymentReportQueryDto, @Res() res: Response) {
-    const buffer = await this.reportService.getPaymentReportPdf(body)
+  async getPaymentReportPdf(@Query() query: PaymentReportQueryDto, @Res() res: Response) {
+    const buffer = await this.reportService.getPaymentReportPdf(query)
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="reporte-pagos-${Date.now()}.pdf"`,
@@ -24,7 +24,7 @@ export class ReportController {
     res.end(buffer)
   }
   
-  @Post('payment/:id/pdf')
+  @Get('payment/:id/pdf')
   @RequiredRole(UserRole.ADMIN)
   async getSinglePaymentPdf(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const buffer = await this.reportService.getSinglePaymentPdf(id)
@@ -38,10 +38,10 @@ export class ReportController {
     res.end(buffer)
   }
 
-  @Post('expenses/pdf')
+  @Get('expenses/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getExpenseReportPdf(@Body() body: ExpenseReportQueryDto, @Res() res: Response) {
-    const buffer = await this.reportService.getExpenseReportPdf(body)
+  async getExpenseReportPdf(@Query() query: ExpenseReportQueryDto, @Res() res: Response) {
+    const buffer = await this.reportService.getExpenseReportPdf(query)
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="reporte-gastos-${Date.now()}.pdf"`,
@@ -50,10 +50,10 @@ export class ReportController {
     res.end(buffer)
   }
 
-  @Post('reservations/pdf')
+  @Get('reservations/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getReservationReportPdf(@Body() body: ReservationReportQueryDto, @Res() res: Response) {
-    const buffer = await this.reportService.getReservationReportPdf(body)
+  async getReservationReportPdf(@Query() query: ReservationReportQueryDto, @Res() res: Response) {
+    const buffer = await this.reportService.getReservationReportPdf(query)
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="reporte-reservas-${Date.now()}.pdf"`,
@@ -62,10 +62,10 @@ export class ReportController {
     res.end(buffer)
   }
 
-  @Post('occupancy/pdf')
+  @Get('occupancy/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getOccupancyReportPdf(@Body() body: OccupancyReportQueryDto, @Res() res: Response) {
-    const buffer = await this.reportService.getOccupancyReportPdf(body)
+  async getOccupancyReportPdf(@Query() query: OccupancyReportQueryDto, @Res() res: Response) {
+    const buffer = await this.reportService.getOccupancyReportPdf(query)
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="reporte-ocupacion-${Date.now()}.pdf"`,
@@ -74,10 +74,10 @@ export class ReportController {
     res.end(buffer)
   }
 
-  @Post('income-summary/pdf')
+  @Get('income-summary/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getIncomeSummaryPdf(@Body() body: OccupancyReportQueryDto, @Res() res: Response) {
-    const buffer = await this.reportService.getIncomeSummaryPdf(body)
+  async getIncomeSummaryPdf(@Query() query: OccupancyReportQueryDto, @Res() res: Response) {
+    const buffer = await this.reportService.getIncomeSummaryPdf(query)
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="resumen-ingresos-${Date.now()}.pdf"`,

@@ -1,8 +1,8 @@
-import { Type } from 'class-transformer'
-import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { PaymentFilterDto } from '@/modules/payment/application/dto/payment-filter.dto'
-import { IsOptional, IsString, IsInt, IsEnum, IsDateString, IsArray } from 'class-validator'
 import { PaymentMethod } from '@/modules/payment/domain/enums/payment-method.enum'
+import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
+import { Transform, Type } from 'class-transformer'
+import { IsDateString, IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
 
 export class PaymentReportQueryDto extends PaymentFilterDto {
   @IsOptional()
@@ -24,12 +24,12 @@ export class PaymentReportQueryDto extends PaymentFilterDto {
   override toDate?: string
 
   @IsOptional()
-  @IsArray({ message: 'El estado debe ser un arreglo de estados' })
+  @Transform(({ value }) => (Array.isArray(value) ? value : value ? [value] : []))
   @IsEnum(PaymentStatus, { each: true, message: 'Cada estado debe ser un valor válido' })
   override status?: PaymentStatus[]
 
   @IsOptional()
-  @IsArray({ message: 'El método debe ser un arreglo de métodos' })
+  @Transform(({ value }) => (Array.isArray(value) ? value : value ? [value] : []))
   @IsEnum(PaymentMethod, { each: true, message: 'Cada estado debe ser un valor válido' })
   override method?: PaymentMethod[]
 
