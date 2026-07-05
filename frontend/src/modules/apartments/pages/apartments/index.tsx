@@ -22,6 +22,7 @@ import {
   ButtonGroup,
   RangeCalendar,
 } from '@heroui/react'
+import { UserPageLayout } from '@/layout/UserPageLayout'
 
 export const ApartmentsPage = () => {
   const INITIAL_PRICE_RANGE = [20, 2000]
@@ -158,9 +159,9 @@ export const ApartmentsPage = () => {
   }
 
   return (
-    <div className='min-h-screen bg-background text-foreground flex justify-center'>
-      <div className='w-full max-w-7xl px-6 py-6 flex flex-col md:flex-row gap-7'>
-        <aside className='w-fit shrink-0 space-y-6 bg-card p-5 rounded-2xl  h-fit'>
+    <UserPageLayout>
+      <div className='flex flex-col md:flex-row gap-4'>
+        <aside className='w-fit shrink-0 space-y-6 bg-card p-5 rounded-2xl h-fit'>
           <div className='flex justify-between items-center pb-2 border-b border-border'>
             <h3 className='font-bold text-xs tracking-wide text-muted-foreground'>
               Filtros Avanzados
@@ -245,7 +246,7 @@ export const ApartmentsPage = () => {
             </ButtonGroup>
           </div>
         </aside>
-        <div className='flex-1 flex flex-col gap-5'>
+        <div className='flex-1 flex flex-col gap-4'>
           <Input
             size='md'
             variant='flat'
@@ -291,6 +292,6 @@ export const ApartmentsPage = () => {
           )}
         </div>
       </div>
-    </div>
+    </UserPageLayout>
   )
 }

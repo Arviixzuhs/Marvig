@@ -4,6 +4,7 @@ import { RootState } from '@/store'
 import { setMyUser } from '@/features/userSlice'
 import { inputStyles } from '@/styles'
 import { userService } from '@/services/user'
+import { FormActions } from '@/components/FormActions'
 import { Building, User } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from '@heroui/react'
@@ -85,6 +86,22 @@ export const PersonalInfoForm = () => {
       toast.error(error.message || 'Error al guardar')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const onCancelEdit = () => {
+    setName(user?.name || '')
+    setLastName(user?.lastName || '')
+
+    const stored = user?.phone || ''
+    const match = stored.match(/^(\+\d+(?:-\d+)?)\s?(.*)$/)
+
+    if (match) {
+      setPhonePrefix(match[1])
+      setPhoneNumber(match[2])
+    } else {
+      setPhonePrefix('+58')
+      setPhoneNumber(stored)
     }
   }
 
@@ -191,20 +208,10 @@ export const PersonalInfoForm = () => {
             onValueChange={(val) => setPhoneNumber(val.replace(/[^0-9]/g, ''))}
             variant='bordered'
             classNames={inputStyles}
-   
           />
         </div>
+        <FormActions visible={hasChanges} isSaving={isSaving} onCancel={onCancelEdit} />
       </div>
-
-      <Button
-        type='submit'
-        color='primary'
-   
-        isLoading={isSaving}
-        isDisabled={!hasChanges}
-      >
-        Guardar cambios
-      </Button>
     </form>
   )
 }
