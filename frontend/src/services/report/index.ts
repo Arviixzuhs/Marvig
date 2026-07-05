@@ -8,11 +8,13 @@ import {
 } from '@/models/ReportModel'
 
 const downloadPdf = async <T>(endpoint: string, filename: string, filters?: T) => {
-  const response = await api.post<Blob>(endpoint, filters || {}, { responseType: 'blob' })
-
-  const { data } = response
+  const { data } = await api.get<Blob>(endpoint, {
+    responseType: 'blob',
+    ...(filters && { params: filters }),
+  })
 
   const url = URL.createObjectURL(data)
+
   const link = document.createElement('a')
 
   link.href = url
@@ -22,6 +24,7 @@ const downloadPdf = async <T>(endpoint: string, filename: string, filters?: T) =
   link.click()
 
   document.body.removeChild(link)
+
   URL.revokeObjectURL(url)
 }
 
