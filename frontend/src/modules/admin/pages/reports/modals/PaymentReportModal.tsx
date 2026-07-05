@@ -37,7 +37,7 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
   const [filters, setFilters] = useState<IPaymentReportFilter>({
     fromDate: '',
     toDate: '',
-    status: [], // Ya inicializado correctamente como arreglo vacío
+    status: [],
     search: '',
   })
   const [pdfLoading, setPdfLoading] = useState(false)
@@ -95,7 +95,6 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
             </p>
           </div>
         </ModalHeader>
-
         <ModalBody>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4'>
             <div className='col-span-1 sm:col-span-2'>
@@ -110,7 +109,6 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
                 />
               </I18nProvider>
             </div>
-
             <Select
               label='Estados'
               size='sm'
@@ -125,7 +123,6 @@ export const PaymentReportModal = ({ isOpen, onClose }: Props) => {
                 <SelectItem key={s}>{STATUS_LABELS[s]}</SelectItem>
               ))}
             </Select>
-
             <Input
               label='Buscar'
               size='sm'
