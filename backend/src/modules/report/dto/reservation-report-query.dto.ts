@@ -1,7 +1,7 @@
-import { Type } from 'class-transformer'
-import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
-import { IsOptional, IsString, IsInt, IsEnum, IsDateString, IsArray } from 'class-validator'
+import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { Transform, Type } from 'class-transformer'
+import { IsDateString, IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
 
 export class ReservationReportQueryDto extends ReservationFilterDto {
   @IsOptional()
@@ -23,7 +23,7 @@ export class ReservationReportQueryDto extends ReservationFilterDto {
   override endDate?: string
 
   @IsOptional()
-  @IsArray({ message: 'El estado debe ser un arreglo de estados' })
+  @Transform(({ value }) => (Array.isArray(value) ? value : value ? [value] : []))
   @IsEnum(ReservationStatus, { each: true, message: 'Cada estado debe ser un valor válido' })
   override status?: ReservationStatus[]
 
