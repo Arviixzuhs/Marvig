@@ -85,11 +85,7 @@ export const NavbarUserOptions = () => {
                 key='admin-dashboard'
                 startContent={<ShieldAlert size={15} />}
                 isDisabled={isRoute('/admin/dashboard')}
-                className={
-                  isRoute('/admin/dashboard')
-                    ? 'opacity-50 cursor-not-allowed dark:text-warning'
-                    : 'dark:text-warning'
-                }
+                className={isRoute('/admin/dashboard') ? 'opacity-50 cursor-not-allowed' : ''}
                 onPress={() => {
                   if (!isRoute('/admin')) {
                     navigate('/admin/dashboard')
