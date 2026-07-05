@@ -19,13 +19,10 @@ export const NavbarUserOptions = () => {
   const navigate = useNavigate()
 
   if (!user) {
-    return (
-      <Avatar as='button' size='sm' color='primary' className='transition-transform' isBordered />
-    )
+    return <Avatar as='button' size='sm' color='primary' isBordered />
   }
 
-  const isAdminRoute = location.pathname.includes('/admin')
-  const isConfigRoute = location.pathname.includes('/config')
+  const isRoute = (path: string) => location.pathname === path
 
   return (
     <Dropdown placement='bottom-end'>
@@ -41,72 +38,76 @@ export const NavbarUserOptions = () => {
 
       <DropdownMenu aria-label='Acciones de Perfil' variant='flat'>
         <DropdownSection showDivider aria-label='Información de cuenta'>
-          <DropdownItem key='profile-info' className='h-16 gap-3 default-text-color' isReadOnly>
+          <DropdownItem key={'user'} isReadOnly className='h-16 gap-3'>
             <div className='flex items-center gap-3'>
-              <Avatar
-                size='sm'
-                color='primary'
-                src={user.avatar}
-                className='w-8 h-8 min-w-[32px]'
-              />
-              <div className='flex flex-col gap-0.5'>
-                <div className='flex items-center gap-2'>
-                  <p className='font-semibold text-sm text-default-800'>
-                    {`${user.name} ${user.lastName}` || 'Usuario'}
-                  </p>
-                </div>
-                <p className='text-xs text-default-400 font-normal truncate max-w-[150px]'>
-                  {user.email}
+              <Avatar size='sm' src={user.avatar} />
+              <div className='flex flex-col'>
+                <p className='font-semibold text-sm'>
+                  {`${user.name} ${user.lastName}` || 'Usuario'}
                 </p>
+                <p className='text-xs text-default-400 truncate max-w-[150px]'>{user.email}</p>
               </div>
             </div>
           </DropdownItem>
         </DropdownSection>
-
-        <DropdownSection title='Mi Cuenta' showDivider aria-label='Opciones de usuario'>
+        <DropdownSection title='Mi Cuenta' showDivider>
           <DropdownItem
             key='my-reservations'
             startContent={<CalendarDays size={15} />}
-            onPress={() => navigate('/reservations')}
+            isDisabled={isRoute('/reservations')}
+            className={isRoute('/reservations') ? 'opacity-50 cursor-not-allowed' : ''}
+            onPress={() => {
+              if (!isRoute('/reservations')) {
+                navigate('/reservations')
+              }
+            }}
           >
             Mis reservas
           </DropdownItem>
-
-          <>
-            {!isConfigRoute && (
-              <DropdownItem
-                key='settings'
-                startContent={<Cog size={15} />}
-                onPress={() => navigate('/config')}
-              >
-                Configuración
-              </DropdownItem>
-            )}
-          </>
+          <DropdownItem
+            key='settings'
+            startContent={<Cog size={15} />}
+            isDisabled={isRoute('/config')}
+            className={isRoute('/config') ? 'opacity-50 cursor-not-allowed' : ''}
+            onPress={() => {
+              if (!isRoute('/config')) {
+                navigate('/config')
+              }
+            }}
+          >
+            Configuración
+          </DropdownItem>
         </DropdownSection>
-
         <>
-          {user.role === UserRole.ADMIN && !isAdminRoute && (
-            <DropdownSection title='Administración' showDivider aria-label='Opciones de admin'>
+          {user.role === UserRole.ADMIN && (
+            <DropdownSection title='Administración' showDivider>
               <DropdownItem
                 key='admin-dashboard'
-                className='dark:text-warning'
                 startContent={<ShieldAlert size={15} />}
-                onPress={() => navigate('/admin/dashboard')}
+                isDisabled={isRoute('/admin/dashboard')}
+                className={
+                  isRoute('/admin/dashboard')
+                    ? 'opacity-50 cursor-not-allowed dark:text-warning'
+                    : 'dark:text-warning'
+                }
+                onPress={() => {
+                  if (!isRoute('/admin')) {
+                    navigate('/admin/dashboard')
+                  }
+                }}
               >
-                Dashboard Admin
+                Dashboard
               </DropdownItem>
             </DropdownSection>
           )}
         </>
-
-        <DropdownSection aria-label='Acciones de salida'>
+        <DropdownSection>
           <DropdownItem
             key='logout'
             className='text-danger'
             color='danger'
             startContent={<DoorOpen size={15} />}
-            onPress={() => logOut()}
+            onPress={logOut}
           >
             Cerrar sesión
           </DropdownItem>
