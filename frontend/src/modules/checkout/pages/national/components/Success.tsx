@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
@@ -54,13 +55,12 @@ export const Success = () => {
           </span>
         </div>
       </div>
-      <button
-        type='button'
-        className='text-sm font-bold underline hover:opacity-80 transition-opacity'
-        style={{ color: '#2B4FFF' }}
+      <Link
+        to='/reservations'
+        className='text-sm text-blue-500 font-bold underline hover:opacity-80 transition-opacity'
       >
         Ver mis reservas
-      </button>
+      </Link>
     </div>
   )
 }
