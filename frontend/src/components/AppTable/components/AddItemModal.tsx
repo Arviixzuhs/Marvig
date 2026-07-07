@@ -202,16 +202,10 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
             </div>
           </ModalBody>
           <ModalFooter className='flex gap-2 w-full'>
-            <Button
-              type='button'
-              variant='flat'
-              onPress={toggleModal}
-              className='w-full'
-              isLoading={isLoading}
-            >
+            <Button type='button' variant='flat' onPress={toggleModal} className='w-full'>
               Cancelar
             </Button>
-            <Button type='submit' color='primary' className='w-full'>
+            <Button type='submit' color='primary' className='w-full' isLoading={isLoading}>
               Guardar
             </Button>
           </ModalFooter>
