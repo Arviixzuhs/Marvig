@@ -383,7 +383,7 @@ export const AdminDashboardPage = () => {
       </div>
       {activeTab !== 'expenses' && (
         <div className='flex gap-2 flex-col'>
-          <h2 className='text-lg font-bold text-foreground'>Últimos pagos</h2>
+          <h2 className='text-lg font-bold text-foreground'>Últimos Pagos</h2>
           <AdminPaymentPage hiddeTopContent />
         </div>
       )}
