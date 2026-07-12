@@ -84,7 +84,7 @@ export class ExpenseSpecificationBuilder {
 
   withDateBetween(fromDate?: string, toDate?: string) {
     if (fromDate || toDate) {
-      this.where.createdAt = {
+      this.where.date = {
         ...(fromDate && { gte: new Date(fromDate) }),
         ...(toDate && { lte: new Date(toDate) }),
       }
