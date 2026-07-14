@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { jsPDF } from 'jspdf'
 import { getFormattedDateTime } from './getFormattedDateTime'
+import { readFileSync } from 'node:fs'
 
-/**
- * Shared service with PDF layout helpers (header, footer, summary box,
- * currency/date formatters). Injectable so any module can use it.
- */
 @Injectable()
 export class PdfGeneratorService {
   readonly BRAND_COLOR: [number, number, number] = [15, 23, 42] // slate-900 (Deep, elegant)
-  readonly ACCENT_COLOR: [number, number, number] = [79, 70, 229] // Indigo-600 (Vibrant brand color)
+  readonly ACCENT_COLOR: [number, number, number] = [0, 0, 0] // Indigo-600 (Vibrant brand color)
   readonly LIGHT_COLOR: [number, number, number] = [248, 250, 252] // slate-50
   readonly TEXT_MUTED: [number, number, number] = [100, 116, 139] // slate-500
   readonly BORDER_COLOR: [number, number, number] = [226, 232, 240] // slate-200 (Clean, visible borders)
@@ -26,26 +23,30 @@ export class PdfGeneratorService {
    * Genera un encabezado limpio y asimétrico sobre fondo blanco con acento de marca.
    */
   addPdfHeader(doc: jsPDF, title: string, subtitle: string): void {
+    const logoBase64 = readFileSync('src/common/assets/logo.jpg').toString('base64')
+
     const pageW = doc.internal.pageSize.getWidth()
 
     // --- ACCENT BAR: Franja decorativa superior en color Indigo ---
     doc.setFillColor(...this.ACCENT_COLOR)
     doc.rect(0, 0, pageW, 4.5, 'F')
 
+
     // --- LADO IZQUIERDO: Branding de la aplicación ---
     // Pequeño logo minimalista (un rectángulo vertical en Accent Color)
     doc.setFillColor(...this.ACCENT_COLOR)
-    doc.roundedRect(14, 11, 4, 10, 0.5, 0.5, 'F')
+    /* doc.roundedRect(14, 11, 4, 10, 0.5, 0.5, 'F') */
+    doc.addImage(logoBase64, 'ICO', 15, 10, 15, 15)
 
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(13)
     doc.setTextColor(...this.BRAND_COLOR)
-    doc.text('MARVIG', 21, 18.5)
+    doc.text('MARVIG', 35, 18.5)
 
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(...this.TEXT_MUTED)
-    doc.text('Sistema de Gestión', 21, 23.5)
+    doc.text('Sistema de Gestión Integral de Reservas', 35, 23.5)
 
     // --- LADO DERECHO: Metadatos del Reporte ---
     doc.setFont('helvetica', 'bold')
