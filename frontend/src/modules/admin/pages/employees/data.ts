@@ -11,7 +11,7 @@ export const tableColumns: TableColumnInterface[] = [
     uid: 'lastName',
   },
   {
-    name: 'Telefono',
+    name: 'Teléfono',
     uid: 'phone',
   },
   {
