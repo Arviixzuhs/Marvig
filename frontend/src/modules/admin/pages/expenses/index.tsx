@@ -107,7 +107,7 @@ export const AdminExpensePage = () => {
         </>
       }
       tableActions={tableActions}
-      searchbarPlaceholder='Buscar gastos...'
+      searchbarPlaceholder='Buscar gasto por descripción...'
     />
   )
 }
