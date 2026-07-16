@@ -54,7 +54,7 @@ export const modalInputs: ModalInput[] = [
   },
   {
     name: 'number',
-    label: 'Número de Apartmento',
+    label: 'Número de Apartamento',
     type: 'text',
     placeholder: 'Ej: A-101',
     required: true,

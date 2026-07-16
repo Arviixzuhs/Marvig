@@ -40,7 +40,7 @@ export const ConfirmDeleteModal = ({ handleDelete }: ConfirmDeleteModalProps) =>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader className='flex justify-center'>Mensaje importante</ModalHeader>
         <ModalBody className='text-center'>
-          <p>¿Estas seguro que deseas eliminar este registro?</p>
+          <p>¿Estás seguro que deseas eliminar este registro?</p>
           <p className='text-red-400 text-sm'>Esta acción no puede deshacerse.</p>
         </ModalBody>
         <ModalFooter className='flex gap-2 w-full'>
