@@ -1,6 +1,6 @@
-import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 import { Prisma } from 'generated/prisma/client'
-import { PromotionTypeEnum } from '../../domain/enums/promotion-type.enum'
+import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
+import { PaginateSpecificationBuilder } from '@/common/utils/paginate.specificationBuilder'
 
 export interface PromotionSpecificationBuild {
   where: Prisma.PromotionWhereInput
