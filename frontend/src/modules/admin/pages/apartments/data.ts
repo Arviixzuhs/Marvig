@@ -3,7 +3,7 @@ import { ModalInput, TableColumnInterface } from '@/features/appTableSlice'
 
 export const tableColumns: TableColumnInterface[] = [
   {
-    name: 'Precio por Día',
+    name: 'Precio por noche',
     uid: 'pricePerDay',
     style: 'currency',
   },
