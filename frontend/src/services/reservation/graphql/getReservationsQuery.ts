@@ -15,6 +15,14 @@ export const GET_RESERVATIONS = gql`
         status
         totalPrice
         userId
+        payments {
+          id
+          amount
+          method
+          status
+          reference
+          date
+        }
         apartments {
           id
           floor
