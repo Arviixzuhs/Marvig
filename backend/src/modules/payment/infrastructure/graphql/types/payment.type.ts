@@ -4,7 +4,7 @@ import { ReservationType } from '@/modules/reservation/infrastructure/graphql/ty
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql'
 
 @ObjectType()
-export class PaymentType {
+export class SimplePaymentType {
   @Field(() => Int)
   id: number
 
@@ -31,7 +31,10 @@ export class PaymentType {
 
   @Field({ nullable: true })
   createdAt?: Date | null
+}
 
+@ObjectType()
+export class PaymentType extends SimplePaymentType {
   @Field(() => ReservationType, { nullable: true })
   reservation?: ReservationType
 }
