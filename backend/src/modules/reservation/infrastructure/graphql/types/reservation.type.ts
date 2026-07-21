@@ -1,5 +1,6 @@
-import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
 import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
+import { ApartmentType } from '@/modules/apartment/infrastructure/graphql/types/apartment.type'
+import { SimplePaymentType } from '@/modules/payment/infrastructure/graphql/types/payment.type'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 
@@ -46,4 +47,7 @@ export class ReservationType {
 
   @Field(() => [ApartmentType], { nullable: 'itemsAndList' })
   apartments?: ApartmentType[]
+
+  @Field(() => [SimplePaymentType], { nullable: 'itemsAndList' })
+  payments?: SimplePaymentType[]
 }

@@ -34,6 +34,7 @@ export interface ReservationModel {
   updatedAt?: Date | null
   user?: UserModel
   apartments?: ApartmentModel[]
+  payments?: PaymentModel[]
 }
 
 export interface ICreateReservation {
