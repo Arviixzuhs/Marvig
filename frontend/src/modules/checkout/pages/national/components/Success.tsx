@@ -21,7 +21,7 @@ export const Success = () => {
         ¡Reserva confirmada!
       </h2>
       <p className='text-muted-foreground text-sm mb-7 max-w-sm leading-relaxed px-4'>
-        Tu reserva para ha sido confirmada con éxito. Recibirás un correo con todos los detalles.
+        Tu reserva ha sido confirmada con éxito. Recibirás un correo con todos los detalles.
       </p>
       <div className='bg-muted/60 border border-border rounded-xl p-5 text-left text-sm space-y-2.5 w-full max-w-sm mb-7'>
         <div className='flex justify-between items-center'>
