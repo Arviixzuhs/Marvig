@@ -140,29 +140,38 @@ export class CreateReservationUseCase {
       )
     }
 
-    try {
-      await this.emailService.sendSingleEmail({
-        to: data.clientEmail ? data.clientEmail : user.email,
-        subject: 'Confirmación de Reserva',
-        title: '¡Tu reserva ha sido confirmada con éxito!',
-        subtitle: `Hola, ${data.clientName ? data.clientName : user.name || 'Cliente'}`,
-        content: `
-          <p>Nos complace informarte que tu reserva se ha procesado correctamente. Aquí tienes los detalles:</p>
-          <hr />
-          <p><strong>Fecha de Entrada (Check-in):</strong> ${getFormattedDateTime({ value: start })}</p>
-          <p><strong>Fecha de Salida (Check-out):</strong> ${getFormattedDateTime({ value: end })}</p>
-          <p><strong>Total Pagado:</strong> $${finalTotal}</p>
-          <hr />
-          <p>El pago con referencia <strong>${createdPayment.reference}</strong> fue aprobado mediante el método de <strong>${createdPayment.method}</strong>.</p>
-          <p>¡Gracias por confiar en nosotros! Te esperamos pronto.</p>
-        `,
-      })
-    } catch (emailError) {
-      console.error(
-        `La reserva #${createdReservation.id} se creó pero falló el envío del email:`,
-        emailError,
-      )
-    }
+    this.emailService.sendSingleEmail({
+      to: data.clientEmail ? data.clientEmail : user.email,
+      subject: 'Confirmación de Reserva - Posada Marvig',
+      title: '¡Tu reserva ha sido confirmada!',
+      subtitle: `Hola, ${data.clientName ? data.clientName : user.name || 'Cliente'}`,
+      content: `
+    <p>Nos complace informarte que tu reserva se ha procesado correctamente. A continuación, encontrarás el resumen de tu estancia:</p>
+
+    <div class="reservation-details">
+      <p><strong>Fecha de Entrada:</strong> ${getFormattedDateTime({ value: start })}</p>
+      <p><strong>Fecha de Salida:</strong> ${getFormattedDateTime({ value: end })}</p>
+      <p><strong>Total Pagado:</strong> $${finalTotal}</p>
+      <p style="margin-top: 8px; font-size: 13px; color: #71717a;">
+        Pago ref. <strong>${createdPayment.reference}</strong>
+      </p>
+    </div>
+
+    <div class="cta-container">
+      <a href="${process.env.CLIENT_ORIGIN}/reservations" class="btn-primary">
+        Ver mi reserva
+      </a>
+    </div>
+
+    <p style="text-align: center; font-size: 13px; color: #71717a;">
+      Desde tu panel podrás consultar el estado de tu alojamiento.
+    </p>
+    
+    <p style="text-align: center; font-size: 13px; color: #71717a;">
+      ¡Gracias por confiar en nosotros!
+    </p>
+  `,
+    });
 
     return createdReservation
   }
