@@ -31,14 +31,14 @@ const paymentMethodConfig = {
   [PaymentMethod.DEBIT_CARD]: { label: 'T. Débito', color: '#3B82F6' },
   [PaymentMethod.CREDID_CARD]: { label: 'T. Crédito', color: '#1E40AF' },
   [PaymentMethod.BANK_TRANSFER]: { label: 'Transferencia', color: '#10B981' },
-};
+}
 
 const statusConfig = {
   [PaymentStatus.PENDING]: { label: 'Pendiente', color: '#F59E0B' },
   [PaymentStatus.CONFIRMED]: { label: 'Confirmado', color: '#10B981' },
   [PaymentStatus.FAILED]: { label: 'Fallido', color: '#EF4444' },
   [PaymentStatus.CANCELLED]: { label: 'Cancelado', color: '#6B7280' },
-};
+}
 
 export const expenseCategoryConfig = {
   [ExpenseCategory.MAINTENANCE]: { label: 'Mantenimiento', color: '#F59E0B' },
@@ -47,19 +47,19 @@ export const expenseCategoryConfig = {
   [ExpenseCategory.TAXES]: { label: 'Impuestos', color: '#EF4444' },
   [ExpenseCategory.SUPPLIES]: { label: 'Suministros', color: '#8B5CF6' },
   [ExpenseCategory.OTHER]: { label: 'Otros', color: '#6B7280' },
-};
+}
 
 export const reservationTypeConfig = {
   [RentalType.DAILY]: { label: 'Diario', color: '#3B82F6' },
   [RentalType.FIXED_SEASON]: { label: 'Temporada', color: '#8B5CF6' },
-};
+}
 
 export const reservationStatusConfig = {
   [ReservationStatus.PENDING]: { label: 'Pendiente', color: '#F59E0B' },
   [ReservationStatus.CONFIRMED]: { label: 'Confirmado', color: '#10B981' },
   [ReservationStatus.CANCELLED]: { label: 'Cancelado', color: '#EF4444' },
   [ReservationStatus.COMPLETED]: { label: 'Completado', color: '#6B7280' },
-};
+}
 
 @Injectable()
 export class ReportService {
@@ -153,11 +153,11 @@ export class ReportService {
     const where = {
       ...(filters.fromDate || filters.toDate
         ? {
-          createdAt: {
-            ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
-            ...(filters.toDate && { lte: new Date(filters.toDate) }),
-          },
-        }
+            createdAt: {
+              ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
+              ...(filters.toDate && { lte: new Date(filters.toDate) }),
+            },
+          }
         : {}),
     }
 
@@ -185,10 +185,7 @@ export class ReportService {
     return { totalIncome, totalExpenses, netProfit, expensesByCategory }
   }
 
-
   async getPaymentReportPdf(filters: PaymentReportQueryDto): Promise<Buffer> {
-
-
     const data = await this.getPaymentReport({ ...filters, page: 0, pageSize: 10000 })
     const doc = new jsPDF({ orientation: 'landscape' })
     const subtitle =
@@ -245,50 +242,47 @@ export class ReportService {
       },
       didDrawCell: (dataCell) => {
         if (dataCell.cell.section === 'body') {
-          const rowIndex = dataCell.row.index;
-          const record = data.content[rowIndex];
-          if (!record) return;
+          const rowIndex = dataCell.row.index
+          const record = data.content[rowIndex]
+          if (!record) return
 
-          let config: { label: string; color: string } | null = null;
+          let config: { label: string; color: string } | null = null
 
           if (dataCell.column.index === 3) {
-            config = statusConfig[record.status];
+            config = statusConfig[record.status]
           } else if (dataCell.column.index === 4) {
-            config = paymentMethodConfig[record.method];
+            config = paymentMethodConfig[record.method]
           }
 
           if (config) {
-            const { x, y, width, height } = dataCell.cell;
+            const { x, y, width, height } = dataCell.cell
 
+            const chipWidth = width - 4
+            const chipHeight = 5.2
+            const chipX = x + (width - chipWidth) / 2
+            const chipY = y + (height - chipHeight) / 2
+            const borderRadius = 1
 
-            const chipWidth = width - 4;
-            const chipHeight = 5.2;
-            const chipX = x + (width - chipWidth) / 2;
-            const chipY = y + (height - chipHeight) / 2;
-            const borderRadius = 1;
+            const rgb = this.hexToRgb(config.color)
 
-            const rgb = this.hexToRgb(config.color);
+            doc.setFillColor(rgb[0], rgb[1], rgb[2])
+            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F')
 
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(7)
+            doc.setTextColor(255, 255, 255)
 
-            doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F');
-
-
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7);
-            doc.setTextColor(255, 255, 255);
-
-            const textX = chipX + (chipWidth / 2);
-            const textY = chipY + (chipHeight / 2) + 0.3;
+            const textX = chipX + chipWidth / 2
+            const textY = chipY + chipHeight / 2 + 0.3
 
             doc.text(config.label, textX, textY, {
               align: 'center',
               baseline: 'middle',
-            });
+            })
           }
         }
       },
-    });
+    })
 
     this.pdf.addPdfFooter(doc)
     return Buffer.from(doc.output('arraybuffer') as ArrayBuffer)
@@ -302,10 +296,10 @@ export class ReportService {
       include: {
         reservation: {
           include: {
-            apartments: true
-          }
-        }
-      }
+            apartments: true,
+          },
+        },
+      },
     })
 
     const doc = new jsPDF({ orientation: 'portrait' })
@@ -331,7 +325,10 @@ export class ReportService {
         ['Método de Pago', ''],
         ['Estado del Pago', ''],
         ['Cliente', payment.reservation?.clientName || '—'],
-        ['Apartamento(s)', payment.reservation?.apartments?.map((a) => `#${a.number}`).join(', ') || '—'],
+        [
+          'Apartamento(s)',
+          payment.reservation?.apartments?.map((a) => `#${a.number}`).join(', ') || '—',
+        ],
       ],
       theme: 'plain',
       styles: {
@@ -354,42 +351,40 @@ export class ReportService {
       },
       didDrawCell: (dataCell) => {
         if (dataCell.cell.section === 'body' && dataCell.column.index === 1) {
-          const rowIndex = dataCell.row.index;
-          let config: { label: string; color: string } | null = null;
-
+          const rowIndex = dataCell.row.index
+          let config: { label: string; color: string } | null = null
 
           if (rowIndex === 2) {
-            config = paymentMethodConfig[payment.method];
+            config = paymentMethodConfig[payment.method]
           } else if (rowIndex === 3) {
-            config = statusConfig[payment.status];
+            config = statusConfig[payment.status]
           }
 
           if (config) {
-            const { x, y, height } = dataCell.cell;
+            const { x, y, height } = dataCell.cell
 
-       
-            const chipWidth = 28;
-            const chipHeight = 4.8;
-            const chipX = x + 6;
-            const chipY = y + (height - chipHeight) / 2;
-            const borderRadius = 1;
+            const chipWidth = 28
+            const chipHeight = 4.8
+            const chipX = x + 6
+            const chipY = y + (height - chipHeight) / 2
+            const borderRadius = 1
 
-            const rgb = this.hexToRgb(config.color);
+            const rgb = this.hexToRgb(config.color)
 
-            doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F');
+            doc.setFillColor(rgb[0], rgb[1], rgb[2])
+            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F')
 
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7.5);
-            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(7.5)
+            doc.setTextColor(255, 255, 255)
 
-            const textX = chipX + (chipWidth / 2);
-            const textY = chipY + (chipHeight / 2) + 0.3;
+            const textX = chipX + chipWidth / 2
+            const textY = chipY + chipHeight / 2 + 0.3
 
             doc.text(config.label, textX, textY, {
               align: 'center',
               baseline: 'middle',
-            });
+            })
           }
         }
       },
@@ -454,43 +449,43 @@ export class ReportService {
       },
       didDrawCell: (dataCell) => {
         if (dataCell.cell.section === 'body') {
-          const rowIndex = dataCell.row.index;
-          const expense = data.content[rowIndex];
-          if (!expense) return;
+          const rowIndex = dataCell.row.index
+          const expense = data.content[rowIndex]
+          if (!expense) return
 
-          let config: { label: string; color: string } | null = null;
+          let config: { label: string; color: string } | null = null
 
           if (dataCell.column.index === 3) {
-            config = expenseCategoryConfig[expense.category];
+            config = expenseCategoryConfig[expense.category]
           } else if (dataCell.column.index === 4) {
-            config = paymentMethodConfig[expense.paymentMethod]; // Nota: Asegúrate que el campo del backend coincida con 'paymentMethod'
+            config = paymentMethodConfig[expense.paymentMethod] // Nota: Asegúrate que el campo del backend coincida con 'paymentMethod'
           }
 
           if (config) {
-            const { x, y, width, height } = dataCell.cell;
+            const { x, y, width, height } = dataCell.cell
 
-            const chipWidth = width - 4;
-            const chipHeight = 5.2;
-            const chipX = x + (width - chipWidth) / 2;
-            const chipY = y + (height - chipHeight) / 2;
-            const borderRadius = 1;
+            const chipWidth = width - 4
+            const chipHeight = 5.2
+            const chipX = x + (width - chipWidth) / 2
+            const chipY = y + (height - chipHeight) / 2
+            const borderRadius = 1
 
-            const rgb = this.hexToRgb(config.color);
+            const rgb = this.hexToRgb(config.color)
 
-            doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F');
+            doc.setFillColor(rgb[0], rgb[1], rgb[2])
+            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F')
 
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7);
-            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(7)
+            doc.setTextColor(255, 255, 255)
 
-            const textX = chipX + (chipWidth / 2);
-            const textY = chipY + (chipHeight / 2) + 0.3;
+            const textX = chipX + chipWidth / 2
+            const textY = chipY + chipHeight / 2 + 0.3
 
             doc.text(config.label, textX, textY, {
               align: 'center',
               baseline: 'middle',
-            });
+            })
           }
         }
       },
@@ -580,48 +575,48 @@ export class ReportService {
         3: { halign: 'center', cellWidth: 23 },
         4: { halign: 'center', cellWidth: 23 },
         7: { halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] },
-        8: { halign: 'right', fontStyle: 'bold', textColor: [22, 163, 74] }, 
+        8: { halign: 'right', fontStyle: 'bold', textColor: [22, 163, 74] },
         9: { halign: 'right', fontStyle: 'bold', textColor: [220, 38, 38] },
       },
       didDrawCell: (dataCell) => {
         if (dataCell.cell.section === 'body') {
-          const rowIndex = dataCell.row.index;
-          const reservation = rows[rowIndex];
-          if (!reservation) return;
+          const rowIndex = dataCell.row.index
+          const reservation = rows[rowIndex]
+          if (!reservation) return
 
-          let config: { label: string; color: string } | null = null;
+          let config: { label: string; color: string } | null = null
 
           if (dataCell.column.index === 3) {
-            config = reservationStatusConfig[reservation.status];
+            config = reservationStatusConfig[reservation.status]
           } else if (dataCell.column.index === 4) {
-            config = reservationTypeConfig[reservation.type];
+            config = reservationTypeConfig[reservation.type]
           }
 
           if (config) {
-            const { x, y, width, height } = dataCell.cell;
+            const { x, y, width, height } = dataCell.cell
 
-            const chipWidth = width - 4;
-            const chipHeight = 5.2;
-            const chipX = x + (width - chipWidth) / 2;
-            const chipY = y + (height - chipHeight) / 2;
-            const borderRadius = 1;
+            const chipWidth = width - 4
+            const chipHeight = 5.2
+            const chipX = x + (width - chipWidth) / 2
+            const chipY = y + (height - chipHeight) / 2
+            const borderRadius = 1
 
-            const rgb = this.hexToRgb(config.color);
+            const rgb = this.hexToRgb(config.color)
 
-            doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F');
+            doc.setFillColor(rgb[0], rgb[1], rgb[2])
+            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F')
 
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(6.5);
-            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(6.5)
+            doc.setTextColor(255, 255, 255)
 
-            const textX = chipX + (chipWidth / 2);
-            const textY = chipY + (chipHeight / 2) + 0.3;
+            const textX = chipX + chipWidth / 2
+            const textY = chipY + chipHeight / 2 + 0.3
 
             doc.text(config.label, textX, textY, {
               align: 'center',
               baseline: 'middle',
-            });
+            })
           }
         }
       },
@@ -782,39 +777,39 @@ export class ReportService {
       },
       didDrawCell: (dataCell) => {
         if (dataCell.cell.section === 'body' && dataCell.column.index === 0) {
-          const rowIndex = dataCell.row.index;
-          const item = data.expensesByCategory[rowIndex];
-          if (!item) return;
+          const rowIndex = dataCell.row.index
+          const item = data.expensesByCategory[rowIndex]
+          if (!item) return
 
-          const config = expenseCategoryConfig[item.category];
+          const config = expenseCategoryConfig[item.category]
 
           if (config) {
-            const { x, y, width, height } = dataCell.cell;
+            const { x, y, width, height } = dataCell.cell
 
-            const chipWidth = width - 4;
-            const chipHeight = 5.2;
-            const chipX = x + (width - chipWidth) / 2;
-            const chipY = y + (height - chipHeight) / 2;
-            const borderRadius = 1;
+            const chipWidth = width - 4
+            const chipHeight = 5.2
+            const chipX = x + (width - chipWidth) / 2
+            const chipY = y + (height - chipHeight) / 2
+            const borderRadius = 1
 
-            const rgb = this.hexToRgb(config.color);
+            const rgb = this.hexToRgb(config.color)
 
             // 1. Dibujar fondo del Chip
-            doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F');
+            doc.setFillColor(rgb[0], rgb[1], rgb[2])
+            doc.roundedRect(chipX, chipY, chipWidth, chipHeight, borderRadius, borderRadius, 'F')
 
             // 2. Dibujar texto del Chip centrado
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7);
-            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(7)
+            doc.setTextColor(255, 255, 255)
 
-            const textX = chipX + (chipWidth / 2);
-            const textY = chipY + (chipHeight / 2) + 0.3; 
+            const textX = chipX + chipWidth / 2
+            const textY = chipY + chipHeight / 2 + 0.3
 
             doc.text(config.label, textX, textY, {
               align: 'center',
               baseline: 'middle',
-            });
+            })
           }
         }
       },
@@ -825,7 +820,7 @@ export class ReportService {
   }
 
   hexToRgb(hex: string): [number, number, number] {
-    const num = parseInt(hex.replace('#', ''), 16);
-    return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
-  };
+    const num = parseInt(hex.replace('#', ''), 16)
+    return [(num >> 16) & 255, (num >> 8) & 255, num & 255]
+  }
 }

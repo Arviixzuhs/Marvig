@@ -13,7 +13,7 @@ export class FindReservationsUseCase {
   async execute(filters: ReservationFilterDto, userId?: number): Promise<ReservationPageDto> {
     const reservations = await this.reservationRepository.findReservations({
       ...filters,
-      ...(filters.mine && userId && { userId })
+      ...(filters.mine && userId && { userId }),
     })
     return reservations
   }

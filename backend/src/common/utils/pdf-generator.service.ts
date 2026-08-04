@@ -31,7 +31,6 @@ export class PdfGeneratorService {
     doc.setFillColor(...this.ACCENT_COLOR)
     doc.rect(0, 0, pageW, 4.5, 'F')
 
-
     // --- LADO IZQUIERDO: Branding de la aplicación ---
     // Pequeño logo minimalista (un rectángulo vertical en Accent Color)
     doc.setFillColor(...this.ACCENT_COLOR)

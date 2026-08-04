@@ -4,12 +4,12 @@ import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { useCalendarContext } from '@/context/calendarContext'
 import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
-import { calcTotalByApartmentAndNights } from '@/utils/calcTotalByApartmentAndNights'
 import { Card, Button, Divider, CardBody, CardFooter, CardHeader } from '@heroui/react'
 
 export const ApartmentCalendarRange = () => {
   const navigate = useNavigate()
   const apartment = useSelector((state: RootState) => state.apartment)
+  const checkout = useSelector((state: RootState) => state.checkout)
   const { nights } = useCalendarContext()
   if (!apartment) return null
 
@@ -32,20 +32,7 @@ export const ApartmentCalendarRange = () => {
             <Divider />
             <div className='flex justify-between font-bold'>
               <span>Total</span>
-              <span>
-                {formatCurrency(
-                  calcTotalByApartmentAndNights({
-                    nights,
-                    pricePerDay: apartment.pricePerDay,
-                    ...(apartment.promotion && {
-                      promotion: {
-                        type: apartment.promotion.type,
-                        value: apartment.promotion.value,
-                      },
-                    }),
-                  }),
-                )}
-              </span>
+              <span>{formatCurrency(checkout.totalPrice)}</span>
             </div>
           </div>
           <Button
