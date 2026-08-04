@@ -1,16 +1,19 @@
 import React from 'react'
 import { RootState } from '@/store'
-import { useSelector } from 'react-redux'
 import { I18nProvider } from '@react-aria/i18n'
 import { RangeCalendar } from '@heroui/react'
+import { setTotalPrice } from '@/features/checkoutSlice'
 import { reservationService } from '@/services/reservation'
 import { useCalendarContext } from '@/context/calendarContext'
+import { useDispatch, useSelector } from 'react-redux'
+import { calcTotalByApartmentsAndDates } from '@/utils/calcTotalByApartmentsAndDates'
 import { CalendarDate, DateValue, getLocalTimeZone, today } from '@internationalized/date'
 
 export const ApartmentCalendarDateRange = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
   const [invalidDates, setInvalidDates] = React.useState<CalendarDate[]>([])
   const { date, setDate, refresh } = useCalendarContext()
+  const dispatch = useDispatch()
 
   React.useEffect(() => {
     if (!apartment?.id) return
@@ -32,6 +35,18 @@ export const ApartmentCalendarDateRange = () => {
 
     loadData()
   }, [apartment?.id, refresh])
+
+  React.useEffect(() => {
+    if (date?.start && date?.end && apartment) {
+      const total = calcTotalByApartmentsAndDates({
+        startDate: date?.start.toDate(getLocalTimeZone()),
+        endDate: date?.end.toDate(getLocalTimeZone()),
+        apartments: [apartment],
+      })
+
+      dispatch(setTotalPrice(total))
+    }
+  }, [date?.start && date?.end && apartment])
 
   if (!apartment) return null
 
