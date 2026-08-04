@@ -1,6 +1,7 @@
 import { getDiffDays } from './get-diff-days-by-dates.util'
 import { ApartmentModel } from '@/modules/apartment/domain/models/apartment.model'
 import { PromotionTypeEnum } from '@/modules/promotion/domain/enums/promotion-type.enum'
+import { getSeasonByDateRange } from './get-season.util'
 
 interface ICalcTotalByApartmentsAndDatesProps {
   endDate: Date
@@ -15,23 +16,29 @@ export const calcTotalByApartments = ({
 }: ICalcTotalByApartmentsAndDatesProps): number => {
   const diffDays = getDiffDays(startDate, endDate)
 
-  const rawTotal = apartments.reduce((acc, apartment) => {
-    const pricePerDay = Number(apartment.pricePerDay)
-    let discount = 0
+  if (diffDays <= 0) return 0
 
-    if (apartment.promotion) {
-      const promoValue = Number(apartment.promotion.value)
+  const seasonPercentage = getSeasonByDateRange(startDate, endDate)?.percentage ?? 0
 
-      if (apartment.promotion.type === PromotionTypeEnum.PERCENTAGE) {
-        discount = (pricePerDay * promoValue) / 100
+  const total = apartments.reduce((sum, apartment) => {
+    const basePrice = Number(apartment.pricePerDay)
+    const seasonalPrice = basePrice * (1 + seasonPercentage / 100)
+
+    let finalPrice = seasonalPrice
+
+    const promotion = apartment.promotion
+    if (promotion) {
+      const promotionValue = Number(promotion.value)
+
+      if (promotion.type === PromotionTypeEnum.PERCENTAGE) {
+        finalPrice -= (seasonalPrice * promotionValue) / 100
       } else {
-        discount = promoValue
+        finalPrice -= promotionValue
       }
     }
 
-    const finalPricePerDay = Math.max(0, pricePerDay - discount)
-    return acc + finalPricePerDay * diffDays
+    return sum + Math.max(0, finalPrice) * diffDays
   }, 0)
 
-  return Math.round(rawTotal * 100) / 100 || 0
+  return Math.round(total * 100) / 100 || 0
 }
