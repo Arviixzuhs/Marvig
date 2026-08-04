@@ -10,7 +10,7 @@ import { Controller, Get, Query, Res, Param, ParseIntPipe } from '@nestjs/common
 
 @Controller('reports')
 export class ReportController {
-  constructor(private readonly reportService: ReportService) { }
+  constructor(private readonly reportService: ReportService) {}
 
   @Get('payments/pdf')
   @RequiredRole(UserRole.ADMIN)
@@ -23,7 +23,7 @@ export class ReportController {
     })
     res.end(buffer)
   }
-  
+
   @Get('payment/:id/pdf')
   @RequiredRole(UserRole.ADMIN)
   async getSinglePaymentPdf(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
