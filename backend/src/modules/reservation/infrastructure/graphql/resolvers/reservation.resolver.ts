@@ -57,7 +57,10 @@ export class ReservationResolver {
   }
 
   @Query(() => ReservationPageType, { description: 'Obtiene el listado histórico de reservas' })
-  findReservations(@Args('filters') filters: ReservationFilterInput, @CurrentUser() user: User): Promise<ReservationPageType> {
+  findReservations(
+    @Args('filters') filters: ReservationFilterInput,
+    @CurrentUser() user: User,
+  ): Promise<ReservationPageType> {
     return this.findReservationsUseCase.execute(filters, user.userId)
   }
 

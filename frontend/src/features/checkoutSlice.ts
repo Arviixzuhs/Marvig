@@ -2,10 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface AppTableInterface {
   formData: Record<string, string | unknown>
+  totalPrice: number
 }
 
 const initialState = {
   formData: {},
+  totalPrice: 0,
 } as AppTableInterface
 
 export const manageCheckoutSlice = createSlice({
@@ -13,6 +15,9 @@ export const manageCheckoutSlice = createSlice({
   initialState,
   reducers: {
     clearCheckout: () => initialState,
+    setTotalPrice: (state, action) => {
+      state.totalPrice = action.payload
+    },
     setCheckoutFormData: (
       state,
       action: PayloadAction<{ name: string; value: string | unknown }>,
@@ -25,4 +30,4 @@ export const manageCheckoutSlice = createSlice({
   },
 })
 
-export const { clearCheckout, setCheckoutFormData } = manageCheckoutSlice.actions
+export const { clearCheckout, setCheckoutFormData, setTotalPrice } = manageCheckoutSlice.actions

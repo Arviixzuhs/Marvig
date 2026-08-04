@@ -1,14 +1,7 @@
 import { ExpenseFilterDto } from '@/modules/expense/application/dto/expense-filter.dto'
 import { ExpenseCategory } from '@/modules/expense/domain/enums/expense-category.enum'
 import { Transform, Type } from 'class-transformer'
-import {
-  IsDateString,
-  IsEnum,
-  IsInt,
-  IsNumber,
-  IsOptional,
-  IsString
-} from 'class-validator'
+import { IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class ExpenseReportQueryDto extends ExpenseFilterDto {
   @IsOptional()

@@ -2,14 +2,15 @@ import { Divider } from '@heroui/react'
 import { pluralize } from '@/utils/pluralize'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
-import { formatCurrency } from '@/utils/formatCurrency'
 import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 import { useCalendarContext } from '@/context/calendarContext'
 import { formatCalendarDate } from '@/utils/formatCalendarDate'
 import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
+import { formatCurrency } from '@/utils/formatCurrency'
 
 export const Summary = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
+  const checkout = useSelector((state: RootState) => state.checkout)
   const { date, nights } = useCalendarContext()
   if (!apartment) return
 
@@ -36,7 +37,7 @@ export const Summary = () => {
           <Divider />
           <div className='flex justify-between font-bold text-base w-full'>
             <span>Total</span>
-            <span>{formatCurrency(apartment.pricePerDay * nights)}</span>
+            <span>{formatCurrency(checkout.totalPrice)}</span>
           </div>
         </div>
       </div>
