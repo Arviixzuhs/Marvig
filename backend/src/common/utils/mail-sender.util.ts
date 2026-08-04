@@ -24,28 +24,23 @@ export class EmailService {
       port: parseInt(process.env.EMAIL_PORT),
       secure: true,
       auth: {
-        user: process.env.EMAIL_USER,
+        user: process.env.EMAIL,
         pass: process.env.EMAIL_PASS,
       },
     })
   }
 
-  async sendSingleEmail(dto: SendEmailDto): Promise<void> {
+  sendSingleEmail(dto: SendEmailDto): void {
     const htmlContent = getEmailTemplate(dto.title, dto.subtitle, dto.content)
 
     const mailOptions: nodemailer.SendMailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL,
       to: dto.to,
       subject: dto.subject,
       html: htmlContent,
     }
 
-    try {
-      await this.transporter.sendMail(mailOptions)
-    } catch (error) {
-      console.error(`Error enviando email a ${dto.to}:`, error)
-      throw error
-    }
+    this.transporter.sendMail(mailOptions)
   }
 
   async sendBulkEmail(dto: SendBulkEmailDto): Promise<void> {
