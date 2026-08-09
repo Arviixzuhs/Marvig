@@ -19,7 +19,7 @@ export const PersonalInformation = () => {
           <Input
             label='Nombre'
             labelPlacement='outside'
-            placeholder='Victor'
+            placeholder='Ingrese su nombre'
             variant='underlined'
             value={String(checkout.formData?.['clientName'] || '')}
             isRequired
@@ -29,7 +29,7 @@ export const PersonalInformation = () => {
           <Input
             label='Apellido'
             labelPlacement='outside'
-            placeholder='Pandolfi'
+            placeholder='Ingrese su apellido'
             variant='underlined'
             value={String(checkout.formData?.['clientLastname'] || '')}
             isRequired
@@ -41,7 +41,7 @@ export const PersonalInformation = () => {
           <Input
             label='Correo electrónico'
             labelPlacement='outside'
-            placeholder='ejemplo@correo.com'
+            placeholder='Ingrese su correo electrónico'
             type='email'
             variant='underlined'
             value={String(checkout.formData?.['clientEmail'] || '')}
@@ -51,7 +51,7 @@ export const PersonalInformation = () => {
           <Input
             label='Teléfono'
             labelPlacement='outside'
-            placeholder='+58 000 000 0000'
+            placeholder='Ingrese su número de teléfono'
             type='tel'
             variant='underlined'
             value={String(checkout.formData?.['clientPhone'] || '')}
@@ -62,7 +62,7 @@ export const PersonalInformation = () => {
         <NumberInput
           label='Número de Personas'
           labelPlacement='outside'
-          placeholder='3'
+          placeholder='Ingrese el número de personas'
           variant='underlined'
           value={Number(checkout.formData?.['persons']) || 0}
           isRequired
