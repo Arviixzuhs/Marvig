@@ -4,7 +4,7 @@ import { RootState } from '@/store'
 import { I18nProvider } from '@react-aria/i18n'
 import { parseAbsoluteToLocal } from '@internationalized/date'
 import { useDispatch, useSelector } from 'react-redux'
-import { setFormData, toggleAddItemModal } from '@/features/appTableSlice'
+import { InputType, setFormData, toggleAddItemModal } from '@/features/appTableSlice'
 import {
   Form,
   Modal,
@@ -20,6 +20,7 @@ import {
   ModalFooter,
   ModalContent,
 } from '@heroui/react'
+import { isValidNumericInput } from '@/utils/isValidNumericInput'
 
 export interface AddItemModalProps {
   action: () => Promise<void>
@@ -45,8 +46,11 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: InputType) => {
     const { name, value } = e.target
+
+    if (!isValidNumericInput(value, type)) return
+
     if (value === '') {
       dispatch(setFormData({ name, value: null }))
       return
@@ -54,19 +58,10 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
 
     let processedValue: string | number | null = value
 
-    if (type === 'number' || type === 'float') {
-      const regex = type === 'float' ? /[^0-9.]/g : /[^0-9]/g
-      let sanitizedString = value.replace(regex, '')
-
-      if (sanitizedString === '') return
-
-      if (type === 'float') {
-        const dots = (sanitizedString.match(/\./g) || []).length
-        if (dots > 1) return
-        processedValue = parseFloat(sanitizedString)
-      } else {
-        processedValue = parseInt(sanitizedString)
-      }
+    if (type === 'number') {
+      processedValue = parseInt(value, 10)
+    } else if (type === 'float') {
+      processedValue = value.endsWith('.') ? value : parseFloat(value)
     }
 
     dispatch(setFormData({ name, value: processedValue }))
