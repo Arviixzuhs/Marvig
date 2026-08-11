@@ -49,14 +49,14 @@ export const modalInputs: ModalInput[] = [
     name: 'floor',
     label: 'Piso',
     type: 'number',
-    placeholder: 'Ej: 1',
+    placeholder: '1',
     required: true,
   },
   {
     name: 'number',
     label: 'Número de Apartamento',
     type: 'text',
-    placeholder: 'Ej: A-101',
+    placeholder: 'A-101',
     required: true,
   },
   {
@@ -82,22 +82,22 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'pricePerDay',
     label: 'Precio por noche',
-    type: 'number',
-    placeholder: 'Precio por noche',
+    type: 'float',
+    placeholder: '75.0',
     required: true,
   },
   {
     name: 'bathrooms',
     label: 'Baños',
     type: 'number',
-    placeholder: 'Cantidad de baños',
+    placeholder: '2',
     required: true,
   },
   {
     name: 'squareMeters',
     label: 'Metros Cuadrados',
     type: 'float',
-    placeholder: 'Ej: 65.5',
+    placeholder: '65.5',
     required: false,
   },
 ]

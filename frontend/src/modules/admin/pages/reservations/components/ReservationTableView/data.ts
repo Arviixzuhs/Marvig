@@ -60,7 +60,7 @@ export const modalInputs: ModalInput[] = [
     label: 'Número de Personas',
     type: 'number',
     required: false,
-    placeholder: 'Número de personas',
+    placeholder: '4',
   },
   {
     name: 'type',
@@ -95,7 +95,7 @@ export const modalInputs: ModalInput[] = [
     name: 'clientName',
     label: 'Nombre del Cliente',
     type: 'text',
-    placeholder: 'Nombre completo',
+    placeholder: 'John Doe',
     required: true,
   },
   {
