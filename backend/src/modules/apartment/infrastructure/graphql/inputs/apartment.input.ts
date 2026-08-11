@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, Float, InputType } from '@nestjs/graphql'
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
@@ -21,15 +21,16 @@ export class ApartmentInput {
   @IsInt()
   bedrooms: number
 
-  @Field(() => Number)
-  @IsInt()
+  @Field(() => Float)
+  @IsNumber()
+  @Min(0)
   pricePerDay: number
 
   @Field(() => Number, { nullable: true })
   @IsInt()
   bathrooms?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Float, { nullable: true })
   @IsNumber()
   @IsOptional()
   squareMeters?: number
