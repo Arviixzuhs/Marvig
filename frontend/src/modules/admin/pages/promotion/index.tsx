@@ -1,20 +1,24 @@
 import toast from 'react-hot-toast'
+import React from 'react'
 import { AppTable } from '@/components/AppTable'
 import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
+import { InputType } from '@/features/appTableSlice'
 import { useDebounce } from 'use-debounce'
-import { useSelector } from 'react-redux'
 import { useTablePage } from '@/hooks/useTablePage'
 import { IPageResponse } from '@/api/interfaces'
-import { PromotionModel } from '@/models/PromotionModel'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { FIND_PROMOTIONS } from '@/services/promotion/graphql/findPromotionsQuery'
 import { promotionService } from '@/services/promotion'
+import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
+import { setFormData, setModalInputs } from '@/features/appTableSlice'
+import { PromotionModel, PromotionType } from '@/models/PromotionModel'
 
 export const AdminPromotionPage = () => {
   const table = useSelector((state: RootState) => state.appTable)
   const [debounceValue] = useDebounce(table.filterValue, 100)
+  const dispatch = useDispatch()
   useTablePage({ tableColumns, modalInputs })
 
   const { data, refetch, previousData } = useQuery<{
@@ -30,6 +34,45 @@ export const AdminPromotionPage = () => {
     },
     notifyOnNetworkStatusChange: true,
   })
+
+  React.useEffect(() => {
+    if (table.formData['type']) {
+      const isFixed = table.formData['type'] === PromotionType.FIXED
+
+      const updatedModalInputs = modalInputs.map((input) => {
+        if (input.name === 'value') {
+          return {
+            ...input,
+            type: (isFixed ? 'number' : 'float') as InputType,
+          }
+        }
+        return input
+      })
+
+      dispatch(setModalInputs(updatedModalInputs))
+
+      dispatch(
+        setFormData({
+          name: 'value',
+          value: '',
+        }),
+      )
+    }
+  }, [table.formData['type']])
+
+  React.useEffect(() => {
+    if (
+      table.formData['type'] === PromotionType.PERCENTAGE &&
+      Number(table.formData['value']) > 100
+    ) {
+      dispatch(
+        setFormData({
+          name: 'value',
+          value: 100,
+        }),
+      )
+    }
+  }, [table.formData['value']])
 
   const tableActions: AppTableActions = {
     create: async () => {
