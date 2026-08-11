@@ -3,7 +3,7 @@ import React from 'react'
 import { AppTable } from '@/components/AppTable'
 import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
-import { InputType } from '@/features/appTableSlice'
+import { setFormData } from '@/features/appTableSlice'
 import { useDebounce } from 'use-debounce'
 import { useTablePage } from '@/hooks/useTablePage'
 import { IPageResponse } from '@/api/interfaces'
@@ -12,7 +12,6 @@ import { FIND_PROMOTIONS } from '@/services/promotion/graphql/findPromotionsQuer
 import { promotionService } from '@/services/promotion'
 import { useDispatch, useSelector } from 'react-redux'
 import { tableColumns, modalInputs } from './data'
-import { setFormData, setModalInputs } from '@/features/appTableSlice'
 import { PromotionModel, PromotionType } from '@/models/PromotionModel'
 
 export const AdminPromotionPage = () => {
@@ -37,20 +36,6 @@ export const AdminPromotionPage = () => {
 
   React.useEffect(() => {
     if (table.formData['type']) {
-      const isFixed = table.formData['type'] === PromotionType.FIXED
-
-      const updatedModalInputs = modalInputs.map((input) => {
-        if (input.name === 'value') {
-          return {
-            ...input,
-            type: (isFixed ? 'number' : 'float') as InputType,
-          }
-        }
-        return input
-      })
-
-      dispatch(setModalInputs(updatedModalInputs))
-
       dispatch(
         setFormData({
           name: 'value',
