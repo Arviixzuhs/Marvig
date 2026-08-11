@@ -51,15 +51,15 @@ export const modalInputs: ModalInput[] = [
   {
     name: 'value',
     label: 'Valor',
-    type: 'number',
-    placeholder: '0.00',
+    type: 'float',
+    placeholder: 'Ej: 100.00',
     required: true,
   },
   {
     name: 'description',
     label: 'Descripción',
     type: 'textarea',
-    placeholder: 'Breve detalle de la promoción...',
+    placeholder: 'Ej: Este descuendo se aplica en los...',
     required: false,
   },
 ]

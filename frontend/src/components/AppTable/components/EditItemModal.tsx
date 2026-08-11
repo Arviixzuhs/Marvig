@@ -8,6 +8,7 @@ import {
   toggleEditItemModal,
   setCurrentItemToUpdate,
   InputType,
+  clearFormData,
 } from '@/features/appTableSlice'
 import {
   Form,
@@ -110,8 +111,9 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   }
 
   const toggleModal = () => {
-    dispatch(setCurrentItemToUpdate(-1))
     dispatch(toggleEditItemModal(null))
+    dispatch(clearFormData(null))
+    dispatch(setCurrentItemToUpdate(-1))
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
