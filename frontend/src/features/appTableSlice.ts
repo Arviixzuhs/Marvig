@@ -80,6 +80,7 @@ export type ModalInput = SharedProps &
 export interface AppTableInterface {
   columns: TableColumnInterface[]
   formData: Record<string, string | unknown>
+  formErrors: Record<string, string | unknown>
   dateFilter: DateFilter
   filterValue: string
   currentPage: number
@@ -101,6 +102,7 @@ export const manageAppTableSlice = createSlice({
   initialState: {
     columns: [],
     formData: {},
+    formErrors: {},
     filterValue: '',
     currentPage: 0,
     rowsPerPage: 10,
@@ -160,6 +162,12 @@ export const manageAppTableSlice = createSlice({
     setModalInputs: (state, action: PayloadAction<ModalInput[]>) => {
       state.modalInputs = action.payload
     },
+    setFormError: (state, action: PayloadAction<{ name: string; value: string | unknown }>) => {
+      const { name, value } = action.payload
+      if (state.formErrors) {
+        state.formErrors[name] = value
+      }
+    },
     setFormData: (state, action: PayloadAction<{ name: string; value: string | unknown }>) => {
       const { name, value } = action.payload
       if (state.formData) {
@@ -204,6 +212,7 @@ export const manageAppTableSlice = createSlice({
 })
 
 export const {
+  setFormError,
   setTableData,
   setTableColumns,
   setFilterValue,
