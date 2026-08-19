@@ -55,7 +55,7 @@ export const modalInputs: ModalInput[] = [
     name: 'amount',
     label: 'Monto',
     type: 'float',
-    placeholder: '0.00',
+    placeholder: 'Ej: 100.00',
     required: true,
   },
   {
@@ -99,7 +99,7 @@ export const modalInputs: ModalInput[] = [
     name: 'description',
     label: 'Descripción',
     type: 'textarea',
-    placeholder: 'Ingrese el motivo del gasto...',
+    placeholder: 'Ej: gastos operativos para limpieza en general',
     required: false,
   },
 ]
