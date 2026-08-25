@@ -5,6 +5,7 @@ import { PrismaClient } from 'generated/prisma/client'
 import { CreateVarificationCodeUseCase } from './usecases/create-verification-code.usecase'
 import { ValidateVarificationCodeUseCase } from './usecases/validate-verification-code.usecase'
 import { PrismaVerificationCodeRepositoryAdapter } from '@/modules/verificationCode/infrastructure/repositories/prisma.verificationCode.repository.adapter'
+import { EmailService } from '@/common/utils/mail-sender.util'
 
 config()
 @Module({
@@ -16,6 +17,7 @@ config()
         adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
       }),
     },
+    EmailService,
     CreateVarificationCodeUseCase,
     ValidateVarificationCodeUseCase,
     {
