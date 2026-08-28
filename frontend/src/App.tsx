@@ -22,6 +22,12 @@ import { NationalCheckoutPage } from '@/modules/checkout/pages/national'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { LoadCurrentUserMiddleware } from '@/middlewares/LoadCurrentUserMiddleware'
 import { LoadCurrentApartmentMiddleware } from './middlewares/LoadCurrentApartmentMiddleware'
+import CreatePassword from './modules/auth/pages/CreatePassword'
+import ConfirmRegisterMessage from './modules/auth/pages/ConfirmRegisterMessage'
+import { RecoverPasswordMiddleware } from './middlewares/RecoverPasswordMiddleware.tsx'
+import RecoverPasswordEmail from './modules/auth/pages/RecoverPasswordEmail.tsx'
+import RecoverPasswordCode from './modules/auth/pages/RecoverPasswordCode.tsx'
+import RecoverPasswordChange from './modules/auth/pages/RecoverPasswordChange.tsx'
 
 function App() {
   return (
@@ -29,6 +35,14 @@ function App() {
       <Route path='*' element={<Navigate to='/' />} />
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
+      <Route path='/register/message' element={<ConfirmRegisterMessage />} />
+      <Route path='/register/create-password/:confirmationToken' element={<CreatePassword />} />
+
+      <Route element={<RecoverPasswordMiddleware />}>
+        <Route path={'/recovery-password/email'} element={<RecoverPasswordEmail />} />
+        <Route path={'/recovery-password/code'} element={<RecoverPasswordCode />} />
+        <Route path={'/recovery-password/change'} element={<RecoverPasswordChange  />} />
+      </Route>
       <Route element={<LoadCurrentUserMiddleware />}>
         <Route element={<UserLayout />}>
           <Route element={<AuthMiddleware />}>
