@@ -3,7 +3,7 @@ import React from 'react'
 
 interface AuthBodyProps {
   children: React.ReactNode
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void
 }
 
 export const AuthBody = ({ children, onSubmit }: AuthBodyProps) => {
