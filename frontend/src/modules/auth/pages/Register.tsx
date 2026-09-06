@@ -6,163 +6,164 @@ import { AuthFooter } from '@/modules/auth/components/AuthFooter'
 import { AuthHeader } from '@/modules/auth/components/AuthHeader'
 import { AuthSubmit } from '@/modules/auth/components/AuthSubmit'
 import { authService } from '@/modules/auth/services'
-import { validatePassword } from '@/utils/validatePassword'
 import { ContinueWithGoogle } from '@/modules/auth/components/ContinueWithGoogle'
-import type { IAuthRegisterUser } from '@/modules/auth/services/interfaces'
+import type { IAuthSigning } from '@/modules/auth/services/interfaces'
+import { useNavigate } from 'react-router-dom'
+import { setAuthFormdata } from '../slice/authSlice'
+import { useDispatch } from 'react-redux'
+const MAX_LENGTH = 100
 
 export const RegisterPage = () => {
-  const [data, setData] = React.useState<IAuthRegisterUser>({
+  const navigate = useNavigate()
+
+  const dispatch = useDispatch()
+
+  const [data, setData] = React.useState<IAuthSigning>({
     email: '',
-    password: '',
-    lastName: '',
     name: '',
-    repeatPassword: '',
+    lastName: '',
   })
 
-  const [errors, setErrors] = React.useState<{ [key: string]: string }>({
-    email: '',
-    password: '',
-    lastName: '',
+  const [errors, setErrors] = React.useState<{
+    [key: string]: string
+  }>({
     name: '',
-    repeatPassword: '',
+    email: '',
+    lastName: '',
   })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setData({
-      ...data,
-      [name]: value,
-    })
-
-    handleValidation(name, value)
-  }
-
-  const handleValidation = (name: string, value: string) => {
-    let newErrors = { ...errors }
-
-    switch (name) {
-      case 'email':
-        if (!validateEmail(value)) {
-          newErrors['email'] = 'Por favor, ingresa un correo electrónico válido.'
-        } else {
-          newErrors['email'] = ''
-        }
-        break
-      case 'password':
-        const passwordError = validatePassword(value)
-        if (passwordError) {
-          newErrors['password'] = passwordError
-        } else {
-          newErrors['password'] = ''
-        }
-        break
-      case 'repeatPassword':
-        if (value !== data.password) {
-          newErrors['repeatPassword'] =
-            'Las contraseñas no coinciden. Por favor, verifica y vuelve a intentarlo.'
-        } else {
-          newErrors['repeatPassword'] = ''
-        }
-        break
-      default:
-        break
-    }
-
-    setErrors(newErrors)
-  }
-
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
-    let valid = true
-    const newErrors = {
-      email: '',
-      username: '',
-      password: '',
-      repeatPassword: '',
-      name: '',
-      lastName: '',
-    }
-    if (!validateEmail(data.email)) {
-      newErrors.email = 'Por favor, ingresa un correo electrónico válido.'
-      valid = false
-    }
-
-    const passwordError = validatePassword(data.password)
-    if (passwordError) {
-      newErrors.password = passwordError
-      valid = false
-    }
-
-    if (data.password !== data.repeatPassword) {
-      newErrors.repeatPassword =
-        'Las contraseñas no coinciden. Por favor, verifica y vuelve a intentarlo.'
-      valid = false
-    }
-
-    setErrors(newErrors)
-
-    if (!valid) return
-
-    try {
-      await authService.register(data)
-
-      window.location.href = '/'
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return regex.test(email)
   }
 
+  const validateField = (name: string, value: string): string => {
+    const trimmedValue = value.trim()
+
+    if (!trimmedValue) {
+      switch (name) {
+        case 'email':
+          return 'Por favor, ingresa un correo electrónico.'
+        case 'name':
+          return 'Por favor, ingresa un nombre.'
+        case 'lastName':
+          return 'Por favor, ingresa tu apellido.'
+        default:
+          return 'Este campo es obligatorio.'
+      }
+    }
+
+    if (value.length > MAX_LENGTH) {
+      return `Este campo no puede superar los ${MAX_LENGTH} caracteres.`
+    }
+
+    switch (name) {
+      case 'email':
+        if (!validateEmail(value)) {
+          return 'Por favor, ingresa un correo electrónico válido.'
+        }
+        break
+      case 'name':
+      case 'lastName':
+        if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(value)) {
+          return 'Solo se permiten letras.'
+        }
+        break
+    }
+
+    return ''
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+
+    if (value.length > MAX_LENGTH) {
+      return
+    }
+
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, value),
+    }))
+  }
+
+  const validateForm = (): boolean => {
+    const newErrors = {
+      email: validateField('email', data.email),
+      username: validateField('name', data.name),
+      lastName: validateField('lastName', data.lastName),
+    }
+
+    setErrors(newErrors)
+
+    return Object.values(newErrors).every((error) => error === '')
+  }
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    try {
+      await authService.signing(data)
+
+      dispatch(
+        setAuthFormdata({
+          name: 'email',
+          value: data.email,
+        }),
+      )
+
+      navigate('/register/message')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const registerInputs = [
     {
-      label: 'Email',
-      name: 'email',
-      type: 'email',
-      value: data.email,
-      placeholder: 'Escribe tu correo electronico',
-    },
-    {
-      label: 'Primer nombre',
+      label: 'Nombre',
       name: 'name',
       type: 'text',
       value: data.name,
-      placeholder: 'Ingresa tu primer nombre',
+      maxLength: MAX_LENGTH,
+      placeholder: 'Ingresa tu nombre.',
     },
     {
       label: 'Apellido',
       name: 'lastName',
       type: 'text',
       value: data.lastName,
+      maxLength: MAX_LENGTH,
       placeholder: 'Ingresa tu apellido',
     },
     {
-      label: 'Contraseña',
-      name: 'password',
-      type: 'password',
-      value: data.password,
-      placeholder: 'Ingresa tu contraseña',
-    },
-    {
-      label: 'Repetir contraseña',
-      name: 'repeatPassword',
-      type: 'password',
-      value: data.repeatPassword,
-      placeholder: 'Repite la contraseña',
+      label: 'Email',
+      name: 'email',
+      type: 'email',
+      value: data.email,
+      maxLength: MAX_LENGTH,
+      placeholder: 'Escribe tu correo electrónico',
     },
   ]
 
   return (
-    <AuthBody onSubmit={handleRegister}>
-      <AuthHeader title='Crea tu cuenta' />
-      <AuthForm inputs={registerInputs} handleChange={handleChange} errors={errors} />
-      <AuthSubmit label='Continuar' />
-      <Or />
-      <ContinueWithGoogle />
-      <AuthFooter href='/login' label='¿Ya estás registrado?' hrefLabel='Haz click aquí' />
-    </AuthBody>
+    <>
+      <AuthBody onSubmit={handleRegister}>
+        <AuthHeader title='Crea tu cuenta' />
+        <AuthForm inputs={registerInputs} handleChange={handleChange} errors={errors} />
+        <AuthSubmit label='Continuar' />
+        <Or />
+        <ContinueWithGoogle />
+        <AuthFooter href='/login' label='¿Ya estás registrado?' hrefLabel='Haz click aquí' />
+      </AuthBody>
+    </>
   )
 }
