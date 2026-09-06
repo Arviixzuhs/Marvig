@@ -1,3 +1,4 @@
+import { authSlice } from '@/modules/auth/slice/authSlice'
 import { chatbotSlice } from '@/features/chatbotSlice'
 import { manageUserSlice } from '@/features/userSlice'
 import { manageCheckoutSlice } from '@/features/checkoutSlice'
@@ -7,6 +8,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 const appReducer = combineReducers({
   user: manageUserSlice.reducer,
+  auth: authSlice.reducer,
   chatbot: chatbotSlice.reducer,
   checkout: manageCheckoutSlice.reducer,
   appTable: manageAppTableSlice.reducer,

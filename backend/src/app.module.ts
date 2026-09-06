@@ -102,8 +102,11 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude(
         '/auth/login',
-        '/auth/register',
+        '/auth/signing',
         '/auth/google',
+        '/auth/change-password-by-code',
+        '/auth/confirm-signing',
+        '/auth/validate-signing-token/:token',
         '/stripe/webhook',
         '/api',
         '/graphql',

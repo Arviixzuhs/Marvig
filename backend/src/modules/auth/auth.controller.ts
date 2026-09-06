@@ -2,18 +2,31 @@ import { ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { LoginDto } from './dto/login.dto'
 import { AuthService } from './auth.service'
-import { RegisterDto } from './dto/register.dto'
 import { GoogleAuthDto } from './dto/google-auth.dto'
-import { Body, Controller, Post, Res, HttpCode, HttpStatus } from '@nestjs/common'
+import { Body, Controller, Post, Res, HttpCode, HttpStatus, Get, Param } from '@nestjs/common'
+import { ConfirmSigningDto } from './dto/confirm-signin.dto'
+import { SigningDto } from './dto/signing.dto'
+import { PasswordResetCodeRequestDto } from './dto/update-password.dto'
 
 @ApiTags('auth')
 @Controller('/auth')
 export class AuthController {
-  constructor(private readonly appService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Post('/register')
-  async register(@Body() data: RegisterDto, @Res({ passthrough: true }) res: Response) {
-    const token = await this.appService.userRegister(data)
+  @Get('/validate-signing-token/:token')
+  async validateSigningToken(@Param('token') token: string) {
+    return this.authService.validateToken(token)
+  }
+
+  @Post('/signing')
+  async Signing(@Body() data: SigningDto): Promise<string> {
+    this.authService.signing(data)
+    return 'Verificacion enviada'
+  }
+
+  @Post('/confirm-signing')
+  async ConfirmSigning(@Body() data: ConfirmSigningDto, @Res({ passthrough: true }) res: Response) {
+    const token = await this.authService.confirmSigning(data)
 
     res.cookie('accessToken', token, {
       httpOnly: true,
@@ -28,7 +41,7 @@ export class AuthController {
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() data: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { token, user } = await this.appService.userLogin(data)
+    const { token, user } = await this.authService.userLogin(data)
 
     res.cookie('accessToken', token, {
       httpOnly: true,
@@ -52,7 +65,7 @@ export class AuthController {
   @Post('/google')
   @HttpCode(HttpStatus.OK)
   async googleAuth(@Body() data: GoogleAuthDto, @Res({ passthrough: true }) res: Response) {
-    const result = await this.appService.googleAuth(data)
+    const result = await this.authService.googleAuth(data)
 
     res.cookie('accessToken', result.accessToken, {
       httpOnly: true,
@@ -70,5 +83,12 @@ export class AuthController {
     res.clearCookie('accessToken', { path: '/' })
     res.clearCookie('isLoggedIn', { path: '/' })
     return { message: 'Cierre de sesión exitoso' }
+  }
+
+  @Post('/change-password-by-code')
+  @HttpCode(HttpStatus.OK)
+  async changePasswordByCode(@Body() dto: PasswordResetCodeRequestDto) {
+    await this.authService.changePasswordByCode(dto)
+    return { message: 'Contraseña actualizada correctamente.' }
   }
 }
