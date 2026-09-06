@@ -16,7 +16,7 @@ export class UpdatePromotionUseCase {
     if (!exists) throw new NotFoundException('Promoción no encontrada')
 
     if (data.type === PromotionTypeEnum.PERCENTAGE && data.value > 100) {
-      throw new BadRequestException('El porcentaje no puede ser mayor a 100.');
+      throw new BadRequestException('El porcentaje no puede ser mayor a 100.')
     }
 
     return await this.promotionRepository.updatePromotion(id, data)

@@ -1,4 +1,3 @@
-
 export interface ReqChangePasswordByPin {
   pin: string
   email: string

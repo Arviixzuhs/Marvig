@@ -17,7 +17,8 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private readonly validateVarificationCodeUseCase: ValidateVarificationCodeUseCase,
-    private readonly emailService: EmailService) { }
+    private readonly emailService: EmailService,
+  ) {}
 
   async findUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
@@ -30,9 +31,9 @@ export class AuthService {
   }
 
   async signing(data: SigningDto): Promise<void> {
-    const user = await this.findUserByEmail(data.email);
+    const user = await this.findUserByEmail(data.email)
     if (user) {
-      throw new HttpException('Ese correo ya está registrado.', HttpStatus.CONFLICT);
+      throw new HttpException('Ese correo ya está registrado.', HttpStatus.CONFLICT)
     }
 
     const token = jwt.sign(
@@ -42,10 +43,10 @@ export class AuthService {
         lastName: data.lastName,
       },
       process.env.SECRET_KEY,
-      { expiresIn: '30m' }
-    );
+      { expiresIn: '30m' },
+    )
 
-    const confirmationLink = `${process.env.CLIENT_ORIGIN}/register/create-password/${token}`;
+    const confirmationLink = `${process.env.CLIENT_ORIGIN}/register/create-password/${token}`
 
     this.emailService.sendSingleEmail({
       to: data.email,
@@ -66,30 +67,30 @@ export class AuthService {
         ¡Gracias por confiar en nosotros!
       </p>
     `,
-    });
+    })
   }
 
   validateToken<T = any>(token: string): T {
-    const secretKey = process.env.SECRET_KEY;
+    const secretKey = process.env.SECRET_KEY
     if (!secretKey) {
-      throw new Error('SECRET_KEY no está configurada en las variables de entorno.');
+      throw new Error('SECRET_KEY no está configurada en las variables de entorno.')
     }
 
     try {
-      return jwt.verify(token, secretKey) as T;
+      return jwt.verify(token, secretKey) as T
     } catch (error) {
-      throw new HttpException('El token es inválido o ha expirado.', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('El token es inválido o ha expirado.', HttpStatus.UNAUTHORIZED)
     }
   }
 
   async confirmSigning(data: ConfirmSigningDto) {
     if (data.password !== data.repeatPassword) {
-      throw new HttpException('Las contraseñas deben ser iguales.', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Las contraseñas deben ser iguales.', HttpStatus.BAD_REQUEST)
     }
 
     let tokenData = this.validateToken<SigningDto>(data.token)
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10)
 
     const createdUser = await this.prisma.user.create({
       data: {
@@ -98,7 +99,7 @@ export class AuthService {
         lastName: tokenData.lastName,
         password: hashedPassword,
       },
-    });
+    })
 
     const token = jwt.sign(
       {
@@ -108,8 +109,8 @@ export class AuthService {
         role: createdUser.role,
       },
       process.env.SECRET_KEY,
-      { expiresIn: '1d' }
-    );
+      { expiresIn: '1d' },
+    )
 
     return token
   }
@@ -208,29 +209,37 @@ export class AuthService {
   async changePasswordByCode(data: PasswordResetCodeRequestDto) {
     const user = await this.findUserByEmail(data.email)
     if (!user) {
-      throw new HttpException('Usuario no encontrado.', HttpStatus.NOT_FOUND);
+      throw new HttpException('Usuario no encontrado.', HttpStatus.NOT_FOUND)
     }
 
     if (data.newPassword !== data.repeatNewPassword) {
-      throw new HttpException('Las contraseñas deben ser iguales.', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Las contraseñas deben ser iguales.', HttpStatus.BAD_REQUEST)
     }
 
     const isPasswordValid = await bcrypt.compare(data.newPassword, user.password)
     if (isPasswordValid) {
-      throw new HttpException('La nueva contraseña no puede ser igual a la actual.', HttpStatus.UNAUTHORIZED)
+      throw new HttpException(
+        'La nueva contraseña no puede ser igual a la actual.',
+        HttpStatus.UNAUTHORIZED,
+      )
     }
 
-    await this.validateVarificationCodeUseCase.execute(data.code, VerificationCodeType.PASSWORD_RESET, data.email, true)
+    await this.validateVarificationCodeUseCase.execute(
+      data.code,
+      VerificationCodeType.PASSWORD_RESET,
+      data.email,
+      true,
+    )
 
-    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10)
 
     await this.prisma.user.update({
       where: {
         id: user.id,
       },
       data: {
-        password: hashedPassword
-      }
+        password: hashedPassword,
+      },
     })
   }
 }

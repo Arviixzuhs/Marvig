@@ -11,10 +11,7 @@ export interface VerificationEmailTemplate {
   expirationMinutes: number
 }
 
-const VERIFICATION_EMAIL_TEMPLATES: Record<
-  VerificationCodeType,
-  VerificationEmailTemplate
-> = {
+const VERIFICATION_EMAIL_TEMPLATES: Record<VerificationCodeType, VerificationEmailTemplate> = {
   [VerificationCodeType.VERIFY_EMAIL]: {
     subject: 'Confirmación de Correo - Posada Marvig',
     title: 'Confirma tu dirección de correo',
@@ -28,7 +25,6 @@ const VERIFICATION_EMAIL_TEMPLATES: Record<
     expirationMinutes: 5,
   },
 }
-
 
 @Injectable()
 export class CreateVarificationCodeUseCase {
@@ -54,13 +50,7 @@ export class CreateVarificationCodeUseCase {
     const expiresAt = new Date(now.getTime() + template.expirationMinutes * 60 * 1000)
     const nextAllowedAt = new Date(now.getTime() + 6 * 60 * 60 * 1000)
 
-    await this.verificationCodeRepository.create(
-      email,
-      type,
-      hashedCode,
-      expiresAt,
-      nextAllowedAt,
-    )
+    await this.verificationCodeRepository.create(email, type, hashedCode, expiresAt, nextAllowedAt)
 
     this.emailService.sendSingleEmail({
       to: email,

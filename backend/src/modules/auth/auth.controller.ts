@@ -11,17 +11,17 @@ import { PasswordResetCodeRequestDto } from './dto/update-password.dto'
 @ApiTags('auth')
 @Controller('/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Get('/validate-signing-token/:token')
   async validateSigningToken(@Param('token') token: string) {
-    return this.authService.validateToken(token);
+    return this.authService.validateToken(token)
   }
 
   @Post('/signing')
   async Signing(@Body() data: SigningDto): Promise<string> {
     this.authService.signing(data)
-    return "Verificacion enviada"
+    return 'Verificacion enviada'
   }
 
   @Post('/confirm-signing')

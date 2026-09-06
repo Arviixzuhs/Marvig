@@ -10,7 +10,7 @@ export class VerificationCodeResolver {
   constructor(
     private readonly createVarificationCodeUseCase: CreateVarificationCodeUseCase,
     private readonly validateVarificationCodeUseCase: ValidateVarificationCodeUseCase,
-  ) { }
+  ) {}
 
   @Mutation(() => String)
   @Public()

@@ -8,9 +8,14 @@ export class ValidateVarificationCodeUseCase {
   constructor(
     @Inject('VerificationCodeRepository')
     private verificationCodeRepository: VerificationCodeRepositoryPort,
-  ) { }
+  ) {}
 
-  async execute(code: string, type: VerificationCodeType, email: string, markUsedOnValid: boolean = false): Promise<boolean> {
+  async execute(
+    code: string,
+    type: VerificationCodeType,
+    email: string,
+    markUsedOnValid: boolean = false,
+  ): Promise<boolean> {
     const MAX_ATTEMPTS = 3
 
     const latestVerificationCode = await this.verificationCodeRepository.findLastest(email, type)

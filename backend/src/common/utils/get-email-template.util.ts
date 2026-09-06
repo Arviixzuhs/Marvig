@@ -1,8 +1,4 @@
-export const getEmailTemplate = (
-  title: string,
-  subtitle: string,
-  content: string,
-): string => {
+export const getEmailTemplate = (title: string, subtitle: string, content: string): string => {
   return `
 <!DOCTYPE html>
 <html lang="es">
