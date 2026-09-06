@@ -10,7 +10,12 @@ export class ValidateVarificationCodeUseCase {
     private verificationCodeRepository: VerificationCodeRepositoryPort,
   ) {}
 
-  async execute(code: string, type: VerificationCodeType, email: string): Promise<boolean> {
+  async execute(
+    code: string,
+    type: VerificationCodeType,
+    email: string,
+    markUsedOnValid: boolean = false,
+  ): Promise<boolean> {
     const MAX_ATTEMPTS = 3
 
     const latestVerificationCode = await this.verificationCodeRepository.findLastest(email, type)
@@ -41,9 +46,11 @@ export class ValidateVarificationCodeUseCase {
       throw new BadRequestException('El código de verificación es incorrecto.')
     }
 
-    await this.verificationCodeRepository.update(latestVerificationCode.id, {
-      isUsed: true,
-    })
+    if (markUsedOnValid) {
+      await this.verificationCodeRepository.update(latestVerificationCode.id, {
+        isUsed: true,
+      })
+    }
 
     return true
   }

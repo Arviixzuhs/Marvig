@@ -1,29 +1,14 @@
-import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator'
 
-export class RegisterDto {
+export class ConfirmSigningDto {
   @ApiProperty({
-    example: 'usuario@ejemplo.com',
-    description: 'El correo electrónico del nuevo usuario.',
+    example: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2Vy',
+    description: 'Token de confirmación',
   })
-  @IsEmail({}, { message: 'El correo debe ser un correo electrónico válido.' })
-  email: string
-
-  @ApiProperty({
-    example: 'Victor',
-    description: 'El nombre de usuario.',
-  })
-  @IsNotEmpty({ message: 'El nombre de usuario no debe estar vacío.' })
+  @IsNotEmpty({ message: 'El token es obligatorio.' })
   @IsString()
-  name: string
-
-  @ApiProperty({
-    example: 'Pandolfi',
-    description: 'El apellido de usuario.',
-  })
-  @IsNotEmpty({ message: 'El apellido de usuario no debe estar vacío.' })
-  @IsString()
-  lastName: string
+  token: string
 
   @ApiProperty({
     example: 'contraseñaSegura123!',

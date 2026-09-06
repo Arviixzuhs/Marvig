@@ -171,7 +171,7 @@ export class CreateReservationUseCase {
       ¡Gracias por confiar en nosotros!
     </p>
   `,
-    });
+    })
 
     return createdReservation
   }

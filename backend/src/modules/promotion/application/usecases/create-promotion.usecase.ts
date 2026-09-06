@@ -13,7 +13,7 @@ export class CreatePromotionUseCase {
 
   async execute(data: PromotionDto): Promise<PromotionModel> {
     if (data.type === PromotionTypeEnum.PERCENTAGE && data.value > 100) {
-      throw new BadRequestException('El porcentaje no puede ser mayor a 100.');
+      throw new BadRequestException('El porcentaje no puede ser mayor a 100.')
     }
 
     return await this.promotionRepository.createPromotion(data)
