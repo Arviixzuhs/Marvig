@@ -10,9 +10,7 @@ export class FileService {
   private readonly uploadPath = './uploads'
 
   generateFileUrl(filename: string): string {
-    const HOST = process.env.HOST || 'localhost'
-    const PORT = process.env.PORT || 3000
-    return `http://${HOST}:${PORT}/uploads/${filename}`
+    return `${process.env.API_URL}/uploads/${filename}`
   }
 
   deleteFile(filename: string): void {
