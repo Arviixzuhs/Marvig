@@ -1,12 +1,12 @@
 import { ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { LoginDto } from './dto/login.dto'
+import { SigningDto } from './dto/signing.dto'
 import { AuthService } from './auth.service'
 import { GoogleAuthDto } from './dto/google-auth.dto'
-import { Body, Controller, Post, Res, HttpCode, HttpStatus, Get, Param } from '@nestjs/common'
 import { ConfirmSigningDto } from './dto/confirm-signin.dto'
-import { SigningDto } from './dto/signing.dto'
 import { PasswordResetCodeRequestDto } from './dto/update-password.dto'
+import { Body, Controller, Post, Res, HttpCode, HttpStatus, Get, Param } from '@nestjs/common'
 
 @ApiTags('auth')
 @Controller('/auth')
