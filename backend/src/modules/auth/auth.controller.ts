@@ -31,8 +31,10 @@ export class AuthController {
     res.cookie('accessToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none',
+      domain: process.env.DOMAIN,
       path: '/',
+      maxAge: 24 * 60 * 60 * 1000,
     })
 
     return 'Registro exitoso'
@@ -45,8 +47,9 @@ export class AuthController {
 
     res.cookie('accessToken', token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      domain: process.env.DOMAIN,
       path: '/',
       maxAge: 24 * 60 * 60 * 1000,
     })
@@ -70,8 +73,9 @@ export class AuthController {
 
     res.cookie('accessToken', result.accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      domain: process.env.DOMAIN,
       path: '/',
       maxAge: 24 * 60 * 60 * 1000,
     })
