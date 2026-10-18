@@ -287,6 +287,7 @@ const listReservationsTool = defineTool({
           items: {
             type: Type.STRING,
             enum: [
+              ReservationStatus.FAILED,
               ReservationStatus.PENDING,
               ReservationStatus.CONFIRMED,
               ReservationStatus.CANCELLED,
