@@ -29,6 +29,7 @@ const statusConfig: Record<
   ReservationStatus,
   { label: string; color: 'warning' | 'success' | 'danger' | 'default' }
 > = {
+  [ReservationStatus.FAILED]: { label: 'Cancelado', color: 'danger' },
   [ReservationStatus.PENDING]: { label: 'Pendiente', color: 'warning' },
   [ReservationStatus.CONFIRMED]: { label: 'Confirmado', color: 'success' },
   [ReservationStatus.CANCELLED]: { label: 'Cancelado', color: 'danger' },

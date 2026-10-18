@@ -4,6 +4,7 @@ import { IPaginationFilter } from '@/api/interfaces'
 import { PaymentModel } from './PaymentModel'
 
 export enum ReservationStatus {
+  FAILED = 'FAILED',
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
   CANCELLED = 'CANCELLED',
