@@ -3,6 +3,7 @@ import { ApartmentModel } from './ApartmentModel'
 import { IPaginationFilter } from '@/api/interfaces'
 
 export enum ReservationStatus {
+  FAILED = 'FAILED',
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
   CANCELLED = 'CANCELLED',
