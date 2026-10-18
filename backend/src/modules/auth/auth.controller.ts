@@ -11,7 +11,7 @@ import { Body, Controller, Post, Res, HttpCode, HttpStatus, Get, Param } from '@
 @ApiTags('auth')
 @Controller('/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Get('/validate-signing-token/:token')
   async validateSigningToken(@Param('token') token: string) {
@@ -45,9 +45,10 @@ export class AuthController {
 
     res.cookie('accessToken', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       path: '/',
+      maxAge: 24 * 60 * 60 * 1000,
     })
 
     return {
@@ -69,9 +70,10 @@ export class AuthController {
 
     res.cookie('accessToken', result.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       path: '/',
+      maxAge: 24 * 60 * 60 * 1000,
     })
 
     return result
