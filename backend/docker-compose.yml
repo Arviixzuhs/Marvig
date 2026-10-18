@@ -26,6 +26,9 @@ services:
         condition: service_healthy
     env_file:
       - .env.production
+    volumes:
+      - uploads-data:/usr/src/app/uploads
 
 volumes:
   db-data:
+  uploads-data:
