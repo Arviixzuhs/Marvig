@@ -21,7 +21,7 @@ export class MarvigAIService {
   constructor(
     private chatService: ChatService,
     private messageService: MessageService,
-  ) {}
+  ) { }
 
   async ask({
     user,
@@ -109,10 +109,10 @@ export class MarvigAIService {
         let result: unknown
         try {
           result = await tool.execute(call.args ?? {})
-          this.logger.log(`✅ [SUCCESS] Tool "${call.name}" ejecutada con éxito.`)
           this.logger.debug(
-            `📤 Resultado de la Tool: ${JSON.stringify(result).substring(0, 500)}...`,
+            `📤 Resultado de la Tool: ${String(JSON.stringify(result) ?? result).substring(0, 500)}...`,
           )
+          this.logger.log(`✅ [SUCCESS] Tool "${call.name}" ejecutada con éxito.`)
         } catch (error: any) {
           this.logger.error(`❌ [ERROR] Falló la ejecución de la tool "${call.name}":`, error)
           result = { error: error.message || 'Error interno de la herramienta' }
