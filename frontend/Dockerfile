@@ -1,12 +1,28 @@
-FROM node:20.16.0
+# 1. Etapa de compilación (Build)
+FROM node:20.19.0-alpine AS build
 
 WORKDIR /app
 
 COPY package*.json ./
-COPY dist ./dist
+RUN npm ci
 
+COPY . .
+
+# Compila el código de React + Vite dentro del contenedor (genera /app/dist)
+RUN npm run build
+
+# 2. Etapa de producción (Servidor con Node)
+FROM node:20.19.0-alpine AS production
+
+WORKDIR /app
+
+# Instala la herramienta liviana 'serve'
 RUN npm install -g serve
+
+# Copia ÚNICAMENTE la carpeta dist compilada en la etapa anterior
+COPY --from=build /app/dist ./dist
 
 EXPOSE 5173
 
-CMD ["serve", "dist", "-l", "tcp://0.0.0.0:5173", "-n", "--single"]
+# Sirve la SPA en el puerto 5173 permitiendo el enrutamiento del lado del cliente (-s)
+CMD ["serve", "-s", "dist", "-l", "5173"]
