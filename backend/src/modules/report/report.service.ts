@@ -55,6 +55,7 @@ export const reservationTypeConfig = {
 }
 
 export const reservationStatusConfig = {
+  [ReservationStatus.FAILED]: { label: 'Fallido', color: '#EF4444' },
   [ReservationStatus.PENDING]: { label: 'Pendiente', color: '#F59E0B' },
   [ReservationStatus.CONFIRMED]: { label: 'Confirmado', color: '#10B981' },
   [ReservationStatus.CANCELLED]: { label: 'Cancelado', color: '#EF4444' },
@@ -69,7 +70,7 @@ export class ReportService {
     private readonly findPaymentsUseCase: FindPaymentsUseCase,
     private readonly findExpensesUseCase: FindExpensesUseCase,
     private readonly findReservationsUseCase: FindReservationsUseCase,
-  ) {}
+  ) { }
 
   async getPaymentReport(filters: PaymentReportQueryDto) {
     return this.findPaymentsUseCase.execute(filters)
@@ -153,11 +154,11 @@ export class ReportService {
     const where = {
       ...(filters.fromDate || filters.toDate
         ? {
-            createdAt: {
-              ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
-              ...(filters.toDate && { lte: new Date(filters.toDate) }),
-            },
-          }
+          createdAt: {
+            ...(filters.fromDate && { gte: new Date(filters.fromDate) }),
+            ...(filters.toDate && { lte: new Date(filters.toDate) }),
+          },
+        }
         : {}),
     }
 
