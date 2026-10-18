@@ -85,7 +85,7 @@ const paymentFilterProperties = {
     type: Type.INTEGER,
     description: 'The page number to retrieve for pagination (only applicable for listing).',
   },
-  rowsPerPage: {
+  pageSize: {
     type: Type.INTEGER,
     description: 'Number of items to return per page (only applicable for listing).',
   },
@@ -167,7 +167,7 @@ const listPromotionsTool = defineTool({
           type: Type.INTEGER,
           description: 'The page number to retrieve for pagination.',
         },
-        rowsPerPage: {
+        pageSize: {
           type: Type.INTEGER,
           description: 'Number of items to return per page.',
         },
@@ -254,7 +254,7 @@ const listApartmentsTool = defineTool({
           type: Type.INTEGER,
           description: 'The page number to retrieve for pagination.',
         },
-        rowsPerPage: {
+        pageSize: {
           type: Type.INTEGER,
           description: 'Number of items to return per page.',
         },
@@ -335,7 +335,7 @@ const listReservationsTool = defineTool({
           type: Type.INTEGER,
           description: 'The page number to retrieve for pagination.',
         },
-        rowsPerPage: {
+        pageSize: {
           type: Type.INTEGER,
           description: 'Number of items to return per page.',
         },
@@ -393,7 +393,7 @@ const listEmployeesTool = defineTool({
           type: Type.INTEGER,
           description: 'The page number to retrieve for pagination.',
         },
-        rowsPerPage: {
+        pageSize: {
           type: Type.INTEGER,
           description: 'Number of items to return per page.',
         },
@@ -482,7 +482,7 @@ const listExpensesTool = defineTool({
           type: Type.INTEGER,
           description: 'The page number to retrieve for pagination.',
         },
-        rowsPerPage: {
+        pageSize: {
           type: Type.INTEGER,
           description: 'Number of items to return per page.',
         },
@@ -578,7 +578,7 @@ const listUsersTool = defineTool({
           type: Type.INTEGER,
           description: 'The page number to retrieve for pagination.',
         },
-        rowsPerPage: {
+        pageSize: {
           type: Type.INTEGER,
           description: 'Number of items to return per page.',
         },
