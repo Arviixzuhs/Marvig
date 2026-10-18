@@ -1,11 +1,11 @@
-FROM node:20.16.0 AS deps
+FROM node:20.19.0 AS deps
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
-FROM node:20.16.0 AS build
+FROM node:20.19.0 AS build
 
 WORKDIR /usr/src/app
 
@@ -17,14 +17,14 @@ RUN prisma generate
 
 RUN npm run build
 
-FROM node:20.16.0 AS production
+FROM node:20.19.0 AS production
 
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 COPY --from=build /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /usr/src/app/node_modules/@prisma ./node_modules/@prisma
