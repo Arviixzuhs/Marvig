@@ -11,7 +11,7 @@ export const UserLayout = () => {
   }, [pathname])
 
   React.useEffect(() => {
-    document.body.classList = ''
+    document.body.classList.value = ''
   }, [])
 
   return (
