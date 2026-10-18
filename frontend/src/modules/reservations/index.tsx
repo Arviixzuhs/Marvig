@@ -16,6 +16,7 @@ import { setCurrentItemToView, toggleViewItemModal } from '@/features/appTableSl
 import { Button, Card, CardBody, CardFooter, Chip, Input, Pagination, Spinner } from '@heroui/react'
 
 const statusConfig = {
+  [ReservationStatus.FAILED]: { label: 'Fallido', color: 'danger' as const },
   [ReservationStatus.PENDING]: { label: 'Pendiente', color: 'warning' as const },
   [ReservationStatus.CONFIRMED]: { label: 'Confirmada', color: 'success' as const },
   [ReservationStatus.CANCELLED]: { label: 'Cancelada', color: 'danger' as const },

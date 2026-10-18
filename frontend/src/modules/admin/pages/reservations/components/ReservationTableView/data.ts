@@ -36,6 +36,7 @@ export const tableColumns: TableColumnInterface[] = [
       [ReservationStatus.CONFIRMED]: { label: 'Confirmado', color: '#10B981' },
       [ReservationStatus.CANCELLED]: { label: 'Cancelado', color: '#EF4444' },
       [ReservationStatus.COMPLETED]: { label: 'Completado', color: '#6B7280' },
+      [ReservationStatus.FAILED]: { label: 'Fallido', color: '#EF4444' },
     },
   },
   {
@@ -80,6 +81,7 @@ export const modalInputs: ModalInput[] = [
     required: true,
     placeholder: 'Estado inicial',
     options: [
+      { label: 'Fallido', value: ReservationStatus.FAILED },
       { label: 'Pendiente', value: ReservationStatus.PENDING },
       { label: 'Confirmado', value: ReservationStatus.CONFIRMED },
       { label: 'Cancelado', value: ReservationStatus.CANCELLED },

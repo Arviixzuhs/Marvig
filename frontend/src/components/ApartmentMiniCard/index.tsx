@@ -10,7 +10,7 @@ export const ApartmentMiniCard = ({ apartment }: ApartmentMiniCardProps) => {
   return (
     <div className='flex gap-3 w-full'>
       <div className='w-20 h-16 rounded-xl bg-muted overflow-hidden shrink-0'>
-        <img className='w-full h-full object-cover' src={apartment.images?.[0].url} />
+        <img className='w-full h-full object-cover' src={apartment.images?.[0]?.url} />
       </div>
       <div className='flex-1'>
         <h3 className='font-semibold text-sm mb-0.5'>Suit #{apartment.number}</h3>

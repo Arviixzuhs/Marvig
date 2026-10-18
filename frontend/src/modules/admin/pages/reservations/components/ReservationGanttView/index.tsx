@@ -39,6 +39,12 @@ const statusColorMap: Record<
     text: 'text-custom-gray',
     label: 'Completado',
   },
+  [ReservationStatus.FAILED]: {
+    bg: 'bg-custom-red-bg',
+    border: 'border-custom-red-border',
+    text: 'text-custom-red',
+    label: 'Cancelado',
+  },
 }
 
 const MONTHS = [
