@@ -7,10 +7,10 @@ import { EmailService } from '@/common/utils/mail-sender.util'
 import { GoogleAuthDto } from './dto/google-auth.dto'
 import { PrismaService } from '@/prisma/prisma.service'
 import { ConfirmSigningDto } from './dto/confirm-signin.dto'
+import { VerificationCodeType } from '@/modules/verificationCode/domain/enums/verificationCode.enum'
 import { PasswordResetCodeRequestDto } from './dto/update-password.dto'
-import { ValidateVarificationCodeUseCase } from '../verificationCode/application/usecases/validate-verification-code.usecase'
+import { ValidateVarificationCodeUseCase } from '@/modules/verificationCode/application/usecases/validate-verification-code.usecase'
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
-import { VerificationCodeType } from '../verificationCode/domain/enums/verificationCode.enum'
 
 @Injectable()
 export class AuthService {
