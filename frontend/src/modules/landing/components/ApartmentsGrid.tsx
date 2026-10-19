@@ -1,6 +1,6 @@
 import React from 'react'
 import { ApartmentCard } from '@/modules/apartments/components/ApartmentCard'
-import { ApartmentModel } from '@/models/ApartmentModel'
+import { ApartmentModel, ApartmentStatus } from '@/models/ApartmentModel'
 import { apartmentService } from '@/services/apartment'
 
 export const ApartmentsGrid = () => {
@@ -9,8 +9,10 @@ export const ApartmentsGrid = () => {
   const loadData = async () => {
     const response = await apartmentService.getAll({
       page: 0,
+      status: [ApartmentStatus.AVAILABLE, ApartmentStatus.OCCUPIED, ApartmentStatus.RESERVED],
       pageSize: 20,
     })
+
     if (response) {
       setApartments(response.content)
     }

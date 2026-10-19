@@ -1,5 +1,4 @@
 import { UserRole } from '@/common/enums/user-role.enum'
-import { UserModel } from '@/modules/user/domain/models/user.model'
 import { EmailService } from '@/common/utils/mail-sender.util'
 import { PaymentStatus } from '@/modules/payment/domain/enums/payment-status.enum'
 import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
@@ -43,16 +42,14 @@ export class CreateReservationUseCase {
     private readonly emailService: EmailService,
   ) {}
 
-  async execute(data: CreateReservationDto, userId?: number): Promise<ReservationModel> {
-    let user: UserModel | null = null
+  async execute(data: CreateReservationDto, userId: number): Promise<ReservationModel> {
+    const user = await this.userRepository.findUser(userId)
+    if (!user) throw new NotFoundException('El usuario no existe')
 
-    if (userId) {
-      user = await this.userRepository.findUser(userId)
-      if (!user) throw new NotFoundException('El usuario no existe')
-    }
-
-    const toDay = new Date()
+    const today = new Date()
+    const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
     const start = new Date(data.startDate)
+    const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate())
     const end = new Date(data.endDate)
 
     if (start >= end) {
@@ -67,6 +64,14 @@ export class CreateReservationUseCase {
       throw new NotFoundException('Algunos de los apartamentos no existen')
     }
 
+    const hasUnavailableApartment = apartments.content.some(
+      (apartment) => apartment.status === ApartmentStatusEnum.MAINTENANCE,
+    )
+
+    if (hasUnavailableApartment) {
+      throw new ConflictException('Uno de los apartamentos están en mantenimiento.')
+    }
+
     const isAvailable = await this.reservationRepository.checkAvailability(
       data.apartmentIds,
       start,
@@ -74,15 +79,7 @@ export class CreateReservationUseCase {
     )
 
     if (!isAvailable) {
-      throw new ConflictException('Uno o más apartamentos no están disponibles.')
-    }
-
-    const hasUnavailableApartment = apartments.content.some(
-      (apartment) => apartment.status === ApartmentStatusEnum.MAINTENANCE,
-    )
-
-    if (hasUnavailableApartment) {
-      throw new ConflictException('Uno de los apartamentos está en mantenimiento.')
+      throw new ConflictException('Uno o más apartamentos ya se encuentran reservados en ese rango de fechas.')
     }
 
     const finalTotal = calcTotalByApartments({
@@ -105,10 +102,13 @@ export class CreateReservationUseCase {
       userId,
     )
 
+    const isUserAdmin = user?.role === UserRole.ADMIN
+    const paymentStatus = isUserAdmin ? PaymentStatus.CONFIRMED : PaymentStatus.PENDING
+
     const createdPayment = await this.paymentRepository.createPayment({
       date: new Date(),
       amount: finalTotal,
-      status: user.role === UserRole.ADMIN ? PaymentStatus.CONFIRMED : PaymentStatus.PENDING,
+      status: paymentStatus,
       method: data.payment.method,
       reference: data.payment.reference,
       description: data.payment.description,
@@ -121,6 +121,7 @@ export class CreateReservationUseCase {
       ? `Tu pago de $${finalTotal} por la reservación #${createdReservation.id} ha sido confirmado con éxito.`
       : `Hemos recibido tu reporte de pago por $${finalTotal} (Ref: ${data.payment.reference}). Está en proceso de verificación.`
 
+
     await this.notificationRepository.createNotification({
       body: notificationBody,
       type: NotificationType.PAYMENT_ACTIVITY,
@@ -130,48 +131,38 @@ export class CreateReservationUseCase {
       userTargetRole: UserRole.ADMIN,
     })
 
-    const todayMidnight = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate())
-    const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate())
 
-    if (todayMidnight.getTime() === startMidnight.getTime()) {
-      await this.apartmentRepository.updateStatusByApartmentIds(
-        data.apartmentIds,
-        ApartmentStatusEnum.OCCUPIED,
-      )
+    const newApartmentStatus = todayMidnight.getTime() === startMidnight.getTime()
+      ? ApartmentStatusEnum.OCCUPIED
+      : ApartmentStatusEnum.RESERVED
+
+    await this.apartmentRepository.updateStatusByApartmentIds(
+      data.apartmentIds,
+      newApartmentStatus,
+    )
+
+    const recipientEmail = data.clientEmail || user?.email
+    const recipientName = data.clientName || user?.name || 'Cliente'
+
+    if (recipientEmail) {
+      this.emailService.sendSingleEmail({
+        to: recipientEmail,
+        subject: 'Confirmación de Reserva - Posada Marvig',
+        title: '¡Tu reserva ha sido confirmada!',
+        subtitle: `Hola, ${recipientName}`,
+        content: `
+        <p>Nos complace informarte que tu reserva se ha procesado correctamente. A continuación, encontrarás el resumen de tu estancia:</p>
+        <div class="reservation-details">
+          <p><strong>Fecha de Entrada:</strong> ${getFormattedDateTime({ value: start })}</p>
+          <p><strong>Fecha de Salida:</strong> ${getFormattedDateTime({ value: end })}</p>
+          <p><strong>Total Pagado:</strong> $${finalTotal}</p>
+          <p style="margin-top: 8px; font-size: 13px; color: #71717a;">
+            Pago ref. <strong>${createdPayment.reference}</strong>
+          </p>
+        </div>
+      `,
+      })
     }
-
-    this.emailService.sendSingleEmail({
-      to: data.clientEmail ? data.clientEmail : user.email,
-      subject: 'Confirmación de Reserva - Posada Marvig',
-      title: '¡Tu reserva ha sido confirmada!',
-      subtitle: `Hola, ${data.clientName ? data.clientName : user.name || 'Cliente'}`,
-      content: `
-    <p>Nos complace informarte que tu reserva se ha procesado correctamente. A continuación, encontrarás el resumen de tu estancia:</p>
-
-    <div class="reservation-details">
-      <p><strong>Fecha de Entrada:</strong> ${getFormattedDateTime({ value: start })}</p>
-      <p><strong>Fecha de Salida:</strong> ${getFormattedDateTime({ value: end })}</p>
-      <p><strong>Total Pagado:</strong> $${finalTotal}</p>
-      <p style="margin-top: 8px; font-size: 13px; color: #71717a;">
-        Pago ref. <strong>${createdPayment.reference}</strong>
-      </p>
-    </div>
-
-    <div class="cta-container">
-      <a href="${process.env.CLIENT_ORIGIN}/reservations" class="btn-primary">
-        Ver mi reserva
-      </a>
-    </div>
-
-    <p style="text-align: center; font-size: 13px; color: #71717a;">
-      Desde tu panel podrás consultar el estado de tu alojamiento.
-    </p>
-    
-    <p style="text-align: center; font-size: 13px; color: #71717a;">
-      ¡Gracias por confiar en nosotros!
-    </p>
-  `,
-    })
 
     return createdReservation
   }
