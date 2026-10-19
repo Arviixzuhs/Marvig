@@ -44,7 +44,7 @@ export class MarvigAIService {
     chatId: string
     accessToken: string
     userMessage: string
-    signal: AbortSignal,
+    signal: AbortSignal
   }) {
     const decodedUserMessage = decodeURIComponent(userMessage)
     this.logger.log(`🚀 [ASK] ChatId: ${chatId} | Usuario: ${user.userId}`)
