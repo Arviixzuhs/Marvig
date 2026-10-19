@@ -1,4 +1,4 @@
-import { ChatBot } from './components/ChatBot'
+import { Chatbot } from '@/components/Chatbot'
 import ReactLenis from 'lenis/react'
 import { FaqSection } from './components/FaqSection'
 import { HeroSection } from './components/HeroSection'
@@ -17,7 +17,7 @@ export const LandingPage = () => {
         <FaqSection />
         <LocationSection />
         <ContactSection />
-        <ChatBot />
+        <Chatbot mode='POPUP' />
       </div>
     </ReactLenis>
   )
