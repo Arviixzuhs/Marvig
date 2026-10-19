@@ -4,10 +4,10 @@ import { ApartmentsGrid } from './ApartmentsGrid'
 
 export const ApartmentsSection = () => {
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16'>
+    <section className='max-w-6xl mx-auto px-6 py-16' id='apartments'>
       <div className='flex items-end justify-between mb-8'>
         <div>
-          <h2 className='text-2xl font-bold'>Destacados esta semana</h2>
+          <h2 className='text-2xl font-bold'>Apartamentos</h2>
           <p className='text-muted-foreground text-sm mt-1'>Los más buscados en la plataforma</p>
         </div>
         <Link
