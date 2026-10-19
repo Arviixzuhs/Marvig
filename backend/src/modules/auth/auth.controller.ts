@@ -83,7 +83,7 @@ export class AuthController {
   }
 
   private getCookieOptions(): CookieOptions {
-    const isProduction = process.env.NODE_ENV === 'PRODUCTION'
+    const isProduction = process.env.SERVER_MODE === 'PRODUCTION'
 
     return {
       httpOnly: true,
