@@ -106,7 +106,7 @@ export const ApartmentImagesGrid = () => {
             {/* Botón de cierre */}
             <button
               onClick={closeCarousel}
-              className='absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all z-20 cursor-pointer'
+              className='absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full bg-black/50 hover:bg-black/80 transition-all z-20 cursor-pointer'
               aria-label='Cerrar modal'
             >
               <X size={24} />
