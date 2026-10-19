@@ -11,7 +11,7 @@ import { Body, Controller, Post, Res, HttpCode, HttpStatus, Get, Param } from '@
 @ApiTags('auth')
 @Controller('/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Get('/validate-signing-token/:token')
   async validateSigningToken(@Param('token') token: string) {
