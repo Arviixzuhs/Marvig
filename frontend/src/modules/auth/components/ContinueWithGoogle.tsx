@@ -2,15 +2,21 @@ import toast from 'react-hot-toast'
 import { useRef } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { setMyUser } from '@/features/userSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { authService } from '@/modules/auth/services'
+import { RootState } from '@/store'
+import { setIsLoginModal } from '../slice/authSlice'
 
-export const ContinueWithGoogle = () => {
+interface ContinueWithGoogle {
+  navigateToHome?: boolean
+}
+
+export const ContinueWithGoogle = ({ navigateToHome = true }: ContinueWithGoogle) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
+  const auth = useSelector((state: RootState) => state.auth)
   const hiddenButtonRef = useRef<HTMLDivElement>(null)
 
   const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
@@ -28,7 +34,13 @@ export const ContinueWithGoogle = () => {
 
       dispatch(setMyUser(user))
 
-      navigate('/')
+      if (auth.isLoginModalOpen) {
+        dispatch(setIsLoginModal(false))
+      }
+
+      if (navigateToHome) {
+        navigate('/')
+      }
     } catch (error: any) {
       console.error(error)
 
