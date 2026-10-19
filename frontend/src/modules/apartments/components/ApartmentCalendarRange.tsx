@@ -1,20 +1,34 @@
 import { RootState } from '@/store'
+import { LoginModal } from '@/modules/auth/components/LoginModal'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { formatCurrency } from '@/utils/formatCurrency'
+import { setIsLoginModal } from '@/modules/auth/slice/authSlice'
 import { useCalendarContext } from '@/context/calendarContext'
+import { useDispatch, useSelector } from 'react-redux'
 import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRange'
 import { Card, Button, Divider, CardBody, CardFooter, CardHeader } from '@heroui/react'
 
 export const ApartmentCalendarRange = () => {
   const navigate = useNavigate()
+  const user = useSelector((state: RootState) => state.user)
   const apartment = useSelector((state: RootState) => state.apartment)
   const checkout = useSelector((state: RootState) => state.checkout)
+
   const { nights } = useCalendarContext()
+  const dispatch = useDispatch()
   if (!apartment) return null
+
+  const onSubmit = () => {
+    if (!user) {
+      dispatch(setIsLoginModal(true))
+    } else {
+      navigate(`/checkout/national/${apartment.id}`)
+    }
+  }
 
   return (
     <div>
+      <LoginModal title='Inicia sesión para continuar' />
       <Card className='w-full md:w-fit'>
         <CardHeader className='flex gap-3'>
           <div className='flex items-baseline gap-1'>
@@ -35,12 +49,7 @@ export const ApartmentCalendarRange = () => {
               <span>{formatCurrency(checkout.totalPrice)}</span>
             </div>
           </div>
-          <Button
-            color='primary'
-            className='w-full'
-            isDisabled={nights === 0}
-            onPress={() => navigate(`/checkout/national/${apartment.id}`)}
-          >
+          <Button color='primary' className='w-full' isDisabled={nights === 0} onPress={onSubmit}>
             {nights === 0 ? 'Selecciona una fecha' : 'Reservar'}
           </Button>
         </CardFooter>
