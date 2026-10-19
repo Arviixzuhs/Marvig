@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import React, { useState } from 'react'
 import { Card, CardBody, Input, Textarea, Button, Divider } from '@heroui/react'
 import { BsInstagram } from 'react-icons/bs'
@@ -49,19 +50,25 @@ export const ContactSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Datos enviados:', formData)
+    toast.success('¡Mensaje enviado correctamente!')
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+    })
   }
 
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16'>
+    <section className='max-w-6xl mx-auto px-6 py-16' id='contact'>
       {/* Encabezado */}
       <div className='flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4'>
         <div className='max-w-xl'>
           <p className='text-small font-semibold tracking-wider text-primary uppercase mb-2'>
-            Estamos para ayudarte
+            Contacto
           </p>
           <h2 className='text-3xl font-bold tracking-tight text-default-900 sm:text-4xl'>
-            Ponte en contacto con nosotros
+            Estamos para ayudarte
           </h2>
         </div>
         <p className='text-default-500 max-w-md text-medium'>
@@ -161,8 +168,6 @@ export const ContactSection = () => {
                 key={index}
                 isPressable={!!item.href}
                 as={item.href ? 'a' : 'div'}
-     
-
                 rel={item.href ? 'noopener noreferrer' : undefined}
                 className='border-none bg-default-50 dark:bg-default-100 shadow-sm transition-all duration-300 hover:-translate-y-1'
               >

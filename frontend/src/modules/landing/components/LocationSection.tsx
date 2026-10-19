@@ -50,12 +50,12 @@ export const LocationSection: React.FC = () => {
   }
 
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16'>
+    <section className='max-w-6xl mx-auto px-6 py-16' id='address'>
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-start'>
         <div className='lg:col-span-4 space-y-6'>
           <div>
             <p className='text-small font-semibold tracking-wider text-primary uppercase mb-2'>
-              Ubicación Estratégica
+              Ubicación
             </p>
             <h2 className='text-3xl font-bold tracking-tight text-default-900'>
               El corazón de tu próxima aventura
