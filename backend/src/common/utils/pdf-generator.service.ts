@@ -24,8 +24,8 @@ export class PdfGeneratorService {
    * Genera un encabezado limpio y asimétrico sobre fondo blanco con acento de marca.
    */
   addPdfHeader(doc: jsPDF, title: string, subtitle: string): void {
-    const logoPath = join(__dirname, '../assets/logo.jpg');
-    const logoBase64 = readFileSync(logoPath).toString('base64');
+    const logoPath = join(__dirname, '../assets/logo.jpg')
+    const logoBase64 = readFileSync(logoPath).toString('base64')
     const pageW = doc.internal.pageSize.getWidth()
 
     // --- ACCENT BAR: Franja decorativa superior en color Indigo ---

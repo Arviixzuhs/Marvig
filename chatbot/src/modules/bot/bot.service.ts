@@ -21,7 +21,7 @@ export class MarvigAIService {
   constructor(
     private chatService: ChatService,
     private messageService: MessageService,
-  ) { }
+  ) {}
 
   async ask({
     user,

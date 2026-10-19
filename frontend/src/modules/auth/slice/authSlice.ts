@@ -4,6 +4,7 @@ export interface AuthState {
   email: string
   code: string
   password?: string
+  isLoginModalOpen?: boolean
 }
 
 export const authSlice = createSlice({
@@ -11,6 +12,7 @@ export const authSlice = createSlice({
   initialState: {
     email: '',
     code: '',
+    isLoginModalOpen: false,
   } as AuthState,
   reducers: {
     setAuthFormdata: (state, action) => {
@@ -20,6 +22,9 @@ export const authSlice = createSlice({
         [name]: value,
       }
     },
+    setIsLoginModal: (state, action) => {
+      state.isLoginModalOpen = action.payload
+    },
     resetRecoverPasswordData: () => ({
       email: '',
       code: '',
@@ -27,4 +32,4 @@ export const authSlice = createSlice({
   },
 })
 
-export const { setAuthFormdata, resetRecoverPasswordData } = authSlice.actions
+export const { setAuthFormdata, resetRecoverPasswordData, setIsLoginModal } = authSlice.actions

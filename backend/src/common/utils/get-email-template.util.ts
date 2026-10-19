@@ -34,7 +34,7 @@ export const getEmailTemplate = (title: string, subtitle: string, content: strin
 
   /* Header con imagen de fondo u Overlay oscuro para contraste */
   .header {
-    background: url("https://media.discordapp.net/attachments/1064750763013853264/1534310072992403577/image.png?ex=6a73a91b&is=6a72579b&hm=e7a7dcb17e01b6649e4fed84088e84e8f4fde03beb2064fb5b10225696525dac&=&format=webp&quality=lossless") center/cover no-repeat #000000;
+    background: url("https://res.cloudinary.com/rvf7h1gz/image/upload/v1792372118/bg-image.jpg") center/cover no-repeat #000000;
     color: #ffffff;
     text-align: center;
     padding: 40px 24px 36px 24px;
@@ -196,7 +196,7 @@ export const getEmailTemplate = (title: string, subtitle: string, content: strin
   <div class="container">
 
     <div class="header">
-      <img src="https://media.discordapp.net/attachments/1064750763013853264/1534303815321260073/logo.jpg?ex=6a73a347&is=6a7251c7&hm=74447dae59fc90e0a9a7552b0d48ee32b866f8bf54ed4888c55d0beca04cfb50&=&format=webp" class="logo" alt="Posada Marvig">
+      <img src="https://res.cloudinary.com/rvf7h1gz/image/upload/v1792372160/logo.jpg" class="logo" alt="Posada Marvig">
       <div class="title">${title}</div>
       <div class="subtitle">${subtitle}</div>
     </div>

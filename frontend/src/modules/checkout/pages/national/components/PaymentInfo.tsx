@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 export const PaymentInfo = () => {
   const dispatch = useDispatch()
+
   const checkout = useSelector((state: RootState) => state.checkout)
   const [copiedText, setCopiedText] = React.useState<string | null>(null)
 

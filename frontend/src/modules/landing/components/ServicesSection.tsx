@@ -49,15 +49,15 @@ export const ServicesSection = () => {
   ]
 
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16'>
+    <section className='max-w-6xl mx-auto px-6 py-16' id='services'>
       {/* Encabezado */}
       <div className='flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4'>
         <div className='max-w-xl'>
           <p className='text-small font-semibold tracking-wider text-primary uppercase mb-2'>
-            Tu comodidad es prioridad
+            Servicios
           </p>
           <h2 className='text-3xl font-bold tracking-tight text-default-900 sm:text-4xl'>
-            Servicios diseñados para una estadía perfecta
+            Todo para una estadía perfecta
           </h2>
         </div>
         <p className='text-default-500 max-w-md text-medium'>
