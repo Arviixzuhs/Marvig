@@ -31,7 +31,7 @@ export const ChatbotMessages = () => {
   const dispatch = useDispatch()
   const messagesEndRef = React.useRef<HTMLDivElement | null>(null)
 
-  const userName = useSelector((state: any) => state.user?.name || 'Usuario')
+  const userName = useSelector((state: RootState) => state.user?.data?.name || 'Usuario')
 
   const {
     value: input,

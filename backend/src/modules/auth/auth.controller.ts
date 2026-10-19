@@ -44,6 +44,7 @@ export class AuthController {
       message: 'Inicio de sesión exitoso',
       user: {
         id: user.id,
+        role: user.role,
         name: user.name,
         email: user.email,
         avatar: user.avatar,

@@ -10,7 +10,7 @@ import { Card, Button, Divider, CardBody, CardFooter, CardHeader } from '@heroui
 
 export const ApartmentCalendarRange = () => {
   const navigate = useNavigate()
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user.data)
   const apartment = useSelector((state: RootState) => state.apartment)
   const checkout = useSelector((state: RootState) => state.checkout)
 

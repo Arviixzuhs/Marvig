@@ -60,7 +60,7 @@ export const ContactSection = () => {
   }
 
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16' id='contact'>
+    <section className='max-w-6xl mx-auto px-6 py-16 scroll-mt-10' id='contact'>
       {/* Encabezado */}
       <div className='flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4'>
         <div className='max-w-xl'>

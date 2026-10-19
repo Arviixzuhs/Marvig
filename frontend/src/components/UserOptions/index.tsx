@@ -14,7 +14,7 @@ import {
 } from '@heroui/react'
 
 export const NavbarUserOptions = () => {
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user.data)
   const location = useLocation()
   const navigate = useNavigate()
 
