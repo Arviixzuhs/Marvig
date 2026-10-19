@@ -1,22 +1,32 @@
-import { User } from '@/interfaces/user.interface'
+import OpenAI from 'openai'
 import { config } from 'dotenv'
+import { User } from '@/interfaces/user.interface'
 import { AuthorType } from '@prisma/client'
 import { ChatService } from '@/modules/chat/chat.service'
 import { getFileContent } from '@/utils/getFileContent'
 import { MessageService } from '@/modules/messages/messages.service'
 import { apiTools, tools } from '@/tools'
 import { setDynamicHeaders } from '@/api/apollo-client'
-import { GoogleGenAI, ContentListUnion } from '@google/genai'
-import { ConflictException, Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
 config()
 
 @Injectable()
 export class MarvigAIService {
   private readonly logger = new Logger(MarvigAIService.name)
-  private readonly ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
+  private readonly ai = new OpenAI({
+    baseURL: process.env.OPENROUTER_BASE_URL,
+    apiKey: process.env.OPENROUTER_API_KEY,
+    defaultHeaders: {
+      'HTTP-Referer': process.env.APP_URL,
+      'X-Title': 'Marvig',
+    },
+  })
+  private readonly model = process.env.OPENROUTER_MODEL
   private readonly MESSAGE_TO_SUMMARY = 8
   private readonly SHORT_CONTEXT_SIZE = 8
+  private readonly MAX_LOOPS = 5
 
   constructor(
     private chatService: ChatService,
@@ -28,114 +38,37 @@ export class MarvigAIService {
     chatId,
     accessToken,
     userMessage,
+    signal,
   }: {
     user: User
     chatId: string
     accessToken: string
     userMessage: string
+    signal: AbortSignal,
   }) {
     const decodedUserMessage = decodeURIComponent(userMessage)
-    this.logger.log(`=========================================`)
-    this.logger.log(`🚀 [ASK INICIADO] ChatId: ${chatId} | Usuario: ${user.userId}`)
-    this.logger.log(`💬 Mensaje del usuario: "${decodedUserMessage}"`)
+    this.logger.log(`🚀 [ASK] ChatId: ${chatId} | Usuario: ${user.userId}`)
 
     const chat = await this.chatService.findBy(chatId, user.userId)
-
     const shortContext = await this.messageService.findLastContextMessages(
       chatId,
       this.SHORT_CONTEXT_SIZE,
     )
-    this.logger.log(`📚 Contexto cargado: ${shortContext.length} mensajes previos encontrados.`)
-
-    const contents: ContentListUnion = shortContext.map((m) => ({
-      role: m.authorType === AuthorType.USER ? 'user' : 'model',
-      parts: [{ text: m.content }],
-    }))
-
-    contents.push({
-      role: 'user',
-      parts: [{ text: decodedUserMessage }],
-    })
 
     const systemInstruction = await this.buildSystemInstruction(chat.summary)
 
-    setDynamicHeaders({
-      Authorization: `Bearer ${accessToken}`,
-    })
+    const messages: ChatCompletionMessageParam[] = [
+      { role: 'system', content: systemInstruction },
+      ...shortContext.map(
+        (m): ChatCompletionMessageParam => ({
+          role: m.authorType === AuthorType.USER ? 'user' : 'assistant',
+          content: m.content,
+        }),
+      ),
+      { role: 'user', content: decodedUserMessage },
+    ]
 
-    let loopCount = 0
-    const MAX_LOOPS = 5
-
-    while (loopCount < MAX_LOOPS) {
-      loopCount++
-      this.logger.log(`\n🤖 [BUCLE AGENTE] Paso #${loopCount} - Enviando contexto a Gemini...`)
-
-      const response = await this.ai.models.generateContent({
-        model: process.env['GEMINI_MODEL'],
-        contents,
-        config: {
-          tools: apiTools,
-          systemInstruction,
-        },
-      })
-
-      const functionCalls = response.functionCalls
-
-      if (!functionCalls || functionCalls.length === 0) {
-        this.logger.log(
-          `✨ [BUCLE AGENTE] El modelo decidió no usar herramientas en el paso #${loopCount}. Saliendo al stream final.`,
-        )
-        break
-      }
-
-      this.logger.warn(
-        `🛠️ [TOOL CALL] Gemini solicitó ejecutar (${functionCalls.length}) herramienta(s):`,
-      )
-
-      contents.push(response.candidates[0].content)
-
-      const functionResponses: any[] = []
-
-      for (const call of functionCalls) {
-        this.logger.log(`✨ Ejecutando: "${call.name}" | ID: ${call.id}`)
-        this.logger.debug(`📦 Argumentos recibidos: ${JSON.stringify(call.args)}`)
-
-        const tool = tools.find((t) => t.name === call.name)
-        if (!tool) {
-          this.logger.error(`❌ Función no registrada en el sistema: ${call.name}`)
-          throw new ConflictException(`Función no registrada: ${call.name}`)
-        }
-
-        let result: unknown
-        try {
-          result = await tool.execute(call.args ?? {})
-          this.logger.debug(
-            `📤 Resultado de la Tool: ${String(JSON.stringify(result) ?? result).substring(0, 500)}...`,
-          )
-          this.logger.log(`✅ [SUCCESS] Tool "${call.name}" ejecutada con éxito.`)
-        } catch (error: any) {
-          this.logger.error(`❌ [ERROR] Falló la ejecución de la tool "${call.name}":`, error)
-          result = { error: error.message || 'Error interno de la herramienta' }
-        }
-
-        functionResponses.push({
-          name: call.name,
-          id: call.id,
-          response: { result },
-        })
-      }
-
-      contents.push({
-        role: 'user',
-        parts: functionResponses.map((fRes) => ({ functionResponse: fRes })),
-      })
-    }
-
-    if (loopCount >= MAX_LOOPS) {
-      this.logger.error(
-        `⚠️ [GUARDRAIL] Se alcanzó el límite máximo de bucles (${MAX_LOOPS}). Rompiendo ciclo por seguridad.`,
-      )
-    }
+    setDynamicHeaders({ Authorization: `Bearer ${accessToken}` })
 
     await this.messageService.create({
       chatId,
@@ -143,46 +76,122 @@ export class MarvigAIService {
       authorType: AuthorType.USER,
     })
 
-    this.logger.log(
-      `📝 Mensaje del usuario guardado en base de datos. Generando stream de respuesta...`,
-    )
-
     this.handleSummary(chatId, chat.messageCount)
 
-    return this.streamExplanation(chatId, contents, systemInstruction)
+    return this.runAgent(chatId, messages, signal)
   }
 
-  private async *streamExplanation(
+  private async *runAgent(
     chatId: string,
-    contents: ContentListUnion,
-    systemInstruction: string,
+    messages: ChatCompletionMessageParam[],
+    signal: AbortSignal,
   ) {
-    const stream = await this.ai.models.generateContentStream({
-      model: process.env['GEMINI_MODEL'],
-      contents,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
-    })
-
     let fullText = ''
 
-    for await (const chunk of stream) {
-      const textChunk = chunk.text || ''
-      if (textChunk) {
-        fullText += textChunk
-        yield textChunk
+    try {
+      for (let step = 1; step <= this.MAX_LOOPS; step++) {
+        if (signal.aborted) break
+
+        const isLastStep = step === this.MAX_LOOPS
+        this.logger.log(`🤖 [AGENTE] Paso #${step}`)
+
+        const stream = await this.ai.chat.completions.create(
+          {
+            model: this.model,
+            messages,
+            stream: true,
+            temperature: 0.7,
+            ...(isLastStep ? {} : { tools: apiTools, tool_choice: 'auto' as const }),
+          },
+          { signal },
+        )
+
+        let stepText = ''
+        const calls = new Map<number, { id: string; name: string; args: string }>()
+
+        for await (const chunk of stream) {
+          const delta = chunk.choices[0]?.delta
+          if (!delta) continue
+
+          if (delta.content) {
+            stepText += delta.content
+            fullText += delta.content
+            yield delta.content
+          }
+
+          for (const tc of delta.tool_calls ?? []) {
+            const current = calls.get(tc.index) ?? { id: '', name: '', args: '' }
+            if (tc.id) current.id = tc.id
+            if (tc.function?.name) current.name += tc.function.name
+            if (tc.function?.arguments) current.args += tc.function.arguments
+            calls.set(tc.index, current)
+          }
+        }
+
+        if (signal.aborted || calls.size === 0) break
+
+        const toolCalls = [...calls.values()].map((c, i) => ({
+          id: c.id || `call_${step}_${i}`,
+          name: c.name,
+          args: c.args,
+        }))
+
+        messages.push({
+          role: 'assistant',
+          content: stepText || null,
+          tool_calls: toolCalls.map((c) => ({
+            id: c.id,
+            type: 'function' as const,
+            function: { name: c.name, arguments: c.args || '{}' },
+          })),
+        })
+
+        for (const call of toolCalls) {
+          if (signal.aborted) break // no ejecutar más tools si ya se canceló
+          const result = await this.executeTool(call.name, call.args)
+          messages.push({
+            role: 'tool',
+            tool_call_id: call.id,
+            content: JSON.stringify(result),
+          })
+        }
+      }
+    } catch (error) {
+      // El abort lanza una excepción: es esperada, cualquier otra se propaga
+      if (!signal.aborted) throw error
+      this.logger.log(`Petición cancelada por el usuario (chat ${chatId})`)
+    } finally {
+      // Se guarda lo generado hasta ahora, también si se canceló a la mitad
+      if (fullText.trim()) {
+        await this.messageService.create({
+          chatId,
+          content: fullText,
+          authorType: AuthorType.CHATBOT,
+        })
       }
     }
 
-    await this.messageService.create({
-      chatId,
-      content: fullText,
-      authorType: AuthorType.CHATBOT,
-    })
+    if (!signal.aborted) yield '[DONE]'
+  }
 
-    yield '[DONE]'
+  private async executeTool(name: string, rawArgs: string): Promise<unknown> {
+    const tool = tools.find((t) => t.name === name)
+    if (!tool) {
+      this.logger.error(`❌ Función no registrada: ${name}`)
+      // Se devuelve al modelo en vez de lanzar excepción, para que pueda corregirse
+      return { error: `Función no registrada: ${name}` }
+    }
+
+    try {
+      const args = rawArgs ? JSON.parse(rawArgs) : {}
+      this.logger.log(`✨ Ejecutando "${name}" con ${rawArgs}`)
+      const result = await tool.execute(args)
+      this.logger.log(`✅ Tool "${name}" OK`)
+      return result ?? { ok: true }
+    } catch (error: any) {
+      this.logger.error(`❌ Falló la tool "${name}"`, error)
+      return { error: error.message || 'Error interno de la herramienta' }
+    }
   }
 
   private async handleSummary(chatId: string, messageCount: number) {
@@ -193,11 +202,7 @@ export class MarvigAIService {
     }
 
     const summary = await this.generateSummary(chatId)
-
-    await this.chatService.update(chatId, {
-      summary,
-      messageCount: 0,
-    })
+    await this.chatService.update(chatId, { summary, messageCount: 0 })
   }
 
   private async generateSummary(chatId: string) {
@@ -205,22 +210,20 @@ export class MarvigAIService {
     const chatHistory = messages.map((m) => `${m.authorType}: ${m.content}`).join('\n')
     const systemInstruction = await getFileContent('skills/prompts/resume', 'SKILL.md')
 
-    const response = await this.ai.models.generateContent({
-      model: process.env['GEMINI_MODEL'],
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: `${systemInstruction}\n\nCONVERSACIÓN:\n${chatHistory}` }],
-        },
+    const response = await this.ai.chat.completions.create({
+      model: this.model,
+      messages: [
+        { role: 'system', content: systemInstruction },
+        { role: 'user', content: `CONVERSACIÓN:\n${chatHistory}` },
       ],
-      config: { maxOutputTokens: 150 },
+      max_tokens: 150,
     })
 
-    return response.candidates[0].content.parts[0].text
+    return response.choices[0]?.message?.content ?? ''
   }
 
   private async buildSystemInstruction(summary: string): Promise<string> {
     const role = await getFileContent('skills/prompts/marvig', 'SKILL.md')
-    return `${role}\n\n${summary}`.trim()
+    return `${role}\n\n${summary ?? ''}`.trim()
   }
 }
