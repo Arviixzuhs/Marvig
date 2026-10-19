@@ -1,4 +1,3 @@
-import { defineTool } from '@/utils/defineTool'
 import { userService } from '@/services/user'
 import { PromotionType } from '@/models/PromotionModel'
 import { expenseService } from '@/services/exepense'
@@ -7,9 +6,10 @@ import { ExpenseCategory } from '@/models/ExpenseModel'
 import { ApartmentStatus } from '@/models/ApartmentModel'
 import { employeeService } from '@/services/employee'
 import { apartmentService } from '@/services/apartment'
+import { defineTool, Type } from '@/utils/defineTool'
 import { promotionService } from '@/services/promotion'
 import { reservationService } from '@/services/reservation'
-import { ToolListUnion, Type } from '@google/genai'
+import type { ChatCompletionTool } from 'openai/resources/chat/completions'
 import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel'
 import { RentalType, ReservationStatus } from '@/models/ReservationModel'
 
@@ -186,6 +186,11 @@ const listApartmentsTool = defineTool({
       Returns a paginated and filtered list of apartments/rooms available in the vacation posada.
       Use this tool whenever the user asks to see available rooms, room prices, features (bathrooms/bedrooms), 
       or wants to filter by a specific status, room size, price range, or check availability for specific dates.
+
+      IMPORTANT FOR DATE AVAILABILITY SEARCHES:
+      When checking availability for specific dates (fromDate and toDate are provided):
+      - Do NOT pass status: ["AVAILABLE"] alone, because apartments currently 'OCCUPIED' or 'RESERVED' might be free during the requested date range.
+      - Pass status: ["AVAILABLE", "RESERVED", "OCCUPIED"] or omit status so the backend checks schedule overlap, but NEVER include "MAINTENANCE" as those are never rent-able.
     `,
     parameters: {
       type: Type.OBJECT,
@@ -214,7 +219,7 @@ const listApartmentsTool = defineTool({
             ],
           },
           description:
-            'Filter by one or multiple current statuses of the apartment. Pass an array of values.',
+            'Filter by one or multiple current statuses of the apartment. NOTE: When searching by date range (fromDate/toDate), exclude MAINTENANCE as those cannot be rented. Pass an array of values.',
         },
         bedrooms: {
           type: Type.INTEGER,
@@ -235,12 +240,12 @@ const listApartmentsTool = defineTool({
         fromDate: {
           type: Type.STRING,
           description:
-            'The check-in/start date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+            'The check-in/start date for availability checks. Must be converted into ISO string format (YYYY-MM-DD). When provided with toDate, the service checks booking overlaps across all non-maintenance apartments.',
         },
         toDate: {
           type: Type.STRING,
           description:
-            'The check-out/end date for availability checks. Must be converted into an ISO string format (YYYY-MM-DD or full ISO).',
+            'The check-out/end date for availability checks. Must be converted into ISO string format (YYYY-MM-DD).',
         },
         minSquareMeters: {
           type: Type.INTEGER,
@@ -604,8 +609,7 @@ export const tools = [
   getPaymentsPerformanceTool,
 ]
 
-export const apiTools: ToolListUnion = [
-  {
-    functionDeclarations: tools.map((t) => t.declaration),
-  },
-]
+export const apiTools: ChatCompletionTool[] = tools.map((t) => ({
+  type: 'function' as const,
+  function: t.declaration,
+}))
