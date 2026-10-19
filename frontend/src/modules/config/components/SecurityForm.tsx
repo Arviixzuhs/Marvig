@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 
 export const SecurityForm = () => {
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user.data)
 
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')

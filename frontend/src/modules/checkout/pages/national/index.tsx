@@ -16,6 +16,7 @@ import { useCalendarContext } from '@/context/calendarContext'
 export const NationalCheckoutPage = () => {
   const [step, setStep] = React.useState<number>(1)
   const navigate = useNavigate()
+  const user = useSelector((state: RootState) => state.user)
   const checkout = useSelector((state: RootState) => state.checkout)
   const apartment = useSelector((state: RootState) => state.apartment)
   const [isLoading, setLoading] = React.useState(false)
@@ -38,6 +39,12 @@ export const NationalCheckoutPage = () => {
   }, [])
 
   if (!apartment) return
+
+  React.useEffect(() => {
+    if (!user.isLoading && !user.data) {
+      navigate('/', { replace: true })
+    }
+  }, [user.data, user.isLoading, navigate])
 
   React.useEffect(() => {
     if (!date?.end || !date?.start) {
