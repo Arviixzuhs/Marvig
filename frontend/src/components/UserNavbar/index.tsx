@@ -40,7 +40,7 @@ export const UserNavbar = () => {
   const links = [
     { label: 'Apartamentos', id: 'apartments' },
     { label: 'Servicios', id: 'services' },
-    { label: 'Dirección', id: 'address' },
+    { label: 'Ubicación', id: 'address' },
     { label: 'Contacto', id: 'contact' },
   ]
 
