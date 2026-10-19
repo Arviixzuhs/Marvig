@@ -29,7 +29,7 @@ const countries = [
 
 export const PersonalInfoForm = () => {
   const dispatch = useDispatch()
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user.data)
 
   const [name, setName] = React.useState('')
   const [lastName, setLastName] = React.useState('')

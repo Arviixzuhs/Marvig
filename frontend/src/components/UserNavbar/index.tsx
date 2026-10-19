@@ -6,8 +6,8 @@ import { appConfig } from '@/config'
 import { ChevronLeft } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { NavbarUserOptions } from '@/components/UserOptions'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 export const UserNavbar = () => {
   const user = useSelector((state: RootState) => state.user)
@@ -38,22 +38,10 @@ export const UserNavbar = () => {
   }, [isLanding, pathname])
 
   const links = [
-    {
-      label: 'Apartamentos',
-      id: 'apartments',
-    },
-    {
-      label: 'Servicios',
-      id: 'services',
-    },
-    {
-      label: 'Dirección',
-      id: 'address',
-    },
-    {
-      label: 'Contacto',
-      id: 'contact',
-    },
+    { label: 'Apartamentos', id: 'apartments' },
+    { label: 'Servicios', id: 'services' },
+    { label: 'Dirección', id: 'address' },
+    { label: 'Contacto', id: 'contact' },
   ]
 
   return (
@@ -69,64 +57,73 @@ export const UserNavbar = () => {
             : 'bg-white/80 backdrop-blur text-slate-800'
         }`}
       >
-        <div className='max-w-6xl mx-auto flex items-center justify-between px-6'>
-          <Link to='/' className='transition-colors duration-300'>
-            <div className='flex items-center flex-shrink-0 gap-2'>
+        <div className='max-w-6xl mx-auto flex items-center justify-between px-6 min-h-[40px]'>
+          <Link to='/' className='transition-colors duration-300 flex-shrink-0'>
+            <div className='flex items-center gap-2'>
               <img src={logo} alt='' className='w-8 h-8 rounded-sm' />
               <span
-                className={`font-bold whitespace-nowrap ${isLanding && !isScrolled ? 'text-white' : 'text-slate-900'}`}
+                className={`font-bold whitespace-nowrap ${
+                  isLanding && !isScrolled ? 'text-white' : 'text-slate-900'
+                }`}
               >
                 {appConfig.company}
               </span>
             </div>
           </Link>
-          {isLanding && (
-            <nav className='hidden md:flex items-center gap-8 text-sm font-medium'>
-              {links.map((item, index) => (
-                <a
-                  key={index}
-                  onClick={() => {
-                    const element = document.getElementById(item.id)
-                    if (element) {
-                      lenis?.scrollTo(element)
-                    }
-                  }}
-                  className={`cursor-pointer transition-colors duration-300 ${isScrolled ? 'hover:text-blue-600' : 'hover:text-blue-200'}`}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          )}
-
-          {user ? (
-            <NavbarUserOptions />
-          ) : (
-            <div className='flex items-center gap-2'>
-              <Link to='/login'>
-                <Button
-                  color={isLanding && !isScrolled ? 'default' : 'primary'}
-                  variant='light'
-                  radius='sm'
-                  className={isLanding && !isScrolled ? 'text-white' : ''}
-                >
-                  Iniciar sesión
-                </Button>
-              </Link>
-              <Link to='/register'>
-                <Button
-                  color={isLanding && !isScrolled ? 'default' : 'primary'}
-                  variant={isLanding && !isScrolled ? 'flat' : 'solid'}
-                  radius='sm'
-                  className={
-                    isLanding && !isScrolled ? 'bg-white/20 text-white backdrop-blur-sm' : ''
+          <nav
+            className={`hidden md:flex items-center gap-8 text-sm font-medium ${
+              isLanding ? 'visible opacity-100' : 'invisible opacity-0 pointer-events-none'
+            }`}
+          >
+            {links.map((item, index) => (
+              <a
+                key={index}
+                onClick={() => {
+                  const element = document.getElementById(item.id)
+                  if (element) {
+                    lenis?.scrollTo(element)
                   }
-                >
-                  Registrarme
-                </Button>
-              </Link>
-            </div>
-          )}
+                }}
+                className={`cursor-pointer transition-colors duration-300 ${
+                  isScrolled ? 'hover:text-blue-600' : 'hover:text-blue-200'
+                }`}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className='flex items-center justify-end h-[36px] min-w-[215px] flex-shrink-0'>
+            {user.isLoading ? (
+              <div className='h-9 w-[215px] rounded-sm animate-pulse' />
+            ) : user.data ? (
+              <NavbarUserOptions />
+            ) : (
+              <div className='flex items-center gap-2 h-9 w-[215px] justify-end whitespace-nowrap'>
+                <Link to='/login' className='inline-block'>
+                  <Button
+                    color={isLanding && !isScrolled ? 'default' : 'primary'}
+                    variant='light'
+                    radius='sm'
+                    className={isLanding && !isScrolled ? 'text-white' : ''}
+                  >
+                    Iniciar sesión
+                  </Button>
+                </Link>
+                <Link to='/register' className='inline-block'>
+                  <Button
+                    color={isLanding && !isScrolled ? 'default' : 'primary'}
+                    variant={isLanding && !isScrolled ? 'flat' : 'solid'}
+                    radius='sm'
+                    className={
+                      isLanding && !isScrolled ? 'bg-white/20 text-white backdrop-blur-sm' : ''
+                    }
+                  >
+                    Registrarme
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </header>
       {!isLanding && (

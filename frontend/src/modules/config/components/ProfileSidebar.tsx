@@ -26,7 +26,7 @@ interface ProfileSidebarProps {
 
 export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSidebarProps) => {
   const dispatch = useDispatch()
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user.data)
 
   const [avatarPreview, setAvatarPreview] = React.useState<string | null>(null)
   const fileInputRef = React.useRef<HTMLInputElement>(null)

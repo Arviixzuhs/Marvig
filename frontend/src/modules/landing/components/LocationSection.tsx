@@ -50,7 +50,7 @@ export const LocationSection: React.FC = () => {
   }
 
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16' id='address'>
+    <section className='max-w-6xl mx-auto px-6 py-16 scroll-mt-10' id='address'>
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-start'>
         <div className='lg:col-span-4 space-y-6'>
           <div>
