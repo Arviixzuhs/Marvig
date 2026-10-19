@@ -17,6 +17,7 @@ import { UpdateReservationUseCase } from '@/modules/reservation/application/usec
 import { DeleteReservationUseCase } from '@/modules/reservation/application/usecases/delete-reservation.usecase'
 import { UpdateReservationStatusUseCase } from '@/modules/reservation/application/usecases/update-reservation-status.usecase'
 import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
+import { Public } from '@/common/decorators/public.decorator'
 
 @Resolver(() => ReservationType)
 export class ReservationResolver {
@@ -34,6 +35,7 @@ export class ReservationResolver {
     description:
       'Obtiene todas las fechas no disponibles (ocupadas) para un apartamento específico',
   })
+  @Public()
   getInvalidDates(
     @Args('apartmentIds', { type: () => [Int] }) apartmentIds: number[],
     @Args('reserveIdToExclude', { type: () => Int, nullable: true }) reserveIdToExclude?: number,
