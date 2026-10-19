@@ -1,5 +1,6 @@
 import logo from '@/assets/icons/logo.jpg'
 import { Button } from '@heroui/react'
+import { useLenis } from 'lenis/react'
 import { RootState } from '@/store'
 import { appConfig } from '@/config'
 import { ChevronLeft } from 'lucide-react'
@@ -13,7 +14,7 @@ export const UserNavbar = () => {
   const { pathname } = useLocation()
   const isLanding = pathname === '/'
   const navigate = useNavigate()
-
+  const lenis = useLenis()
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -36,6 +37,25 @@ export const UserNavbar = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [isLanding, pathname])
 
+  const links = [
+    {
+      label: 'Apartamentos',
+      id: 'apartments',
+    },
+    {
+      label: 'Servicios',
+      id: 'services',
+    },
+    {
+      label: 'Dirección',
+      id: 'address',
+    },
+    {
+      label: 'Contacto',
+      id: 'contact',
+    },
+  ]
+
   return (
     <div
       className={`${isLanding ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-50 transition-all duration-300`}
@@ -49,7 +69,7 @@ export const UserNavbar = () => {
             : 'bg-white/80 backdrop-blur text-slate-800'
         }`}
       >
-        <div className='max-w-7xl mx-auto flex items-center justify-between px-5'>
+        <div className='max-w-6xl mx-auto flex items-center justify-between px-6'>
           <Link to='/' className='transition-colors duration-300'>
             <div className='flex items-center flex-shrink-0 gap-2'>
               <img src={logo} alt='' className='w-8 h-8 rounded-sm' />
@@ -60,26 +80,25 @@ export const UserNavbar = () => {
               </span>
             </div>
           </Link>
-          <nav className='hidden md:flex items-center gap-8 text-sm font-medium'>
-            <a
-              href='#apartments'
-              className={`transition-colors duration-300 ${isScrolled ? 'hover:text-blue-600' : 'hover:text-blue-200'}`}
-            >
-              Apartamentos
-            </a>
-            <a
-              href='#about'
-              className={`transition-colors duration-300 ${isScrolled ? 'hover:text-blue-600' : 'hover:text-blue-200'}`}
-            >
-              Nosotros
-            </a>
-            <a
-              href='#contact'
-              className={`transition-colors duration-300 ${isScrolled ? 'hover:text-blue-600' : 'hover:text-blue-200'}`}
-            >
-              Contacto
-            </a>
-          </nav>
+          {isLanding && (
+            <nav className='hidden md:flex items-center gap-8 text-sm font-medium'>
+              {links.map((item, index) => (
+                <a
+                  key={index}
+                  onClick={() => {
+                    const element = document.getElementById(item.id)
+                    if (element) {
+                      lenis?.scrollTo(element)
+                    }
+                  }}
+                  className={`cursor-pointer transition-colors duration-300 ${isScrolled ? 'hover:text-blue-600' : 'hover:text-blue-200'}`}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          )}
+
           {user ? (
             <NavbarUserOptions />
           ) : (
@@ -112,7 +131,7 @@ export const UserNavbar = () => {
       </header>
       {!isLanding && (
         <div className='w-full bg-slate-50/90 backdrop-blur border-b border-t border-gray-200 py-2'>
-          <div className='max-w-7xl mx-auto px-5'>
+          <div className='max-w-6xl mx-auto px-6'>
             <button
               onClick={() => navigate(-1)}
               className='text-xs font-medium cursor-pointer text-slate-600 hover:text-blue-600 flex items-center gap-1 transition-colors w-fit'
