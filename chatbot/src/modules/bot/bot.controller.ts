@@ -12,19 +12,22 @@ export class MarvigAIController {
   ask(@Req() req: Request, @Query() query: AskQueryDto): Observable<MessageEvent> {
     const { chatId, userMessage } = query
 
+    const abort = new AbortController()
+    req.res?.on('close', () => abort.abort())
+
     return from(
       this.marvigAIService.ask({
         user: req.user,
         chatId,
         userMessage,
         accessToken: req.cookies['accessToken'],
+        signal: abort.signal,
       }),
     ).pipe(
       mergeMap(async function* (asyncGenerator) {
         for await (const chunk of asyncGenerator) {
           yield { data: JSON.stringify(chunk) }
         }
-        yield { data: '[DONE]' }
       }),
     )
   }
