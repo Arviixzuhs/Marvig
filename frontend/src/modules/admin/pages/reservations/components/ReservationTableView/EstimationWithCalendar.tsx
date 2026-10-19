@@ -4,7 +4,7 @@ import { RootState } from '@/store'
 import { I18nProvider } from '@react-aria/i18n'
 import { IPageResponse } from '@/api/interfaces'
 import { formatCurrency } from '@/utils/formatCurrency'
-import { ApartmentModel } from '@/models/ApartmentModel'
+import { ApartmentModel, ApartmentStatus } from '@/models/ApartmentModel'
 import { DifferenceCard } from './DifferenceCard'
 import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { apartmentService } from '@/services/apartment'
@@ -208,6 +208,11 @@ export const EstimationWithCalendar = ({
                     search,
                     page: 0,
                     pageSize: 10,
+                    status: [
+                      ApartmentStatus.AVAILABLE,
+                      ApartmentStatus.OCCUPIED,
+                      ApartmentStatus.RESERVED,
+                    ],
                   })
                   return (
                     res?.content.map((item) => ({
