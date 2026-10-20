@@ -46,7 +46,7 @@ export const ApartmentCalendarDateRange = () => {
 
       dispatch(setTotalPrice(total))
     }
-  }, [date?.start && date?.end && apartment])
+  }, [date?.start, date?.end, apartment])
 
   if (!apartment) return null
 
