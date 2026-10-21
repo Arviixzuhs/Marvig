@@ -25,6 +25,8 @@ interface ImageUploadContextType {
   handleDragLeave: (e: React.DragEvent) => void
   handleFileInput: (e: React.ChangeEvent<HTMLInputElement>) => void
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
+  hasImageChanges: boolean
+  removedImageIds: string[]
 }
 
 const ImageUploadContext = createContext<ImageUploadContextType | undefined>(undefined)
@@ -35,6 +37,7 @@ export const ImageUploadProvider = ({ children }: { children: React.ReactNode })
   const [currentIndex, setCurrentIndex] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [formData] = useState<FormData>(() => new FormData())
+  const [removedImageIds, setRemovedImageIds] = useState<string[]>([])
 
   const appendField = useCallback(
     (key: string, value: any) => {
@@ -53,7 +56,9 @@ export const ImageUploadProvider = ({ children }: { children: React.ReactNode })
     for (const key of Array.from(formData.keys())) {
       formData.delete(key)
     }
+
     setImages([])
+    setRemovedImageIds([])
   }, [formData])
 
   const handleFiles = useCallback((files: FileList | null) => {
@@ -106,17 +111,23 @@ export const ImageUploadProvider = ({ children }: { children: React.ReactNode })
 
   const removeImage = useCallback(
     (id: string) => {
-      setImages((prev) => {
-        const filtered = prev.filter((img) => img.id !== id)
-        const imageToRemove = prev.find((img) => img.id === id)
-        if (imageToRemove) URL.revokeObjectURL(imageToRemove.imageURL)
-        return filtered
-      })
+      const imageToRemove = images.find((img) => img.id === id)
+      if (!imageToRemove) return
+
+      URL.revokeObjectURL(imageToRemove.imageURL)
+
+      // Sin `file` = imagen que ya estaba guardada en el registro
+      if (!imageToRemove.file) {
+        setRemovedImageIds((prev) => [...prev, id])
+      }
+
+      setImages((prev) => prev.filter((img) => img.id !== id))
       setCurrentIndex((prev) => Math.max(0, Math.min(prev, images.length - 2)))
     },
-    [images.length],
+    [images],
   )
 
+  const hasImageChanges = images.some((img) => !!img.file) || removedImageIds.length > 0
   const nextImage = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
   }, [images.length])
@@ -155,6 +166,8 @@ export const ImageUploadProvider = ({ children }: { children: React.ReactNode })
         handleDragLeave,
         handleFileInput,
         setCurrentIndex,
+        hasImageChanges,
+        removedImageIds,
       }}
     >
       {children}

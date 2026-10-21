@@ -29,8 +29,10 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
 
   React.useEffect(() => {
     if (/apartment|checkout/.test(location.pathname)) return
-    setDate(null)
-    setNights(0)
+    return () => {
+      setDate(null)
+      setNights(0)
+    }
   }, [location.pathname])
 
   const refreshCalendar = () => {

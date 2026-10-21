@@ -26,12 +26,36 @@ import {
   ModalContent,
 } from '@heroui/react'
 import { isValidNumericInput } from '@/utils/isValidNumericInput'
+import { DateRangeInput } from '@/components/DateRangeInput'
+import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 
 export interface EditItemModalProps {
   action: () => Promise<void>
   children: React.ReactNode
   tableContent: any[]
   modalExtensionUp?: React.ReactNode
+  skipChangeCheck?: boolean
+}
+
+/** Normaliza valores para compararlos sin importar el formato (20 vs "20", ISO vs "YYYY-MM-DD") */
+const normalizeValue = (value: unknown, type?: InputType): string => {
+  if (value === null || value === undefined || value === '') return ''
+
+  if (type === 'dateRange') return String(value).slice(0, 10)
+
+  if (type === 'date') {
+    const time = new Date(String(value)).getTime()
+    return isNaN(time) ? String(value) : String(time)
+  }
+
+  if (type === 'number' || type === 'float') {
+    const parsed = Number(value)
+    return isNaN(parsed) ? String(value) : String(parsed)
+  }
+
+  if (typeof value === 'object') return JSON.stringify(value)
+
+  return String(value)
 }
 
 export const EditItemModal: React.FC<EditItemModalProps> = ({
@@ -39,16 +63,56 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   children,
   tableContent,
   modalExtensionUp,
+  skipChangeCheck = false,
 }: EditItemModalProps) => {
   const table = useSelector((state: RootState) => state.appTable)
   const dispatch = useDispatch()
   const currentItemToEdit = tableContent.find((item) => item.id === table.currentItemToUpdate)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const { resetFormData, hasImageChanges } = useImageUpload()
 
   const filteredInputs = React.useMemo(
     () => table.modalInputs.filter((input) => input.showOnEdit !== false),
     [table.modalInputs],
   )
+
+  // Hay cambios si algún campo que el usuario tocó quedó distinto al registro original
+  const hasChanges = React.useMemo(() => {
+    if (!currentItemToEdit) return false
+
+    return filteredInputs.some((input) => {
+      if (input.divider || !input.name) return false
+
+      const fields =
+        input.type === 'dateRange' && input.endName ? [input.name, input.endName] : [input.name]
+
+      return fields.some((field) => {
+        const edited = table.formData?.[field]
+
+        // undefined = el usuario no tocó el campo
+        if (edited === undefined) return false
+
+        return (
+          normalizeValue(edited, input.type) !==
+          normalizeValue(currentItemToEdit[field], input.type)
+        )
+      })
+    })
+  }, [table.formData, filteredInputs, currentItemToEdit])
+
+  // Precarga en formData las fechas originales de los inputs dateRange
+  React.useEffect(() => {
+    if (!table.isEditItemModalOpen || !currentItemToEdit) return
+
+    filteredInputs.forEach((input) => {
+      if (input.divider || input.type !== 'dateRange' || !input.endName) return
+      ;[input.name, input.endName].forEach((fieldName) => {
+        if (table.formData?.[fieldName] === undefined) {
+          dispatch(setFormData({ name: fieldName, value: currentItemToEdit[fieldName] ?? null }))
+        }
+      })
+    })
+  }, [table.isEditItemModalOpen, table.currentItemToUpdate])
 
   const parseDateTime = (value: any) => {
     if (!value) return null
@@ -58,6 +122,16 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
     } catch {
       return null
     }
+  }
+
+  const handleDateRangeChange = (
+    startName: string,
+    endName: string,
+    start: string | null,
+    end: string | null,
+  ) => {
+    dispatch(setFormData({ name: startName, value: start }))
+    dispatch(setFormData({ name: endName, value: end }))
   }
 
   // Obtiene el valor modificado de Redux o cae de vuelta al item original
@@ -111,26 +185,38 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   }
 
   const toggleModal = () => {
+    if (hasImageChanges) {
+      resetFormData()
+    }
     dispatch(toggleEditItemModal(null))
     dispatch(clearFormData(null))
     dispatch(setCurrentItemToUpdate(-1))
   }
 
+  const canSubmit = skipChangeCheck || hasChanges || hasImageChanges
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!canSubmit) return
+
     try {
       setIsLoading(true)
 
       filteredInputs.forEach((input) => {
         if (!input.divider && input.name) {
-          if (table.formData?.[input.name] === undefined) {
-            dispatch(
-              setFormData({
-                name: input.name,
-                value: currentItemToEdit?.[input.name] ?? null,
-              }),
-            )
-          }
+          const fieldNames =
+            input.type === 'dateRange' && input.endName ? [input.name, input.endName] : [input.name]
+
+          fieldNames.forEach((fieldName) => {
+            if (table.formData?.[fieldName] === undefined) {
+              dispatch(
+                setFormData({
+                  name: fieldName,
+                  value: currentItemToEdit?.[fieldName] ?? null,
+                }),
+              )
+            }
+          })
         }
       })
 
@@ -198,6 +284,21 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                         ))}
                       </Select>
                     )}
+
+                    {item.type === 'dateRange' && item.endName && (
+                      <DateRangeInput
+                        label={item.label}
+                        isRequired={item.required}
+                        startValue={getFieldValue(item.name) as string | null | undefined}
+                        endValue={
+                          getFieldValue(item.endName as string) as string | null | undefined
+                        }
+                        onChange={(start, end) =>
+                          handleDateRangeChange(item.name, item.endName as string, start, end)
+                        }
+                      />
+                    )}
+
                     {item.type === 'date' && (
                       <DatePicker
                         label={item.label}
@@ -247,7 +348,13 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               Cancelar
             </Button>
 
-            <Button type='submit' color='primary' className='w-full' isLoading={isLoading}>
+            <Button
+              type='submit'
+              color='primary'
+              className='w-full'
+              isLoading={isLoading}
+              isDisabled={!canSubmit}
+            >
               Guardar
             </Button>
           </ModalFooter>

@@ -6,14 +6,15 @@ import { BiSolidDockRight } from 'react-icons/bi'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Briefcase,
-  Home,
-  Users,
-  Receipt,
-  Wallet,
-  Tag,
-  Info,
+  CalendarCheck,
   CreditCard,
+  Receipt,
+  Building2,
+  BadgePercent,
+  CalendarDays,
+  UserCheck,
+  BarChart3,
+  Users,
 } from 'lucide-react'
 
 const menuItems = [
@@ -24,8 +25,18 @@ const menuItems = [
   },
   {
     label: 'Reservas',
-    icon: Receipt,
+    icon: CalendarCheck,
     href: '/admin/reservations',
+  },
+  {
+    label: 'Temporadas',
+    icon: CalendarDays,
+    href: '/admin/pricing',
+  },
+  {
+    label: 'Promociones',
+    icon: BadgePercent,
+    href: '/admin/promotions',
   },
   {
     label: 'Pagos',
@@ -34,33 +45,28 @@ const menuItems = [
   },
   {
     label: 'Gastos',
-    icon: Wallet,
+    icon: Receipt,
     href: '/admin/expenses',
   },
   {
     label: 'Apartamentos',
-    icon: Home,
+    icon: Building2,
     href: '/admin/apartments',
   },
   {
-    label: 'Promociones',
-    icon: Tag,
-    href: '/admin/promotions',
-  },
-  {
     label: 'Empleados',
-    icon: Briefcase,
+    icon: UserCheck,
     href: '/admin/employees',
-  },
-  {
-    label: 'Reportes',
-    icon: Info,
-    href: '/admin/reports',
   },
   {
     label: 'Usuarios',
     icon: Users,
     href: '/admin/users',
+  },
+  {
+    label: 'Reportes',
+    icon: BarChart3,
+    href: '/admin/reports',
   },
 ]
 

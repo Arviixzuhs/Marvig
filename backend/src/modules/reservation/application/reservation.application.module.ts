@@ -15,6 +15,8 @@ import { PrismaPaymentRepositoryAdapter } from '@/modules/payment/infrastructure
 import { PrismaApartmentRepositoryAdapter } from '@/modules/apartment/infrastructure/repositories/prisma.apartment.repository.adapter'
 import { PrismaReservationRepositoryAdapter } from '@/modules/reservation/infrastructure/repositories/prisma.reservation.repository.adapter'
 import { PrismaNotificationRepositoryAdapter } from '@/modules/notification/infrastructure/repositories/prisma.notification.repository.adapter'
+import { PrismaSeasonRepositoryAdapter } from '@/modules/season/infrastructure/repositories/prisma.season.repository.adapter'
+import { CalculateReservationTotalUseCase } from './usecases/calculate-reservation-total.usecase'
 
 config()
 @Module({
@@ -34,9 +36,14 @@ config()
     FindReservationsUseCase,
     UpdateReservationUseCase,
     UpdateReservationStatusUseCase,
+    CalculateReservationTotalUseCase,
     {
       provide: 'ReservationRepository',
       useClass: PrismaReservationRepositoryAdapter,
+    },
+    {
+      provide: 'SeasonRepository',
+      useClass: PrismaSeasonRepositoryAdapter,
     },
     {
       provide: 'ApartmentRepository',
@@ -63,6 +70,7 @@ config()
     UpdateReservationUseCase,
     DeleteReservationUseCase,
     UpdateReservationStatusUseCase,
+    CalculateReservationTotalUseCase,
   ],
 })
 export class ReservationApplicationModule {}

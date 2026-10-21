@@ -24,6 +24,7 @@ export interface AppTableProps {
   modalExtension?: React.ReactElement
   modalExtensionUp?: React.ReactElement
   hiddeTopContent?: boolean
+  skipChangeCheck?: boolean
   topContentExtension?: React.ReactElement
   searchbarPlaceholder?: string
 }
@@ -36,6 +37,7 @@ export const AppTable = ({
   filterByDate,
   dropdownItems,
   modalExtension,
+  skipChangeCheck,
   modalExtensionUp,
   hiddeTopContent = false,
   topContentExtension,
@@ -131,6 +133,7 @@ export const AppTable = ({
         <EditItemModal
           action={tableActions.update}
           tableContent={tableContent}
+          skipChangeCheck={skipChangeCheck}
           modalExtensionUp={modalExtensionUp}
         >
           {modalExtension}

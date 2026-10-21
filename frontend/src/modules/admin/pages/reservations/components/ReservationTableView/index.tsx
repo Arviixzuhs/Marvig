@@ -113,6 +113,7 @@ export const ReservationTableView = () => {
     <>
       <AppTable
         filterByDate
+        skipChangeCheck
         totalPages={data?.findReservations.totalPages || previousData?.findReservations.totalPages}
         tableContent={data?.findReservations.content || []}
         tableActions={tableActions}
