@@ -84,13 +84,6 @@ export const modalInputs: ModalInput[] = [
     required: true,
   },
   {
-    name: 'value',
-    label: 'Valor',
-    type: 'float',
-    placeholder: 'Ej: 15.00',
-    required: true,
-  },
-  {
     name: 'unit',
     label: 'Unidad de Ajuste',
     placeholder: 'Seleccione una unidad',
@@ -100,6 +93,13 @@ export const modalInputs: ModalInput[] = [
       { label: 'Porcentaje', value: AdjustmentUnit.PERCENTAGE },
       { label: 'Monto Fijo', value: AdjustmentUnit.FIXED_AMOUNT },
     ],
+  },
+  {
+    name: 'value',
+    label: 'Valor',
+    type: 'float',
+    placeholder: 'Ej: 15.00',
+    required: true,
   },
   {
     name: 'action',
