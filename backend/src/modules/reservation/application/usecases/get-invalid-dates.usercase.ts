@@ -30,20 +30,23 @@ export class GetInvalidDatesUseCase {
       reserveIdToExclude,
     )
 
-    const invalidDates = []
+    const invalidDates: InvalidDateResponseDto[] = []
 
     for (const reservation of reservations) {
+      // Instanciar asegurando la referencia temporal
       const current = new Date(reservation.startDate)
       const end = new Date(reservation.endDate)
 
-      while (current <= end) {
+      // Recorrer noche a noche en UTC estrictamente (< para no incluir la fecha/día de checkout)
+      while (current < end) {
         invalidDates.push({
-          year: current.getFullYear().toString(),
-          month: (current.getMonth() + 1).toString().padStart(2, '0'),
-          day: current.getDate().toString().padStart(2, '0'),
+          year: current.getUTCFullYear().toString(),
+          month: (current.getUTCMonth() + 1).toString().padStart(2, '0'),
+          day: current.getUTCDate().toString().padStart(2, '0'),
         })
 
-        current.setDate(current.getDate() + 1)
+        // Avanzar exactamente 1 día en UTC
+        current.setUTCDate(current.getUTCDate() + 1)
       }
     }
 

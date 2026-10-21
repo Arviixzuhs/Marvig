@@ -120,6 +120,8 @@ model Apartment {
   promotionId  Int?
   squareMeters Float?
   reservations Reservation[]
+  season       Season?          @relation(fields: [seasonId], references: [id])
+  seasonId     Int?
 }
 
 model ApartmentImage {
@@ -268,4 +270,46 @@ model Promotion {
   deletedAt   DateTime?
   apartments  Apartment[]
   description String?       @db.VarChar(200)
+}
+
+enum SeasonType {
+  LOW
+  HIGH
+  MEDIUM
+  SPECIAL
+}
+
+enum PriceModifierType {
+  INCREASE
+  DECREASE
+}
+
+enum AdjustmentUnit {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+model Season {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+
+  value  Decimal           @db.Decimal(10, 2)
+  unit   AdjustmentUnit    @default(PERCENTAGE)
+  action PriceModifierType @default(INCREASE)
+
+  type     SeasonType @default(HIGH)
+  isActive Boolean    @default(true)
+
+  apartments Apartment[]
+
+  isDeleted Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([startDate, endDate])
+  @@index([isActive])
 }

@@ -8,6 +8,7 @@ import { AppResolver } from '@/app.resolver'
 import { PrismaModule } from '@/prisma/prisma.module'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GqlAuthGuard } from '@/common/guards/gql-auth.guard'
+import { SeasonModule } from '@/modules/season/season.module'
 import { AppController } from '@/app.controller'
 import { ExpenseModule } from '@/modules/expense/expense.module'
 import { PaymentModule } from '@/modules/payment/payment.module'
@@ -33,6 +34,7 @@ config()
     UserModule,
     AuthModule,
     PrismaModule,
+    SeasonModule,
     ExpenseModule,
     PaymentModule,
     EmployeeModule,

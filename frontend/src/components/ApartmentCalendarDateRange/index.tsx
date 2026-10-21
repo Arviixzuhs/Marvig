@@ -1,4 +1,5 @@
 import React from 'react'
+import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
 import { I18nProvider } from '@react-aria/i18n'
 import { RangeCalendar } from '@heroui/react'
@@ -6,8 +7,11 @@ import { setTotalPrice } from '@/features/checkoutSlice'
 import { reservationService } from '@/services/reservation'
 import { useCalendarContext } from '@/context/calendarContext'
 import { useDispatch, useSelector } from 'react-redux'
-import { calcTotalByApartmentsAndDates } from '@/utils/calcTotalByApartmentsAndDates'
+import { CALCULATE_RESERVATION_TOTAL } from '@/services/reservation/graphql/calculateReservationTotalQuery'
 import { CalendarDate, DateValue, getLocalTimeZone, today } from '@internationalized/date'
+
+/** "YYYY-MM-DD" del calendario -> medianoche UTC (mismo criterio que usa el backend para las temporadas) */
+const toUtcMidnightISO = (value: DateValue) => `${value.toString().slice(0, 10)}T00:00:00.000Z`
 
 export const ApartmentCalendarDateRange = () => {
   const apartment = useSelector((state: RootState) => state.apartment)
@@ -36,17 +40,34 @@ export const ApartmentCalendarDateRange = () => {
     loadData()
   }, [apartment?.id, refresh])
 
-  React.useEffect(() => {
-    if (date?.start && date?.end && apartment) {
-      const total = calcTotalByApartmentsAndDates({
-        startDate: date?.start.toDate(getLocalTimeZone()),
-        endDate: date?.end.toDate(getLocalTimeZone()),
-        apartments: [apartment],
-      })
+  const isRangeReady =
+    !!apartment?.id && !!date?.start && !!date?.end && date.end.compare(date.start) > 0
 
-      dispatch(setTotalPrice(total))
+  const { data } = useQuery<{ calculateReservationTotal: number }>(
+    CALCULATE_RESERVATION_TOTAL,
+    {
+      variables: {
+        data: {
+          apartmentIds: apartment ? [apartment.id] : [],
+          startDate: date?.start ? toUtcMidnightISO(date.start) : undefined,
+          endDate: date?.end ? toUtcMidnightISO(date.end) : undefined,
+        },
+      },
+      skip: !isRangeReady,
+      fetchPolicy: 'network-only',
+    },
+  )
+
+  React.useEffect(() => {
+    if (!isRangeReady) {
+      dispatch(setTotalPrice(0))
+      return
     }
-  }, [date?.start, date?.end, apartment])
+
+    if (data) {
+      dispatch(setTotalPrice(data.calculateReservationTotal))
+    }
+  }, [isRangeReady, data])
 
   if (!apartment) return null
 

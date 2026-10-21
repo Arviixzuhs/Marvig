@@ -8,11 +8,12 @@ import { NotificationStatus } from '@/modules/notification/domain/enums/notifica
 import { ApartmentStatusEnum } from '@/modules/apartment/domain/enums/apartment-status.enum'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
 import { getFormattedDateTime } from '@/common/utils/getFormattedDateTime'
-import { calcTotalByApartments } from '@/common/utils/calc-total-by-apartments.util'
+import { SeasonRepositoryPort } from '@/modules/season/domain/repositories/season.repository.port'
 import { PaymentRepositoryPort } from '@/modules/payment/domain/repositories/payment.repository.port'
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { NotificationRepositoryPort } from '@/modules/notification/domain/repositories/notification.repository.port'
+import { calcTotalByApartmentsAndDates } from '@/common/utils/calc-total-by-apartments.util'
 import {
   Inject,
   Injectable,
@@ -38,6 +39,9 @@ export class CreateReservationUseCase {
 
     @Inject('NotificationRepository')
     private readonly notificationRepository: NotificationRepositoryPort,
+
+    @Inject('SeasonRepository')
+    private readonly seasonRepository: SeasonRepositoryPort,
 
     private readonly emailService: EmailService,
   ) {}
@@ -79,13 +83,22 @@ export class CreateReservationUseCase {
     )
 
     if (!isAvailable) {
-      throw new ConflictException('Uno o más apartamentos ya se encuentran reservados en ese rango de fechas.')
+      throw new ConflictException(
+        'Uno o más apartamentos ya se encuentran reservados en ese rango de fechas.',
+      )
     }
 
-    const finalTotal = calcTotalByApartments({
+    const seasons = await this.seasonRepository.findOverlappingSeasons({
+      startDate: start,
+      endDate: end,
+      apartmentIds: data.apartmentIds,
+    })
+
+    const finalTotal = calcTotalByApartmentsAndDates({
       endDate: end,
       startDate: start,
       apartments: apartments.content,
+      seasons,
     })
 
     if (Math.abs(finalTotal - data.totalPrice) > 0.01) {
@@ -121,7 +134,6 @@ export class CreateReservationUseCase {
       ? `Tu pago de $${finalTotal} por la reservación #${createdReservation.id} ha sido confirmado con éxito.`
       : `Hemos recibido tu reporte de pago por $${finalTotal} (Ref: ${data.payment.reference}). Está en proceso de verificación.`
 
-
     await this.notificationRepository.createNotification({
       body: notificationBody,
       type: NotificationType.PAYMENT_ACTIVITY,
@@ -131,15 +143,12 @@ export class CreateReservationUseCase {
       userTargetRole: UserRole.ADMIN,
     })
 
+    const newApartmentStatus =
+      todayMidnight.getTime() === startMidnight.getTime()
+        ? ApartmentStatusEnum.OCCUPIED
+        : ApartmentStatusEnum.RESERVED
 
-    const newApartmentStatus = todayMidnight.getTime() === startMidnight.getTime()
-      ? ApartmentStatusEnum.OCCUPIED
-      : ApartmentStatusEnum.RESERVED
-
-    await this.apartmentRepository.updateStatusByApartmentIds(
-      data.apartmentIds,
-      newApartmentStatus,
-    )
+    await this.apartmentRepository.updateStatusByApartmentIds(data.apartmentIds, newApartmentStatus)
 
     const recipientEmail = data.clientEmail || user?.email
     const recipientName = data.clientName || user?.name || 'Cliente'

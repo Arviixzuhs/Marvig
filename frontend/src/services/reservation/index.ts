@@ -15,6 +15,7 @@ import {
   ICreateReservation,
   IUpdateReservation,
 } from '@/models/ReservationModel'
+import { CALCULATE_RESERVATION_TOTAL } from './graphql/calculateReservationTotalQuery'
 
 export const reservationService = {
   get: async (id: number): Promise<ReservationModel | null> => {
@@ -75,6 +76,18 @@ export const reservationService = {
       variables: { id },
     })
     return !!data?.deleteReservation
+  },
+  calculateTotal: async (payload: {
+    apartmentIds: number[]
+    startDate: string
+    endDate: string
+  }): Promise<number> => {
+    const { data } = await apolloClient.query<{ calculateReservationTotal: number }>({
+      query: CALCULATE_RESERVATION_TOTAL,
+      fetchPolicy: 'network-only',
+      variables: { data: payload },
+    })
+    return data?.calculateReservationTotal ?? 0
   },
   getInvalidDates: async (
     apartmentIds: number[],

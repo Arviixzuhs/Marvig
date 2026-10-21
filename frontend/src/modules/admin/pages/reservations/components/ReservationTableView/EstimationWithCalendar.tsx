@@ -2,20 +2,19 @@ import React from 'react'
 import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
 import { I18nProvider } from '@react-aria/i18n'
-import { IPageResponse } from '@/api/interfaces'
 import { formatCurrency } from '@/utils/formatCurrency'
-import { ApartmentModel, ApartmentStatus } from '@/models/ApartmentModel'
+import { ApartmentStatus } from '@/models/ApartmentModel'
 import { DifferenceCard } from './DifferenceCard'
-import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { apartmentService } from '@/services/apartment'
 import { GET_INVALID_DATES } from '@/services/reservation/graphql/getInvalidDatesQuery'
+import { toUtcMidnightISO } from '@/utils/toUtcMidnightISO'
 import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 import { useCalendarContext } from '@/context/calendarContext'
 import { Divider, RangeCalendar } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearFormData, setFormData } from '@/features/appTableSlice'
+import { CALCULATE_RESERVATION_TOTAL } from '@/services/reservation/graphql/calculateReservationTotalQuery'
 import { InvalidDate, ReservationModel } from '@/models/ReservationModel'
-import { calcTotalByApartmentsAndDates } from '@/utils/calcTotalByApartmentsAndDates'
 import { Autocomplete, AutocompleteChip } from '@/components/Autocomplete'
 import { ShieldAlert, CheckCircle2, RefreshCw } from 'lucide-react'
 import {
@@ -61,25 +60,34 @@ export const EstimationWithCalendar = ({
       (d) => new CalendarDate(parseInt(d.year), parseInt(d.month), parseInt(d.day)),
     ) || []
 
-  const { data: apartmentsRes } = useQuery<{
-    findApartments: IPageResponse<ApartmentModel>
-  }>(GET_APARTMENTS, {
+  // El total lo calcula el backend (precio base + temporada + promoción),
+  // con la misma lógica que valida al crear la reserva.
+  const isRangeReady =
+    selectedApartments.length > 0 &&
+    !!date?.start &&
+    !!date?.end &&
+    date.end.compare(date.start) > 0
+
+  const {
+    data: totalRes,
+    previousData: previousTotalRes,
+    loading: isCalculatingTotal,
+  } = useQuery<{ calculateReservationTotal: number }>(CALCULATE_RESERVATION_TOTAL, {
     variables: {
-      filters: {
-        ids: selectedApartments.map((a) => a.id),
-        page: 0,
-        pageSize: 50,
+      data: {
+        apartmentIds: selectedApartments.map((a) => Number(a.id)),
+        startDate: date?.start ? toUtcMidnightISO(date.start) : undefined,
+        endDate: date?.end ? toUtcMidnightISO(date.end) : undefined,
       },
     },
-    skip: !selectedApartments || selectedApartments.length === 0,
-    notifyOnNetworkStatusChange: true,
+    skip: !isRangeReady,
+    fetchPolicy: 'network-only',
   })
 
-  const total = calcTotalByApartmentsAndDates({
-    endDate: new Date(String(date?.end)),
-    startDate: new Date(String(date?.start)),
-    apartments: apartmentsRes?.findApartments.content || [],
-  })
+  // Mientras recalcula se mantiene el último valor para que no parpadee en 0
+  const total = isRangeReady
+    ? (totalRes ?? previousTotalRes)?.calculateReservationTotal ?? 0
+    : 0
 
   React.useEffect(() => {
     setDate(null)
@@ -193,7 +201,7 @@ export const EstimationWithCalendar = ({
             {currentReservationEdit && currentReservationEdit.apartments && (
               <>
                 {currentReservationEdit.apartments.map((item) => (
-                  <ApartmentMiniCard apartment={item} />
+                  <ApartmentMiniCard key={item.id} apartment={item} />
                 ))}
               </>
             )}
@@ -226,7 +234,10 @@ export const EstimationWithCalendar = ({
             <div className='flex flex-col gap-4'>
               <div className='p-4 bg-primary-50 rounded-lg border border-primary-100'>
                 <h3 className='text-lg font-semibold text-primary-700'>
-                  Total Estimado: <span className='text-xl'>{formatCurrency(total)}</span>
+                  Total Estimado:{' '}
+                  <span className='text-xl'>
+                    {isCalculatingTotal && !previousTotalRes ? 'Calculando...' : formatCurrency(total)}
+                  </span>
                 </h3>
               </div>
             </div>
