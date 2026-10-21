@@ -55,70 +55,70 @@ export const Notifications = () => {
 
   return (
     <div className='relative inline-block'>
-      <Dropdown className='w-80' isOpen={isOpen} onOpenChange={handleOpenChange}>
-        <DropdownTrigger>
-          <Button isIconOnly variant='light' radius='full'>
-            <Badge
-              content={unreadCount}
-              color='danger'
-              shape='circle'
-              placement='top-right'
-              isInvisible={unreadCount === 0}
-            >
+      <Badge
+        content={unreadCount}
+        color='danger'
+        shape='circle'
+        placement='top-right'
+        isInvisible={unreadCount === 0}
+      >
+        <Dropdown className='w-80' isOpen={isOpen} onOpenChange={handleOpenChange}>
+          <DropdownTrigger>
+            <Button isIconOnly variant='light' radius='full' className='z-30'>
               <Bell className='w-5 h-5 text-default-500' />
-            </Badge>
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu
-          items={notifications}
-          variant='flat'
-          aria-label='Notificaciones del sistema'
-          closeOnSelect={false}
-          emptyContent={loading ? 'Cargando...' : <EmptyNotifications />}
-          classNames={{
-            list: 'max-h-[400px] p-1 overflow-y-auto hoverScrollbar',
-          }}
-          itemClasses={{
-            title: 'font-semibold text-small',
-            description: 'text-tiny text-default-400 whitespace-normal',
-          }}
-        >
-          {(notification) => {
-            return (
-              <DropdownItem key={notification.id} textValue={notification.title}>
-                <div className='flex gap-3 items-start w-full'>
-                  <div
-                    className={`flex items-center justify-center min-w-8 h-8 rounded-full flex-shrink-0 ${notification.status === NotificationStatus.UNREAD ? 'bg-default-200' : 'bg-default-100'}`}
-                  >
-                    {iconMap[notification.type] || (
-                      <HelpCircle className='w-4 h-4 text-default-400' />
-                    )}
-                  </div>
-                  <div className='flex flex-col gap-0.5 flex-grow min-w-0'>
-                    <div className='flex justify-between items-start gap-2 w-full'>
-                      <p className='text-small line-clamp-1 min-w-0 font-medium'>
-                        {notification.title}
-                      </p>
-                      {notification.status === NotificationStatus.UNREAD && (
-                        <span className='w-2 h-2 mt-1.5 rounded-full bg-danger flex-shrink-0' />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            items={notifications}
+            variant='flat'
+            aria-label='Notificaciones del sistema'
+            closeOnSelect={false}
+            emptyContent={loading ? 'Cargando...' : <EmptyNotifications />}
+            classNames={{
+              list: 'max-h-[400px] p-1 overflow-y-auto hoverScrollbar',
+            }}
+            itemClasses={{
+              title: 'font-semibold text-small',
+              description: 'text-tiny text-default-400 whitespace-normal',
+            }}
+          >
+            {(notification) => {
+              return (
+                <DropdownItem key={notification.id} textValue={notification.title}>
+                  <div className='flex gap-3 items-start w-full'>
+                    <div
+                      className={`flex items-center justify-center min-w-8 h-8 rounded-full flex-shrink-0 ${notification.status === NotificationStatus.UNREAD ? 'bg-default-200' : 'bg-default-100'}`}
+                    >
+                      {iconMap[notification.type] || (
+                        <HelpCircle className='w-4 h-4 text-default-400' />
                       )}
                     </div>
-                    <p className='text-tiny text-default-500 whitespace-normal break-words leading-normal'>
-                      {notification.body}
-                    </p>
-                    <span className='text-[10px] text-default-400 mt-1 font-medium'>
-                      {getFormattedDateTime({
-                        value: notification.createdAt,
-                        format: { hour: '2-digit', minute: '2-digit' },
-                      })}
-                    </span>
+                    <div className='flex flex-col gap-0.5 flex-grow min-w-0'>
+                      <div className='flex justify-between items-start gap-2 w-full'>
+                        <p className='text-small line-clamp-1 min-w-0 font-medium'>
+                          {notification.title}
+                        </p>
+                        {notification.status === NotificationStatus.UNREAD && (
+                          <span className='w-2 h-2 mt-1.5 rounded-full bg-danger flex-shrink-0' />
+                        )}
+                      </div>
+                      <p className='text-tiny text-default-500 whitespace-normal break-words leading-normal'>
+                        {notification.body}
+                      </p>
+                      <span className='text-[10px] text-default-400 mt-1 font-medium'>
+                        {getFormattedDateTime({
+                          value: notification.createdAt,
+                          format: { hour: '2-digit', minute: '2-digit' },
+                        })}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </DropdownItem>
-            )
-          }}
-        </DropdownMenu>
-      </Dropdown>
+                </DropdownItem>
+              )
+            }}
+          </DropdownMenu>
+        </Dropdown>
+      </Badge>
     </div>
   )
 }
