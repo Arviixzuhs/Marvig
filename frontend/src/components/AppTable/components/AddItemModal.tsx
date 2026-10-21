@@ -21,7 +21,7 @@ import {
   ModalContent,
 } from '@heroui/react'
 import { isValidNumericInput } from '@/utils/isValidNumericInput'
-
+import { DateRangeInput } from '@/components/DateRangeInput'
 export interface AddItemModalProps {
   action: () => Promise<void>
   children: React.ReactNode
@@ -44,6 +44,16 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     } catch {
       return null
     }
+  }
+
+  const handleDateRangeChange = (
+    startName: string,
+    endName: string,
+    start: string | null,
+    end: string | null,
+  ) => {
+    dispatch(setFormData({ name: startName, value: start }))
+    dispatch(setFormData({ name: endName, value: end }))
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, type?: InputType) => {
@@ -152,6 +162,17 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
                           <SelectItem key={opt.value}>{opt.label}</SelectItem>
                         ))}
                       </Select>
+                    )}
+                    {item.type === 'dateRange' && item.endName && (
+                      <DateRangeInput
+                        label={item.label}
+                        isRequired={item.required}
+                        startValue={table.formData?.[item.name] as string | null | undefined}
+                        endValue={table.formData?.[item.endName] as string | null | undefined}
+                        onChange={(start, end) =>
+                          handleDateRangeChange(item.name, item.endName as string, start, end)
+                        }
+                      />
                     )}
                     {item.type === 'date' && (
                       <I18nProvider locale='es'>

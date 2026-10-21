@@ -18,14 +18,22 @@ interface ChipColumn extends BaseColumn {
   chipConfig: {
     [key: string]: IChipConfig
   }
+  format?: never
 }
 
-interface OtherColumn extends BaseColumn {
-  style?: Exclude<TableColumnStyle, 'chip'>
+interface DateColumn extends BaseColumn {
+  style: 'date'
+  dateFormat?: Intl.DateTimeFormatOptions
   chipConfig?: never
 }
 
-export type TableColumnInterface = ChipColumn | OtherColumn
+interface OtherColumn extends BaseColumn {
+  style?: Exclude<TableColumnStyle, 'chip' | 'date'>
+  chipConfig?: never
+  format?: never
+}
+
+export type TableColumnInterface = ChipColumn | DateColumn | OtherColumn
 
 export enum DateFilterPeriod {
   TODAY = 'TODAY',
@@ -48,6 +56,7 @@ export type InputType =
   | 'select'
   | 'float'
   | 'textarea'
+  | 'dateRange'
 
 export interface SelectOption {
   label: string
@@ -64,6 +73,7 @@ interface SharedProps {
 
 interface StandardFields {
   name: string
+  endName?: string
   label: string
   type?: InputType
   placeholder?: string

@@ -63,11 +63,7 @@ export const RenderCell = (props: RenderCellProps) => {
               getFormattedDateTime({
                 value: props.value,
                 format: {
-                  day: '2-digit',
-                  year: 'numeric',
-                  hour: 'numeric',
-                  month: '2-digit',
-                  minute: 'numeric',
+                 ...props.column.dateFormat
                 },
               })
             ) : (

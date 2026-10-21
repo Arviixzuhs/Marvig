@@ -28,6 +28,7 @@ import { RecoverPasswordMiddleware } from './middlewares/RecoverPasswordMiddlewa
 import RecoverPasswordEmail from './modules/auth/pages/RecoverPasswordEmail.tsx'
 import RecoverPasswordCode from './modules/auth/pages/RecoverPasswordCode.tsx'
 import RecoverPasswordChange from './modules/auth/pages/RecoverPasswordChange.tsx'
+import { AdminPricingPage } from './modules/admin/pages/pricing/index.tsx'
 
 function App() {
   return (
@@ -37,18 +38,18 @@ function App() {
       <Route path='/register' element={<RegisterPage />} />
       <Route path='/register/message' element={<ConfirmRegisterMessage />} />
       <Route path='/register/create-password/:confirmationToken' element={<CreatePassword />} />
-
       <Route element={<RecoverPasswordMiddleware />}>
         <Route path={'/recovery-password/email'} element={<RecoverPasswordEmail />} />
         <Route path={'/recovery-password/code'} element={<RecoverPasswordCode />} />
-        <Route path={'/recovery-password/change'} element={<RecoverPasswordChange  />} />
+        <Route path={'/recovery-password/change'} element={<RecoverPasswordChange />} />
       </Route>
+
       <Route element={<LoadCurrentUserMiddleware />}>
         <Route element={<UserLayout />}>
           <Route element={<AuthMiddleware />}>
             <Route element={<ConfigPage />} path='/config' />
           </Route>
-          <Route element={<MyReservationsPage />} path='/reservations'></Route>
+          <Route element={<MyReservationsPage />} path='/reservations' />
           <Route element={<LandingPage />} path='/' />
           <Route element={<LoadCurrentApartmentMiddleware />}>
             <Route element={<NationalCheckoutPage />} path='/checkout/national/:apartmentId' />
@@ -64,6 +65,7 @@ function App() {
           <Route element={<AdminReportsPage />} path='reports' />
           <Route element={<AdminPaymentPage />} path='payments' />
           <Route element={<AdminExpensePage />} path='expenses' />
+          <Route element={<AdminPricingPage />} path='pricing' />
           <Route element={<AdminEmployeePage />} path='employees' />
           <Route element={<AdminDashboardPage />} path='dashboard' />
           <Route element={<AdminApartmentPage />} path='apartments' />

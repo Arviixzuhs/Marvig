@@ -1,4 +1,5 @@
 import { User } from '@/interfaces/user.interface'
+import { Public } from '@/common/decorators/public.decorator'
 import { UserRole } from '@/common/enums/user-role.enum'
 import { CurrentUser } from '@/common/decorators/current-user.decorator'
 import { RequiredRole } from '@/common/decorators/required-role.decorator'
@@ -16,8 +17,9 @@ import { CreateReservationUseCase } from '@/modules/reservation/application/usec
 import { UpdateReservationUseCase } from '@/modules/reservation/application/usecases/update-reservation.usecase'
 import { DeleteReservationUseCase } from '@/modules/reservation/application/usecases/delete-reservation.usecase'
 import { UpdateReservationStatusUseCase } from '@/modules/reservation/application/usecases/update-reservation-status.usecase'
-import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql'
-import { Public } from '@/common/decorators/public.decorator'
+import { CalculateReservationTotalInput } from '@/modules/reservation/infrastructure/graphql/inputs/calculate-reservation-total.input'
+import { CalculateReservationTotalUseCase } from '@/modules/reservation/application/usecases/calculate-reservation-total.usecase'
+import { Resolver, Mutation, Args, Query, Int, Float } from '@nestjs/graphql'
 
 @Resolver(() => ReservationType)
 export class ReservationResolver {
@@ -29,6 +31,7 @@ export class ReservationResolver {
     private readonly updateReservationUseCase: UpdateReservationUseCase,
     private readonly deleteReservationUseCase: DeleteReservationUseCase,
     private readonly updateReservationStatusUseCase: UpdateReservationStatusUseCase,
+    private readonly calculateReservationTotalUseCase: CalculateReservationTotalUseCase,
   ) {}
 
   @Query(() => [InvalidDateType], {
@@ -84,6 +87,11 @@ export class ReservationResolver {
     @Args('status') status: ReservationStatus,
   ): Promise<ReservationType> {
     return this.updateReservationStatusUseCase.execute(id, status)
+  }
+
+  @Query(() => Float)
+  calculateReservationTotal(@Args('data') data: CalculateReservationTotalInput): Promise<number> {
+    return this.calculateReservationTotalUseCase.execute(data)
   }
 
   @Mutation(() => Boolean, { description: 'Elimina una reserva del sistema' })
