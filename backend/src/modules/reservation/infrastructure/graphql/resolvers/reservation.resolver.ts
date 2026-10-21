@@ -90,6 +90,7 @@ export class ReservationResolver {
   }
 
   @Query(() => Float)
+  @Public()
   calculateReservationTotal(@Args('data') data: CalculateReservationTotalInput): Promise<number> {
     return this.calculateReservationTotalUseCase.execute(data)
   }
