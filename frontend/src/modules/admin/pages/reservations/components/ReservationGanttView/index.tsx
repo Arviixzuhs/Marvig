@@ -40,10 +40,10 @@ const statusColorMap: Record<
     label: 'Completado',
   },
   [ReservationStatus.FAILED]: {
-    bg: 'bg-custom-red-bg',
-    border: 'border-custom-red-border',
-    text: 'text-custom-red',
-    label: 'Cancelado',
+    bg: 'bg-custom-orange-bg',
+    border: 'border-custom-orange-border',
+    text: 'text-custom-orange',
+    label: 'Fallido',
   },
 }
 
