@@ -1,9 +1,8 @@
 import { RootState } from '@/store'
+import { ReservationModel } from '@/models/ReservationModel'
 import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 import { toggleViewItemModal } from '@/features/appTableSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import { ReservationModel, ReservationStatus } from '@/models/ReservationModel'
-import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel'
 import {
   Calendar,
   CreditCard,
@@ -24,55 +23,7 @@ import {
   ModalHeader,
   ModalContent,
 } from '@heroui/react'
-
-const statusConfig: Record<
-  ReservationStatus,
-  {
-    label: string
-    color: string
-  }
-> = {
-  [ReservationStatus.FAILED]: {
-    label: 'Fallido',
-    color: '#c2410c',
-  },
-  [ReservationStatus.PENDING]: {
-    label: 'Pendiente',
-    color: '#F59E0B',
-  },
-  [ReservationStatus.CONFIRMED]: {
-    label: 'Confirmado',
-    color: '#10B981',
-  },
-  [ReservationStatus.CANCELLED]: {
-    label: 'Cancelado',
-    color: '#EF4444',
-  },
-  [ReservationStatus.COMPLETED]: {
-    label: 'Completado',
-    color: '#6B7280',
-  },
-}
-
-const paymentStatusConfig: Record<
-  PaymentStatus,
-  { label: string; color: 'warning' | 'success' | 'danger' | 'default' }
-> = {
-  [PaymentStatus.PENDING]: { label: 'Pendiente', color: 'warning' },
-  [PaymentStatus.CONFIRMED]: { label: 'Confirmado', color: 'success' },
-  [PaymentStatus.FAILED]: { label: 'Fallido', color: 'danger' },
-  [PaymentStatus.CANCELLED]: { label: 'Cancelado', color: 'default' },
-}
-
-const paymentMethodLabels: Record<PaymentMethod, string> = {
-  [PaymentMethod.CASH]: 'Efectivo',
-  [PaymentMethod.PAYPAL]: 'PayPal',
-  [PaymentMethod.STRIPE]: 'Stripe',
-  [PaymentMethod.PAGO_MOVIL]: 'Pago Móvil',
-  [PaymentMethod.DEBIT_CARD]: 'Tarjeta de Débito',
-  [PaymentMethod.CREDID_CARD]: 'Tarjeta de Crédito',
-  [PaymentMethod.BANK_TRANSFER]: 'Transferencia Bancaria',
-}
+import { paymentMethodLabels, paymentStatusConfig, reservationStatusChip } from './data'
 
 interface ReservationDetailModalProps {
   reservation: ReservationModel | null | undefined
@@ -88,7 +39,7 @@ export const ReservationDetailModal = ({ reservation }: ReservationDetailModalPr
     return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${d.getUTCFullYear()}`
   }
 
-  const status = statusConfig[reservation.status]
+  const chip = reservationStatusChip[reservation.status]
 
   const onClose = () => dispatch(toggleViewItemModal(null))
 
@@ -114,11 +65,11 @@ export const ReservationDetailModal = ({ reservation }: ReservationDetailModalPr
                   radius='full'
                   variant='flat'
                   style={{
-                    background: status.color + '40' || '#6B7280',
-                    color: status.color,
+                    color: chip.color,
+                    background: chip.color + '40' || '#6B7280',
                   }}
                 >
-                  {status.label}
+                  {chip.label}
                 </Chip>
               </div>
             </ModalHeader>
