@@ -36,7 +36,7 @@ export const tableColumns: TableColumnInterface[] = [
       [ReservationStatus.CONFIRMED]: { label: 'Confirmado', color: '#10B981' },
       [ReservationStatus.CANCELLED]: { label: 'Cancelado', color: '#EF4444' },
       [ReservationStatus.COMPLETED]: { label: 'Completado', color: '#6B7280' },
-      [ReservationStatus.FAILED]: { label: 'Fallido', color: '#EF4444' },
+      [ReservationStatus.FAILED]: { label: 'Fallido', color: '#c2410c' },
     },
   },
   {
