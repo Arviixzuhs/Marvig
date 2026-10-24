@@ -10,9 +10,18 @@ export interface FilesUploadResponse {
   fileUrls: string[]
 }
 
+export enum FileUploadVisibility {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+}
+
 export const fileService = {
-  upload: async (formData: FormData): Promise<FileUploadResponse> => {
+  upload: async (
+    formData: FormData,
+    visibility?: FileUploadVisibility,
+  ): Promise<FileUploadResponse> => {
     const { data } = await api.post<FileUploadResponse>('/file/upload', formData, {
+      params: { visibility },
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -20,8 +29,12 @@ export const fileService = {
     return data
   },
 
-  uploadFiles: async (formData: FormData): Promise<FilesUploadResponse> => {
+  uploadFiles: async (
+    formData: FormData,
+    visibility?: FileUploadVisibility,
+  ): Promise<FilesUploadResponse> => {
     const { data } = await api.post<FilesUploadResponse>('/file/uploads', formData, {
+      params: { visibility },
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     return data
