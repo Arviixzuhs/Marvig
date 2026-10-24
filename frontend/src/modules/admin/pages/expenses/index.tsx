@@ -5,7 +5,6 @@ import { useQuery } from '@apollo/client/react'
 import { RootState } from '@/store'
 import { useDebounce } from 'use-debounce'
 import { useSelector } from 'react-redux'
-import { fileService } from '@/services/file'
 import { GET_EXPENSES } from '@/services/exepense/graphql/getExpensesQuery'
 import { ExpenseModel } from '@/models/ExpenseModel'
 import { useTablePage } from '@/hooks/useTablePage'
@@ -15,6 +14,7 @@ import { expenseService } from '@/services/exepense'
 import { useImageUpload } from '@/components/ImageUploader/providers/ImageUploaderProvider'
 import { AppTableActions } from '@/components/AppTable/interfaces/appTable'
 import { tableColumns, modalInputs } from './data'
+import { fileService, FileUploadVisibility } from '@/services/file'
 
 export const AdminExpensePage = () => {
   const table = useSelector((state: RootState) => state.appTable)
@@ -48,7 +48,7 @@ export const AdminExpensePage = () => {
         const newExpense = await expenseService.create(table.formData)
 
         if (images.length > 0 && newExpense) {
-          const uploadRes = await fileService.uploadFiles(formData)
+          const uploadRes = await fileService.uploadFiles(formData, FileUploadVisibility.PRIVATE)
           await expenseService.updateImages(newExpense.id, uploadRes.fileUrls)
         }
 
@@ -71,7 +71,7 @@ export const AdminExpensePage = () => {
 
         const containsNewFiles = images.some((img) => img.file)
         if (containsNewFiles) {
-          const uploadRes = await fileService.uploadFiles(formData)
+          const uploadRes = await fileService.uploadFiles(formData, FileUploadVisibility.PRIVATE)
           finalURLs = [...finalURLs, ...uploadRes.fileUrls]
         }
 
