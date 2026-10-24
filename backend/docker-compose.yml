@@ -28,7 +28,9 @@ services:
       - .env.production
     volumes:
       - uploads-data:/usr/src/app/uploads
+      - private-uploads-data:/usr/src/app/private-uploads
 
 volumes:
   db-data:
   uploads-data:
+  private-uploads-data:
