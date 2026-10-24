@@ -3,7 +3,7 @@ import { ApartmentMiniCard } from '@/components/ApartmentMiniCard'
 import { toggleViewItemModal } from '@/features/appTableSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { ReservationModel, ReservationStatus } from '@/models/ReservationModel'
-import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel' // Ajusta la ruta de tus modelos si es distinta
+import { PaymentMethod, PaymentStatus } from '@/models/PaymentModel'
 import {
   Calendar,
   CreditCard,
@@ -27,13 +27,31 @@ import {
 
 const statusConfig: Record<
   ReservationStatus,
-  { label: string; color: 'warning' | 'success' | 'danger' | 'default' }
+  {
+    label: string
+    color: string
+  }
 > = {
-  [ReservationStatus.FAILED]: { label: 'Cancelado', color: 'danger' },
-  [ReservationStatus.PENDING]: { label: 'Pendiente', color: 'warning' },
-  [ReservationStatus.CONFIRMED]: { label: 'Confirmado', color: 'success' },
-  [ReservationStatus.CANCELLED]: { label: 'Cancelado', color: 'danger' },
-  [ReservationStatus.COMPLETED]: { label: 'Completado', color: 'default' },
+  [ReservationStatus.FAILED]: {
+    label: 'Fallido',
+    color: '#c2410c',
+  },
+  [ReservationStatus.PENDING]: {
+    label: 'Pendiente',
+    color: '#F59E0B',
+  },
+  [ReservationStatus.CONFIRMED]: {
+    label: 'Confirmado',
+    color: '#10B981',
+  },
+  [ReservationStatus.CANCELLED]: {
+    label: 'Cancelado',
+    color: '#EF4444',
+  },
+  [ReservationStatus.COMPLETED]: {
+    label: 'Completado',
+    color: '#6B7280',
+  },
 }
 
 const paymentStatusConfig: Record<
@@ -90,7 +108,16 @@ export const ReservationDetailModal = ({ reservation }: ReservationDetailModalPr
                 <span className='text-xl font-semibold text-foreground'>
                   Reserva #{reservation.id}
                 </span>
-                <Chip color={status.color} variant='flat' size='sm' className='font-semibold'>
+                <Chip
+                  color='secondary'
+                  size='sm'
+                  radius='full'
+                  variant='flat'
+                  style={{
+                    background: status.color + '40' || '#6B7280',
+                    color: status.color,
+                  }}
+                >
                   {status.label}
                 </Chip>
               </div>

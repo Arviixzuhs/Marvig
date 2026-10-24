@@ -67,6 +67,11 @@
   --text-custom-gray: #4b5563;
   --border-custom-gray: #e5e7eb;
   --bg-custom-gray: #f9fafb;
+
+  /* Naranja */
+  --text-custom-orange: #c2410c;
+  --border-custom-orange: #fed7aa;
+  --bg-custom-orange: #fff7ed;
 }
 
 .light {
@@ -218,6 +223,11 @@
   --text-custom-gray: #8c8294;
   --border-custom-gray: #221e25;
   --bg-custom-gray: #19161b;
+
+  /* Naranja */
+  --text-custom-orange: #fb923c;
+  --border-custom-orange: #451a03;
+  --bg-custom-orange: #27120a;
 }
 
 @theme inline {
@@ -283,6 +293,11 @@
   --color-custom-blue: var(--text-custom-blue);
   --color-custom-blue-border: var(--border-custom-blue);
   --color-custom-blue-bg: var(--bg-custom-blue);
+
+  /* Naranja */
+  --color-custom-orange: var(--text-custom-orange);
+  --color-custom-orange-border: var(--border-custom-orange);
+  --color-custom-orange-bg: var(--bg-custom-orange);
 }
 
 @layer base {
