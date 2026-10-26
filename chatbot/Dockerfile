@@ -1,11 +1,11 @@
-FROM node:20.19.0 AS deps
+FROM node:22 AS deps
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
 RUN npm install
 
-FROM node:20.19.0 AS build
+FROM node:22 AS build
 
 WORKDIR /usr/src/app
 
@@ -17,7 +17,7 @@ RUN prisma generate
 
 RUN npm run build
 
-FROM node:20.19.0 AS production
+FROM node:22 AS production
 
 WORKDIR /usr/src/app
 
