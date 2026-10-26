@@ -1,5 +1,5 @@
 # 1. Instalar dependencias completas
-FROM node:20.19.0-alpine AS deps
+FROM node:22 AS deps
 WORKDIR /usr/src/app
 
 COPY package*.json ./
@@ -9,7 +9,7 @@ COPY prisma.config.ts ./
 RUN npm ci
 
 # 2. Generar cliente de Prisma y compilar TypeScript
-FROM node:20.19.0-alpine AS build
+FROM node:22 AS build
 WORKDIR /usr/src/app
 
 COPY --from=deps /usr/src/app/node_modules ./node_modules
@@ -22,7 +22,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # 3. Imagen de producción ligera
-FROM node:20.19.0-alpine AS production
+FROM node:22 AS production
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
