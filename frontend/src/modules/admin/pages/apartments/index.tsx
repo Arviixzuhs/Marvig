@@ -67,7 +67,8 @@ export const AdminApartmentPage = () => {
 
         let finalURLs = [...existingURLs]
 
-        if (images.length > 0) {
+        const containsNewFiles = images.some((img) => img.file)
+        if (containsNewFiles) {
           const uploadRes = await fileService.uploadFiles(formData)
           finalURLs = [...finalURLs, ...uploadRes.fileUrls]
         }
