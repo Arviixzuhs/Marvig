@@ -9,7 +9,7 @@ import { ApartmentCalendarDateRange } from '@/components/ApartmentCalendarDateRa
 import { formatCurrency } from '@/utils/formatCurrency'
 
 export const Summary = () => {
-  const apartment = useSelector((state: RootState) => state.apartment)
+  const apartment = useSelector((state: RootState) => state.apartment.data)
   const checkout = useSelector((state: RootState) => state.checkout)
   const { date, nights } = useCalendarContext()
   if (!apartment) return

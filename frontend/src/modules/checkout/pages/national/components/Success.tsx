@@ -8,7 +8,7 @@ import { formatCurrency } from '@/utils/formatCurrency'
 
 export const Success = () => {
   const { date } = useCalendarContext()
-  const apartment = useSelector((state: RootState) => state.apartment)
+  const apartment = useSelector((state: RootState) => state.apartment.data)
   const checkout = useSelector((state: RootState) => state.checkout)
   if (!apartment) return null
 

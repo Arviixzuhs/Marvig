@@ -10,15 +10,15 @@ import { useNavigate } from 'react-router-dom'
 import { PaymentMethod } from '@/models/PaymentModel'
 import { Stepper, StepItem } from '@/components/Stepper'
 import { reservationService } from '@/services/reservation'
-import { PersonalInformation } from './components/PersonalInformation'
 import { useCalendarContext } from '@/context/calendarContext'
+import { PersonalInformation } from './components/PersonalInformation'
 
 export const NationalCheckoutPage = () => {
   const [step, setStep] = React.useState<number>(1)
   const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.user)
   const checkout = useSelector((state: RootState) => state.checkout)
-  const apartment = useSelector((state: RootState) => state.apartment)
+  const apartment = useSelector((state: RootState) => state.apartment.data)
   const [isLoading, setLoading] = React.useState(false)
   const [showConfetti, setShowConfetti] = React.useState(false)
   const { date, refreshCalendar } = useCalendarContext()
@@ -38,8 +38,6 @@ export const NationalCheckoutPage = () => {
     }
   }, [])
 
-  if (!apartment) return
-
   React.useEffect(() => {
     if (!user.isLoading && !user.data) {
       navigate('/', { replace: true })
@@ -47,6 +45,8 @@ export const NationalCheckoutPage = () => {
   }, [user.data, user.isLoading, navigate])
 
   React.useEffect(() => {
+    if (!apartment) return
+
     if (!date?.end || !date?.start) {
       navigate(`/apartment/${apartment.id}`)
       return
@@ -71,6 +71,8 @@ export const NationalCheckoutPage = () => {
   const isFinalStep = step === checkoutSteps.length
 
   const getPayload = () => {
+    if (!apartment) return null
+
     const {
       apartments,
       paymentDate,
@@ -97,9 +99,12 @@ export const NationalCheckoutPage = () => {
   }
 
   const handleFinalSubmit = async () => {
+    const payload = getPayload()
+    if (!payload) return
+
     try {
       setLoading(true)
-      await reservationService.create(getPayload())
+      await reservationService.create(payload)
       setStep(checkoutSteps.length)
       window.scrollTo(0, 0)
       setShowConfetti(true)
