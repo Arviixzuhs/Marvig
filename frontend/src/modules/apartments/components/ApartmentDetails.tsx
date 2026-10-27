@@ -1,5 +1,6 @@
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
+import { Skeleton } from '@heroui/react'
 import {
   Bath,
   Bed,
@@ -11,17 +12,40 @@ import {
   Utensils,
 } from 'lucide-react'
 
-export const ApartmentDetails = () => {
-  const apartment = useSelector((state: RootState) => state.apartment)
-  if (!apartment) return null
+const amenities = [
+  { icon: ChefHat, label: 'Cocina' },
+  { icon: Refrigerator, label: 'Nevera' },
+  { icon: Sofa, label: 'Sala' },
+  { icon: UtensilsCrossed, label: 'Comedor' },
+  { icon: Utensils, label: 'Cuchillos, cubiertos y platos' },
+]
 
-  const amenities = [
-    { icon: ChefHat, label: 'Cocina' },
-    { icon: Refrigerator, label: 'Nevera' },
-    { icon: Sofa, label: 'Sala' },
-    { icon: UtensilsCrossed, label: 'Comedor' },
-    { icon: Utensils, label: 'Cuchillos, cubiertos y platos' },
-  ]
+const ApartmentDetailsSkeleton = () => (
+  <div aria-busy='true' aria-label='Cargando detalles' className='flex flex-col gap-7 w-full'>
+    <div className='flex items-center gap-7 py-5 border-y border-border'>
+      <Skeleton className='h-5 w-28 rounded-lg' />
+      <Skeleton className='h-5 w-20 rounded-lg' />
+      <Skeleton className='h-5 w-16 rounded-lg' />
+    </div>
+    <div className='flex flex-col gap-4'>
+      <Skeleton className='h-5 w-24 rounded-lg' />
+      <div className='grid grid-cols-2 gap-3'>
+        {amenities.map(({ label }) => (
+          <div key={label} className='flex items-center gap-2.5'>
+            <Skeleton className='w-8 h-8 rounded-lg shrink-0' />
+            <Skeleton className='h-4 w-24 rounded-lg' />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)
+
+export const ApartmentDetails = () => {
+  const { data: apartment, isLoading } = useSelector((state: RootState) => state.apartment)
+
+  if (isLoading) return <ApartmentDetailsSkeleton />
+  if (!apartment) return null
 
   return (
     <div className='flex flex-col gap-7 w-full'>

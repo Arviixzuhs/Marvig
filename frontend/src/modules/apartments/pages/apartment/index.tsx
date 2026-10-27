@@ -1,4 +1,5 @@
 import React from 'react'
+import { Skeleton } from '@heroui/react'
 import { RootState } from '@/store'
 import { clearCheckout } from '@/features/checkoutSlice'
 import { UserPageLayout } from '@/layout/UserPageLayout'
@@ -17,18 +18,24 @@ export const ApartmentPage = () => {
     }
   }, [dispatch])
 
-  if (!apartment) return null
-
   return (
     <UserPageLayout>
       <div className='flex flex-col gap-4'>
-        <h1 className='text-3xl font-serif text-3xl font-semibold mb-2 tracking-tight'>
-          Apartamento #{apartment.number}
-        </h1>
+        {apartment.isLoading ? (
+          <Skeleton className='h-9 w-64 max-w-full rounded-lg mb-2' />
+        ) : (
+          <h1 className='text-3xl font-serif font-semibold mb-2 tracking-tight'>
+            Apartamento #{apartment.data?.number}
+          </h1>
+        )}
         <ApartmentImagesGrid />
         <div className='flex flex-col md:flex-row w-full gap-5'>
           <ApartmentDetails />
-          <ApartmentCalendarRange />
+          {apartment.isLoading ? (
+            <Skeleton aria-busy='true' className='h-96 w-full rounded-2xl' />
+          ) : (
+            <ApartmentCalendarRange />
+          )}
         </div>
       </div>
     </UserPageLayout>
