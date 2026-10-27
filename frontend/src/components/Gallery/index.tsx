@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { Skeleton } from '@heroui/react'
 import { Image as ImageIcon } from 'lucide-react'
 import { ImageLightbox, type GalleryImage } from './components/ImageLightbox'
 
@@ -6,21 +7,31 @@ export type { GalleryImage }
 
 interface GalleryProps {
   images: GalleryImage[]
-  /**
-   * 'hero'    → una foto grande + 4 secundarias (vista del apartamento)
-   * 'masonry' → columnas tipo mosaico (galería de la landing)
-   */
   variant?: 'hero' | 'masonry'
+  isLoading?: boolean
   className?: string
 }
 
-// Alturas que se alternan en el mosaico para dar ritmo visual
+/* Alturas que se alternan en el mosaico para dar ritmo visual */
 const MASONRY_HEIGHTS = ['h-44', 'h-64', 'h-48', 'h-60', 'h-56', 'h-52']
 
-export const Gallery = ({ images, variant = 'masonry', className = '' }: GalleryProps) => {
+export const Gallery = ({
+  images,
+  variant = 'masonry',
+  isLoading = false,
+  className = '',
+}: GalleryProps) => {
   const [index, setIndex] = useState<number | null>(null)
   const open = useCallback((i: number) => setIndex(i), [])
   const close = useCallback(() => setIndex(null), [])
+
+  if (isLoading) {
+    return variant === 'hero' ? (
+      <HeroSkeleton className={className} />
+    ) : (
+      <MasonrySkeleton className={className} />
+    )
+  }
 
   return (
     <>
@@ -41,13 +52,14 @@ interface GridProps {
   className: string
 }
 
+const HEROGRID_CLASS =
+  'relative grid grid-cols-1 sm:grid-cols-4 grid-rows-1 sm:grid-rows-2 gap-2 h-72 sm:h-80 md:h-96 rounded-xl overflow-hidden'
+
 const HeroGrid = ({ images, onOpen, className }: GridProps) => {
   const secondary = Array.from({ length: 4 }, (_, i) => images[i + 1] ?? null)
 
   return (
-    <div
-      className={`relative grid grid-cols-1 sm:grid-cols-4 grid-rows-1 sm:grid-rows-2 gap-2 h-72 sm:h-80 md:h-96 rounded-xl overflow-hidden ${className}`}
-    >
+    <div className={`${HEROGRID_CLASS} ${className}`}>
       {/* Foto principal */}
       <div className='sm:col-span-2 sm:row-span-2 relative overflow-hidden bg-muted'>
         {images[0] ? (
@@ -121,6 +133,28 @@ const MasonryGrid = ({ images, onOpen, className }: GridProps) => (
           />
         </div>
       </button>
+    ))}
+  </div>
+)
+
+/* Skeletons */
+const HeroSkeleton = ({ className }: { className: string }) => (
+  <div aria-busy='true' aria-label='Cargando fotos' className={`${HEROGRID_CLASS} ${className}`}>
+    <Skeleton className='sm:col-span-2 sm:row-span-2 rounded-none' />
+    {Array.from({ length: 4 }, (_, i) => (
+      <Skeleton key={i} className='hidden sm:block rounded-none' />
+    ))}
+  </div>
+)
+
+const MasonrySkeleton = ({ className }: { className: string }) => (
+  <div
+    aria-busy='true'
+    aria-label='Cargando fotos'
+    className={`columns-1 sm:columns-2 lg:columns-3 gap-4 ${className}`}
+  >
+    {MASONRY_HEIGHTS.map((height, i) => (
+      <Skeleton key={i} className={`${height} w-full mb-4 break-inside-avoid rounded-2xl`} />
     ))}
   </div>
 )

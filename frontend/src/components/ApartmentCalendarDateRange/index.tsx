@@ -4,17 +4,15 @@ import { RootState } from '@/store'
 import { I18nProvider } from '@react-aria/i18n'
 import { RangeCalendar } from '@heroui/react'
 import { setTotalPrice } from '@/features/checkoutSlice'
+import { toUtcMidnightISO } from '@/utils/toUtcMidnightISO'
 import { reservationService } from '@/services/reservation'
 import { useCalendarContext } from '@/context/calendarContext'
 import { useDispatch, useSelector } from 'react-redux'
 import { CALCULATE_RESERVATION_TOTAL } from '@/services/reservation/graphql/calculateReservationTotalQuery'
 import { CalendarDate, DateValue, getLocalTimeZone, today } from '@internationalized/date'
 
-/** "YYYY-MM-DD" del calendario -> medianoche UTC (mismo criterio que usa el backend para las temporadas) */
-const toUtcMidnightISO = (value: DateValue) => `${value.toString().slice(0, 10)}T00:00:00.000Z`
-
 export const ApartmentCalendarDateRange = () => {
-  const apartment = useSelector((state: RootState) => state.apartment)
+  const apartment = useSelector((state: RootState) => state.apartment.data)
   const [invalidDates, setInvalidDates] = React.useState<CalendarDate[]>([])
   const { date, setDate, refresh } = useCalendarContext()
   const dispatch = useDispatch()
