@@ -32,7 +32,7 @@ export const AdminApartmentPage = () => {
         page: table.currentPage,
         search: debounceValue,
         pageSize: table.rowsPerPage,
-        status: table.filters['status']
+        status: table.filters['status'],
       },
     },
     notifyOnNetworkStatusChange: true,
@@ -83,6 +83,7 @@ export const AdminApartmentPage = () => {
     delete: async () => {
       try {
         await apartmentService.delete(table.currentItemToDelete)
+        await refetch()
         toast.success('Apartamento eliminado correctamente')
       } catch (error) {
         toast.error('Error al eliminar')

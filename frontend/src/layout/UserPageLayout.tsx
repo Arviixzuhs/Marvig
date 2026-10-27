@@ -7,7 +7,7 @@ interface UserPageLayoutProps {
 export const UserPageLayout = ({ children }: UserPageLayoutProps) => {
   return (
     <div className='w-full bg-background text-foreground flex justify-center'>
-      <div className='w-full max-w-6xl px-6 py-6'>{children}</div>
+      <div className='w-full max-w-6xl px-3 py-4 md:px-6 md:py-6'>{children}</div>
     </div>
   )
 }

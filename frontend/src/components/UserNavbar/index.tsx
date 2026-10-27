@@ -2,7 +2,7 @@ import logo from '@/assets/icons/logo.jpg'
 import { Button } from '@heroui/react'
 import { useLenis } from 'lenis/react'
 import { RootState } from '@/store'
-import { appConfig } from '@/config'
+import { companyInfo } from '@/constants'
 import { ChevronLeft } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { NavbarUserOptions } from '@/components/UserOptions'
@@ -39,6 +39,7 @@ export const UserNavbar = () => {
 
   const links = [
     { label: 'Apartamentos', id: 'apartments' },
+    { label: 'Galería', id: 'gallery' },
     { label: 'Servicios', id: 'services' },
     { label: 'Ubicación', id: 'address' },
     { label: 'Contacto', id: 'contact' },
@@ -62,11 +63,11 @@ export const UserNavbar = () => {
             <div className='flex items-center gap-2'>
               <img src={logo} alt='' className='w-8 h-8 rounded-sm' />
               <span
-                className={`font-bold whitespace-nowrap ${
+                className={`font-serif font-semibold whitespace-nowrap ${
                   isLanding && !isScrolled ? 'text-white' : 'text-slate-900'
                 }`}
               >
-                {appConfig.company}
+                {companyInfo.company}
               </span>
             </div>
           </Link>

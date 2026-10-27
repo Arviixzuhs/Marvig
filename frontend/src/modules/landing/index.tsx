@@ -3,6 +3,7 @@ import ReactLenis from 'lenis/react'
 import { FaqSection } from './components/FaqSection'
 import { HeroSection } from './components/HeroSection'
 import { ContactSection } from './components/ContactSection'
+import { GallerySection } from './components/GallerySection'
 import { ServicesSection } from './components/ServicesSection'
 import { LocationSection } from './components/LocationSection'
 import { ApartmentsSection } from './components/ApartmentsSection'
@@ -13,6 +14,7 @@ export const LandingPage = () => {
       <div className='min-h-screen bg-background'>
         <HeroSection />
         <ApartmentsSection />
+        <GallerySection />
         <ServicesSection />
         <FaqSection />
         <LocationSection />

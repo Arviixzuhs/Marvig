@@ -72,7 +72,7 @@ export const ImageUploader = () => {
           <div className='relative'>
             <div className='relative aspect-[30/10] bg-muted'>
               <img
-                src={images[currentIndex].imageURL}
+                src={images[currentIndex]?.imageURL}
                 alt={`Imagen ${currentIndex + 1}`}
                 className='h-full w-full object-contain'
               />

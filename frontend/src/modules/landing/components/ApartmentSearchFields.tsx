@@ -47,9 +47,9 @@ export const ApartmentSearchFields = () => {
   }
 
   return (
-    <div className='w-full max-w-md sm:max-w-xl mx-auto'>
-      <div className='flex flex-col sm:flex-row gap-2 items-center p-1.5 shadow-md rounded-xl sm:rounded-full backdrop-blur-md'>
-        <div className='w-full sm:flex-1'>
+    <div className='w-full max-w-2xl'>
+      <div className='flex flex-col sm:flex-row sm:items-end gap-3 p-3 rounded-3xl backdrop-blur-xl'>
+        <div className='w-full sm:flex-1 min-w-0'>
           <I18nProvider locale='es'>
             <DateRangePicker
               labelPlacement='outside-left'

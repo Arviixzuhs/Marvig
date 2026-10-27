@@ -30,7 +30,7 @@ export const ApartmentCard = ({ apartment, index }: IApartmentCard) => {
             )}
           </div>
           <div className='p-4'>
-            <h3 className='font-semibold text-sm mb-0.5'>Suit #{apartment.number}</h3>
+            <h3 className='font-semibold text-sm mb-0.5'>Apartamento #{apartment.number}</h3>
 
             <div className='flex items-center gap-3 text-xs text-muted-foreground mb-3'>
               <span className='flex items-center gap-1'>
