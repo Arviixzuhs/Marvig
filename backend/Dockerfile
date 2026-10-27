@@ -27,8 +27,6 @@ WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 
-RUN apk add --no-cache openssl libc6-compat
-
 COPY package*.json ./
 
 RUN npm ci --omit=dev
@@ -40,5 +38,4 @@ COPY --from=build /usr/src/app/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 3000
 
-# IMPORTANTE: Ejecuta la migración en runtime antes de iniciar la app
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
