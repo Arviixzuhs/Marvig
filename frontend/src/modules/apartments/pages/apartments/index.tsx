@@ -1,5 +1,5 @@
 import React from 'react'
-import { Search } from 'lucide-react'
+import { Search, SlidersHorizontal } from 'lucide-react'
 import { useQuery } from '@apollo/client/react'
 import { useDebounce } from 'use-debounce'
 import { inputStyles } from '@/styles'
@@ -9,26 +9,37 @@ import { IPageResponse } from '@/api/interfaces'
 import { ApartmentModel } from '@/models/ApartmentModel'
 import { GET_APARTMENTS } from '@/services/apartment/graphql/getApartmentsQuery'
 import { useSearchParams } from 'react-router-dom'
+import { useIsMobile } from '@/hooks/useMobile'
 import { IApartmentFilter } from '@/models/ApartmentModel'
 import { useCalendarContext } from '@/context/calendarContext'
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
 import {
   Input,
   Slider,
+  Badge,
   Button,
+  Drawer,
   DateValue,
   RangeValue,
   Pagination,
   ButtonGroup,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerContent,
   RangeCalendar,
+  useDisclosure,
+  Spinner,
 } from '@heroui/react'
 import { UserPageLayout } from '@/layout/UserPageLayout'
+import { EmptyContent } from '@/components/AppTable/components/EmptyContent'
 
 export const ApartmentsPage = () => {
   const INITIAL_PRICE_RANGE = [20, 2000]
   const [searchParams, setSearchParams] = useSearchParams()
   const { date, setDate } = useCalendarContext()
-
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const isMobile = useIsMobile()
   React.useEffect(() => {
     const start = searchParams.get('startDate')
     const end = searchParams.get('endDate')
@@ -42,6 +53,13 @@ export const ApartmentsPage = () => {
       }
     }
   }, [searchParams, setDate])
+
+  React.useEffect(() => {
+    console.log(isMobile)
+    if (!isMobile) {
+      onClose()
+    }
+  }, [isMobile])
 
   const handleCalendarChange = (newDate: RangeValue<DateValue>) => {
     setDate(newDate)
@@ -100,6 +118,7 @@ export const ApartmentsPage = () => {
 
   const apartments = data?.findApartments.content || []
   const totalPages = data?.findApartments.totalPages || 1
+  const totalItems = data?.findApartments.totalItems
 
   const handleFilterChange = (key: keyof IApartmentFilter, value: any) => {
     setFilters((prev) => ({
@@ -158,117 +177,150 @@ export const ApartmentsPage = () => {
     return date.compare(today(getLocalTimeZone())) < 0
   }
 
+  // Cantidad de filtros activos (para el badge del botón en móvil)
+  const activeFiltersCount = [
+    date?.start && date?.end,
+    filters.bedrooms,
+    filters.bathrooms,
+    filters.minPrice !== INITIAL_PRICE_RANGE[0] || filters.maxPrice !== INITIAL_PRICE_RANGE[1],
+  ].filter(Boolean).length
+
+  // Controles de filtros, reutilizados en el sidebar (PC) y en el drawer (móvil)
+  const filterControls = (
+    <>
+      <div className='flex justify-center'>
+        <I18nProvider locale='es'>
+          <RangeCalendar
+            value={date}
+            isDateUnavailable={isDateUnavailable}
+            aria-label='Date (Controlled)'
+            onChange={(e) => handleCalendarChange(e)}
+            errorMessage='Selecciona una fecha disponible'
+            classNames={{
+              base: 'shadow-none ',
+            }}
+          />
+        </I18nProvider>
+      </div>
+      <div className='pt-2'>
+        <Slider
+          label='Precio / mes'
+          size='sm'
+          step={20}
+          minValue={20}
+          maxValue={2000}
+          value={[
+            filters.minPrice ?? INITIAL_PRICE_RANGE[0],
+            filters.maxPrice ?? INITIAL_PRICE_RANGE[1],
+          ]}
+          onChange={handlePriceRangeChange}
+          formatOptions={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}
+          classNames={{
+            label: 'text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
+            value: 'text-xs font-medium text-foreground',
+          }}
+        />
+      </div>
+      <div>
+        <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
+          Habitaciones
+        </h4>
+        <ButtonGroup size='sm' variant='flat' className='w-full flex'>
+          {[1, 2, 3, 4].map((n) => (
+            <Button
+              key={n}
+              onPress={() => handleToggleFilter('bedrooms', n)}
+              className={`flex-1 min-w-0 transition-colors ${
+                filters.bedrooms === n ? 'bg-foreground text-background font-semibold' : ''
+              }`}
+            >
+              {n}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </div>
+      <div>
+        <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
+          Baños
+        </h4>
+        <ButtonGroup size='sm' variant='flat' className='w-full flex'>
+          {[1, 2, 3].map((n) => (
+            <Button
+              key={n}
+              onPress={() => handleToggleFilter('bathrooms', n)}
+              className={`flex-1 min-w-0 transition-colors ${
+                filters.bathrooms === n ? 'bg-foreground text-background font-semibold' : ''
+              }`}
+            >
+              {n}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </div>
+    </>
+  )
+
   return (
     <UserPageLayout>
       <div className='flex flex-col md:flex-row gap-4'>
-        <aside className='w-fit shrink-0 space-y-6 bg-card p-5 rounded-2xl h-fit'>
-          <div className='flex justify-between items-center pb-2 border-b border-border'>
-            <h3 className='font-bold text-xs tracking-wide text-muted-foreground'>
-              Filtros Avanzados
-            </h3>
-            <Button
-              size='sm'
-              variant='light'
-              color='danger'
-              onPress={resetFilters}
-              className='h-auto p-1 min-w-0 text-xs'
-            >
-              Limpiar todo
-            </Button>
-          </div>
-          <div>
-            <I18nProvider locale='es'>
-              <RangeCalendar
-                value={date}
-                isDateUnavailable={isDateUnavailable}
-                aria-label='Date (Controlled)'
-                onChange={(e) => handleCalendarChange(e)}
-                errorMessage='Selecciona una fecha disponible'
-                classNames={{
-                  base: 'shadow-none ',
-                }}
-              />
-            </I18nProvider>
-          </div>
-          <div className='pt-2'>
-            <Slider
-              label='Precio / mes'
-              size='sm'
-              step={20}
-              minValue={20}
-              maxValue={2000}
-              value={[
-                filters.minPrice ?? INITIAL_PRICE_RANGE[0],
-                filters.maxPrice ?? INITIAL_PRICE_RANGE[1],
-              ]}
-              onChange={handlePriceRangeChange}
-              formatOptions={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}
-              classNames={{
-                label: 'text-[11px] font-semibold uppercase tracking-widest text-muted-foreground',
-                value: 'text-xs font-medium text-foreground',
-              }}
-            />
-          </div>
-          <div>
-            <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
-              Habitaciones
-            </h4>
-            <ButtonGroup size='sm' variant='flat' className='w-full flex'>
-              {[1, 2, 3, 4].map((n) => (
-                <Button
-                  key={n}
-                  onPress={() => handleToggleFilter('bedrooms', n)}
-                  className={`flex-1 min-w-0 transition-colors ${
-                    filters.bedrooms === n ? 'bg-foreground text-background font-semibold' : ''
-                  }`}
-                >
-                  {n}
-                </Button>
-              ))}
-            </ButtonGroup>
-          </div>
-          <div>
-            <h4 className='text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3'>
-              Baños
-            </h4>
-            <ButtonGroup size='sm' variant='flat' className='w-full flex'>
-              {[1, 2, 3].map((n) => (
-                <Button
-                  key={n}
-                  onPress={() => handleToggleFilter('bathrooms', n)}
-                  className={`flex-1 min-w-0 transition-colors ${
-                    filters.bathrooms === n ? 'bg-foreground text-background font-semibold' : ''
-                  }`}
-                >
-                  {n}
-                </Button>
-              ))}
-            </ButtonGroup>
+        <aside className='hidden md:block w-fit shrink-0 bg-card p-5 rounded-2xl h-fit'>
+          <div className='space-y-6'>
+            <div className='flex justify-between items-center pb-2 border-b border-border'>
+              <h3 className='font-bold text-xs tracking-wide text-muted-foreground'>
+                Filtros Avanzados
+              </h3>
+              <Button
+                size='sm'
+                variant='light'
+                color='danger'
+                onPress={resetFilters}
+                className='h-auto p-1 min-w-0 text-xs'
+              >
+                Limpiar todo
+              </Button>
+            </div>
+            {filterControls}
           </div>
         </aside>
-        <div className='flex-1 flex flex-col gap-4'>
-          <Input
-            size='md'
-            variant='flat'
-            isClearable
-            radius='lg'
-            classNames={inputStyles}
-            placeholder='Buscar...'
-            startContent={<Search size={16} className='text-muted-foreground' />}
-            value={filters.search || ''}
-            onValueChange={(val) => handleFilterChange('search', val)}
-            onClear={() => handleFilterChange('search', '')}
-          />
+        <div className='flex-1 min-w-0 flex flex-col gap-4'>
+          <div className='flex items-center gap-2'>
+            <Input
+              size='md'
+              variant='flat'
+              isClearable
+              radius='lg'
+              classNames={inputStyles}
+              placeholder='Buscar...'
+              startContent={<Search size={16} className='text-muted-foreground' />}
+              value={filters.search || ''}
+              onValueChange={(val) => handleFilterChange('search', val)}
+              onClear={() => handleFilterChange('search', '')}
+            />
+            <div className='md:hidden shrink-0'>
+              <Badge
+                content={activeFiltersCount}
+                color='primary'
+                size='md'
+                isInvisible={activeFiltersCount === 0}
+              >
+                <Button
+                  variant='flat'
+                  radius='sm'
+                  onPress={onOpen}
+                  startContent={<SlidersHorizontal size={16} />}
+                >
+                  Filtros
+                </Button>
+              </Badge>
+            </div>
+          </div>
           {loading ? (
             <div className='flex justify-center items-center py-24 text-sm text-muted-foreground animate-pulse'>
-              Buscando propiedades...
+              <Spinner />
             </div>
           ) : apartments.length === 0 ? (
-            <div className='flex flex-col justify-center items-center py-24 text-sm text-muted-foreground bg-card rounded-2xl border border-dashed border-border gap-2'>
-              <span>No se encontraron apartamentos con estos filtros.</span>
-              <Button size='sm' variant='flat' onClick={resetFilters}>
-                Restablecer búsqueda
-              </Button>
+            <div className='flex flex-col justify-center items-center w-full px-4 py-24 text-sm text-center text-muted-foreground bg-card rounded-2xl border border-dashed border-border gap-3'>
+              <EmptyContent title='Sin resultados' description='No se encontraron apartamentos' />
             </div>
           ) : (
             <>
@@ -292,6 +344,28 @@ export const ApartmentsPage = () => {
           )}
         </div>
       </div>
+      <Drawer
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement='bottom'
+        scrollBehavior='inside'
+        radius='lg'
+        size='full'
+      >
+        <DrawerContent>
+          <DrawerHeader className='border-b border-border py-3'>
+            <span className='text-base font-semibold'>Filtros</span>
+          </DrawerHeader>
+          <DrawerBody className='gap-6 py-4'>{filterControls}</DrawerBody>
+          <DrawerFooter className='border-t border-border gap-2'>
+            <Button color='primary' radius='lg' className='flex-1' onPress={onClose}>
+              {loading || totalItems === undefined
+                ? 'Ver resultados'
+                : `Ver ${totalItems} resultado${totalItems === 1 ? '' : 's'}`}
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </UserPageLayout>
   )
 }

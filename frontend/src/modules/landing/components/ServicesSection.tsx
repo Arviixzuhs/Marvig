@@ -1,95 +1,74 @@
-import React from 'react'
-import { Card, CardBody, Divider } from '@heroui/react'
-import { Wifi, ShieldCheck, Zap, Waves, MapPin, Utensils } from 'lucide-react'
+import type { ElementType } from 'react'
+import { Wifi, Droplets, Car, MapPin, Utensils } from 'lucide-react'
 
 interface ServiceItem {
-  icon: React.ReactNode
+  icon: ElementType
   title: string
   description: string
 }
 
+const services: ServiceItem[] = [
+  {
+    icon: Droplets,
+    title: 'Agua Garantizada',
+    description: 'Sistemas de agua hidroneumáticos para que tu estadía no sufra interrupciones.',
+  },
+  {
+    icon: Wifi,
+    title: 'Wi-Fi',
+    description:
+      'Conexión estable en todos los apartamentos y áreas comunes, ideal tanto para el descanso como para el trabajo remoto.',
+  },
+  {
+    icon: Car,
+    title: 'Estacionamiento',
+    description: 'Estacionamiento privado para la total tranquilidad de tu vehículo.',
+  },
+  {
+    icon: Utensils,
+    title: 'Zona de Parrilleras',
+    description:
+      'Espacios totalmente equipados para preparar tus asados y compartir momentos especiales al aire libre con tus acompañantes.',
+  },
+  {
+    icon: MapPin,
+    title: 'Ubicación Estratégica',
+    description:
+      'Situados en una zona residencial tranquila, a escasos minutos de las principales playas, restaurantes y centros comerciales.',
+  },
+]
+
 export const ServicesSection = () => {
-  const services: ServiceItem[] = [
-    {
-      icon: <Zap className='w-6 h-6 text-warning' />,
-      title: 'Energía y Agua Garantizada',
-      description:
-        'Contamos con planta eléctrica total de emergencia y sistemas de agua hidroneumáticos para que tu estadía no sufra interrupciones.',
-    },
-    {
-      icon: <Wifi className='w-6 h-6 text-primary' />,
-      title: 'Wi-Fi de Alta Velocidad',
-      description:
-        'Conexión estable y veloz en todos los apartamentos y áreas comunes, ideal tanto para el descanso como para el trabajo remoto.',
-    },
-    {
-      icon: <Waves className='w-6 h-6 text-info text-blue-500' />,
-      title: 'Piscina y Áreas Comunes',
-      description:
-        'Disfruta de nuestra piscina climatizada, solárium y zonas de descanso al aire libre diseñadas para toda la familia.',
-    },
-    {
-      icon: <ShieldCheck className='w-6 h-6 text-success' />,
-      title: 'Seguridad 24/7',
-      description:
-        'Circuito cerrado de cámaras, control de acceso estricto y estacionamiento privado techado para la total tranquilidad de tu vehículo.',
-    },
-    {
-      icon: <Utensils className='w-6 h-6 text-danger' />,
-      title: 'Zona de Parrilleras',
-      description:
-        'Espacios totalmente equipados para preparar tus asados y compartir momentos especiales al aire libre con tus acompañantes.',
-    },
-    {
-      icon: <MapPin className='w-6 h-6 text-red-500' />,
-      title: 'Ubicación Estratégica',
-      description:
-        'Situados en una zona residencial tranquila, a escasos minutos de las principales playas, restaurantes y centros comerciales.',
-    },
-  ]
-
   return (
-    <section className='max-w-6xl mx-auto px-6 py-16 scroll-mt-10' id='services'>
-      {/* Encabezado */}
-      <div className='flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4'>
-        <div className='max-w-xl'>
-          <p className='text-small font-semibold tracking-wider text-primary uppercase mb-2'>
+    <section id='services' className='flex justify-center bg-background-2 text-black scroll-mt-10'>
+      <div className='flex w-full max-w-6xl flex-col gap-10 px-4 py-12 sm:gap-14 sm:px-6 sm:py-20 lg:py-24'>
+        <div className='flex max-w-2xl flex-col gap-3 sm:gap-4'>
+          <h2 className='font-serif text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight text-balance'>
             Servicios
-          </p>
-          <h2 className='text-3xl font-bold tracking-tight text-default-900 sm:text-4xl'>
-            Todo para una estadía perfecta
           </h2>
+          <p className='text-pretty text-base leading-relaxed text-black/75 sm:text-lg'>
+            Nos encargamos de cada detalle para que solo te preocupes por relajarte y disfrutar de
+            las instalaciones del complejo.
+          </p>
         </div>
-        <p className='text-default-500 max-w-md text-medium'>
-          Nos encargamos de cada detalle para que solo te preocupes por relajarte y disfrutar de las
-          instalaciones del complejo.
-        </p>
-      </div>
 
-      <Divider className='my-6 bg-default-200/60' />
+        <ul className='flex flex-wrap gap-x-8 gap-y-8 sm:gap-y-10'>
+          {services.map(({ icon: Icon, title, description }) => (
+            <li
+              key={title}
+              className='group flex w-full items-start gap-4 sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]'
+            >
+              <span className='flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black transition-transform duration-500 group-hover:-translate-y-1'>
+                <Icon strokeWidth={1.5} className='h-6 w-6 text-tertiary' />
+              </span>
 
-      {/* Grid de Servicios/Beneficios */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8'>
-        {services.map((service, index) => (
-          <Card
-            key={index}
-            isHoverable
-            className='border-none bg-default-50 dark:bg-default-100 shadow-sm transition-all duration-300 hover:-translate-y-1'
-          >
-            <CardBody className='p-6 flex flex-col items-start gap-4'>
-              {/* Contenedor del Icono */}
-              <div className='p-3 bg-default-200/50 dark:bg-default-200/30 rounded-xl flex items-center justify-center'>
-                {service.icon}
+              <div className='flex min-w-0 flex-col gap-1'>
+                <h3 className='font-serif text-2xl font-semibold leading-tight'>{title}</h3>
+                <p className='text-pretty leading-relaxed text-black/75'>{description}</p>
               </div>
-
-              {/* Texto */}
-              <div className='space-y-2'>
-                <h3 className='text-lg font-bold text-default-800'>{service.title}</h3>
-                <p className='text-small text-default-500 leading-relaxed'>{service.description}</p>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   )
