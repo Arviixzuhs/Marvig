@@ -89,7 +89,7 @@ export function AdminSidebar() {
               <img src={logo} alt='' className='w-8 h-8 rounded-sm' />
             </Link>
             <span
-              className={`font-bold whitespace-nowrap transition-opacity ${!isOpen ? 'opacity-0' : 'opacity-100'}`}
+              className={`font-serif font-semibold whitespace-nowrap transition-opacity ${!isOpen ? 'opacity-0' : 'opacity-100'}`}
             >
               Marvig
             </span>
