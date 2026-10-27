@@ -141,92 +141,95 @@
   --sidebar-border: oklch(0.9 0.03 10);
   --sidebar-ring: #ff6b8b;
 }
-
 .dark {
-  --scrollbar-bg: oklch(0.25 0.02 240);
-  --scrollbar-bg-hover: oklch(0.35 0.02 240);
-
-  /* Superficies principales */
-  --background: oklch(0.12 0.015 240); /* Fondo oscuro profundo con matiz azulado */
-  --foreground: oklch(0.95 0.01 240); /* Texto principal casi blanco */
-
-  /* Componentes y Tarjetas */
-  --card: #040c13; /* Un tono más claro que el fondo para elevación */
-  --card-foreground: oklch(0.95 0.01 240);
-
-  --popover: oklch(0.16 0.015 240);
-  --popover-foreground: oklch(0.95 0.01 240);
-
-  /* Colores de Marca / Énfasis */
-  --primary: #3474eb; /* Inversión: Texto/Elementos clave ahora son claros */
-  --primary-foreground: oklch(0.12 0.015 240);
-
-  --secondary: oklch(0.22 0.02 240); /* Botones o elementos secundarios */
-  --secondary-foreground: oklch(0.9 0.01 240);
-
-  /* Estados Muted y Desactivados */
-  --muted: oklch(0.2 0.02 240);
-  --muted-2: oklch(0.25 0.04 240); /* Variación para destacar sutilmente en oscuro */
-  --muted-foreground: oklch(0.65 0.02 240); /* Texto secundario con suficiente contraste */
-
-  /* Acento (Azul Eléctrico) */
-  --accent: oklch(0.6 0.2 250); /* Ligeramente ajustado para brillar en fondo oscuro */
-  --accent-foreground: oklch(0.98 0.005 240);
-
-  /* Destructivo (Errores / Alertas) */
-  --destructive: oklch(0.6 0.22 27.3); /* Rojo vibrante pero controlado */
-  --destructive-foreground: oklch(0.98 0.005 240);
-
-  /* Bordes e Inputs */
-  --border: oklch(0.24 0.015 240); /* Bordes sutiles para no ensuciar la interfaz */
-  --input: oklch(0.24 0.015 240);
-  --ring: oklch(0.6 0.2 250);
-
-  /* Gráficos (Invertidos/Ajustados para contrastar en oscuro) */
-  --chart-1: 147 197 253; /* Azul claro */
-  --chart-2: 96 165 250; /* Azul medio */
-  --chart-3: 59 130 246; /* Azul estándar */
-  --chart-4: 29 78 216; /* Azul oscuro */
-  --chart-5: 30 58 138; /* Azul muy oscuro */
-
+  --scrollbar-bg: oklch(0.3 0 0);
+  --scrollbar-bg-hover: oklch(0.42 0 0);
+ 
+  /* Superficies principales: de más oscura a más elevada */
+  --background: oklch(0.13 0 0); /* Negro profundo */
+  --background-2: oklch(0.17 0 0); /* Equivale al #F5F3F1 de las secciones alternas */
+  --foreground: oklch(0.97 0 0); /* Blanco casi puro */
+ 
+  /* Componentes y tarjetas */
+  --card: oklch(0.17 0 0);
+  --card-foreground: oklch(0.97 0 0);
+ 
+  --popover: oklch(0.2 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+ 
+  /* Marca: azul cielo como único color de énfasis */
+  --primary: #f8f8f8;
+  --primary-foreground: oklch(0.13 0 0);
+ 
+  --secondary: oklch(0.24 0 0);
+  --secondary-foreground: oklch(0.93 0 0);
+ 
+  /* Detalles (iconos sobre círculo negro: text-tertiary) */
+  --tertiary: #6ea8fe;
+ 
+  /* Muted y desactivados */
+  --muted: oklch(0.22 0 0);
+  --muted-2: oklch(0.27 0 0);
+  --muted-foreground: oklch(0.7 0 0); /* Texto secundario con buen contraste */
+ 
+  /* Acento: gris elevado, para hover y fondos destacados */
+  --accent: oklch(0.3 0 0);
+  --accent-foreground: oklch(0.97 0 0);
+ 
+  /* Destructivo */
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
+ 
+  /* Bordes e inputs */
+  --border: oklch(0.28 0 0);
+  --input: oklch(0.28 0 0);
+  --ring: #6ea8fe;
+ 
+  /* Gráficos: escala de azules, de claro a oscuro, para distinguir series */
+  --chart-1: 197 220 254; /* #C5DCFE */
+  --chart-2: 110 168 254; /* #6EA8FE */
+  --chart-3: 59 130 246; /* #3B82F6 */
+  --chart-4: 37 99 235; /* #2563EB */
+  --chart-5: 30 64 175; /* #1E40AF */
+ 
   /* Estructura */
   --radius: 0.75rem;
-
+ 
   /* Sidebar */
-  --sidebar: oklch(0.14 0.015 240); /* Ligeramente más oscuro que las cards */
-  --sidebar-foreground: oklch(0.9 0.01 240);
-  --sidebar-primary: oklch(0.6 0.2 250);
-  --sidebar-primary-foreground: oklch(0.98 0.005 240);
-  --sidebar-accent: oklch(0.2 0.02 240);
-  --sidebar-accent-foreground: oklch(0.95 0.01 240);
-  --sidebar-border: oklch(0.22 0.015 240);
-  --sidebar-ring: oklch(0.6 0.2 250);
-
-  /* Amarillo (Pendiente Dark) */
+  --sidebar: oklch(0.1 0 0); /* Más oscuro que el fondo */
+  --sidebar-foreground: oklch(0.93 0 0);
+  --sidebar-primary: #6ea8fe;
+  --sidebar-primary-foreground: oklch(0.13 0 0);
+  --sidebar-accent: oklch(0.21 0 0);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.26 0 0);
+  --sidebar-ring: #6ea8fe;
+ 
+  /* Amarillo (Pendiente) */
   --text-custom-yellow: #fcd34d;
   --border-custom-yellow: #45331d;
   --bg-custom-yellow: #282015;
-
-  /* Verde (Confirmado Dark) */
+ 
+  /* Verde (Confirmado) */
   --text-custom-green: #6ee7b7;
   --border-custom-green: #1b4332;
   --bg-custom-green: #13271d;
-
-  /* Rojo (Cancelado Dark) */
+ 
+  /* Rojo (Cancelado) */
   --text-custom-red: #f87171;
   --border-custom-red: #4c1d1d;
   --bg-custom-red: #2c1616;
-
-  /* Azul (Ask Elysia Cyan-Turquesa Elegante para el Admin) */
-  --text-custom-blue: #00ffd2;
-  --border-custom-blue: #1c353a;
-  --bg-custom-blue: #132225;
-
-  /* Gris (Completado Dark derivado de Elysia / escala default) */
-  --text-custom-gray: #8c8294;
-  --border-custom-gray: #221e25;
-  --bg-custom-gray: #19161b;
-
+ 
+  /* Azul */
+  --text-custom-blue: #6ea8fe;
+  --border-custom-blue: #1f3a66;
+  --bg-custom-blue: #121e33;
+ 
+  /* Gris (Completado) */
+  --text-custom-gray: #a3a3a3;
+  --border-custom-gray: #2a2a2a;
+  --bg-custom-gray: #1a1a1a;
+ 
   /* Naranja */
   --text-custom-orange: #fb923c;
   --border-custom-orange: #451a03;
