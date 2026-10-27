@@ -46,7 +46,7 @@ export const ApartmentCard = ({ apartment, index }: IApartmentCard) => {
             <div className='flex items-center justify-between'>
               <span className='font-bold text-sm'>
                 {formatCurrency(apartment.pricePerDay)}
-                <span className='text-muted-foreground font-normal text-xs'>/día</span>
+                <span className='text-muted-foreground font-normal text-xs'>/noche</span>
               </span>
             </div>
           </div>
