@@ -22,7 +22,7 @@ export const ApartmentPage = () => {
   return (
     <UserPageLayout>
       <div className='flex flex-col gap-4'>
-        <h1 className='text-3xl font-extrabold mb-2 tracking-tight'>
+        <h1 className='text-3xl font-serif text-3xl font-semibold mb-2 tracking-tight'>
           Apartamento #{apartment.number}
         </h1>
         <ApartmentImagesGrid />

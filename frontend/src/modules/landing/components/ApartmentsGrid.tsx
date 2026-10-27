@@ -23,9 +23,9 @@ export const ApartmentsGrid = () => {
   }, [])
 
   return (
-    <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8'>
       {apartments.map((apartment, index) => (
-        <ApartmentCard apartment={apartment} index={index} key={index} />
+        <ApartmentCard apartment={apartment} index={index} key={apartment.id} />
       ))}
     </div>
   )
