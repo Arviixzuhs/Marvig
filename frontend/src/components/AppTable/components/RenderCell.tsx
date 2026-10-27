@@ -1,5 +1,5 @@
 import { Key } from 'react'
-import { Chip } from '@heroui/react'
+import { Avatar, Chip } from '@heroui/react'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { TableColumnInterface } from '@/features/appTableSlice'
 import { getFormattedDateTime } from '@/utils/getFormattedDateTime'
@@ -21,11 +21,13 @@ export const RenderCell = (props: RenderCellProps) => {
       case 'user':
         return (
           <div className='flex items-center gap-2 text-c-text text-nowrap'>
-            <div className='min-w-7 min-h-7 rounded-full bg-primary flex items-center justify-center text-white'>
-              {props.value && typeof props.value === 'string'
-                ? props.value.charAt(0).toUpperCase()
-                : 'U'}
-            </div>
+            <Avatar
+              name={props.value}
+              size='sm'
+              color='primary'
+              showFallback
+              classNames={{ base: 'shrink-0' }}
+            />
             {props.value}
           </div>
         )
@@ -41,7 +43,6 @@ export const RenderCell = (props: RenderCellProps) => {
               style={{
                 background: color + '40' || '#6B7280',
                 color: color,
-      
               }}
             >
               {props.column.chipConfig[props.value]?.label || 'Sin contenido'}
@@ -63,7 +64,7 @@ export const RenderCell = (props: RenderCellProps) => {
               getFormattedDateTime({
                 value: props.value,
                 format: {
-                 ...props.column.dateFormat
+                  ...props.column.dateFormat,
                 },
               })
             ) : (
