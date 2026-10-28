@@ -1,6 +1,7 @@
 import OpenAI from 'openai'
-import { config } from 'dotenv'
 import { User } from '@/interfaces/user.interface'
+import { config } from 'dotenv'
+import { UserRole } from '@/models/UserModel'
 import { AuthorType } from '@prisma/client'
 import { ChatService } from '@/modules/chat/chat.service'
 import { getFileContent } from '@/utils/getFileContent'
@@ -55,7 +56,7 @@ export class MarvigAIService {
       this.SHORT_CONTEXT_SIZE,
     )
 
-    const systemInstruction = await this.buildSystemInstruction(chat.summary)
+    const systemInstruction = await this.buildSystemInstruction(chat.summary, user.role)
 
     const messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: systemInstruction },
@@ -108,8 +109,27 @@ export class MarvigAIService {
 
         let stepText = ''
         const calls = new Map<number, { id: string; name: string; args: string }>()
+        let totalPromptTokens = 0
+        let totalCompletionTokens = 0
+        let totalCachedTokens = 0
 
         for await (const chunk of stream) {
+          if (chunk.usage) {
+            const usage = chunk.usage
+
+            totalPromptTokens += usage.prompt_tokens ?? 0
+            totalCompletionTokens += usage.completion_tokens ?? 0
+            totalCachedTokens += usage.prompt_tokens_details?.cached_tokens ?? 0
+
+            this.logger.log(
+              `[TOKENS] Paso ${step} | ` +
+                `Entrada: ${usage.prompt_tokens} | ` +
+                `Salida: ${usage.completion_tokens} | ` +
+                `Total: ${usage.total_tokens} | ` +
+                `Cache: ${usage.prompt_tokens_details?.cached_tokens ?? 0}`,
+            )
+          }
+
           const delta = chunk.choices[0]?.delta
           if (!delta) continue
 
@@ -222,8 +242,27 @@ export class MarvigAIService {
     return response.choices[0]?.message?.content ?? ''
   }
 
-  private async buildSystemInstruction(summary: string): Promise<string> {
-    const role = await getFileContent('skills/prompts/marvig', 'SKILL.md')
-    return `${role}\n\n${summary ?? ''}`.trim()
+  private basePrompt?: string
+
+  private async buildSystemInstruction(summary: string, userRole: UserRole): Promise<string> {
+    this.basePrompt ??= await getFileContent('skills/prompts/marvig', 'SKILL.md')
+
+    const today = new Intl.DateTimeFormat('es-VE', {
+      dateStyle: 'full',
+      timeZone: 'America/Caracas',
+    }).format(new Date())
+
+    const sessionBlock = `<contexto_sesion>\nRol: ${userRole}\nFecha actual: ${today}\n</contexto_sesion>`
+
+    const cleanSummary = this.sanitize(summary ?? '')
+    const summaryBlock = cleanSummary
+      ? `<resumen_conversacion_previa>\n${cleanSummary}\n</resumen_conversacion_previa>`
+      : ''
+
+    return [this.basePrompt, sessionBlock, summaryBlock].filter(Boolean).join('\n\n')
+  }
+
+  private sanitize(text: string): string {
+    return text.replace(/<\/?(contexto_sesion|resumen_conversacion_previa)[^>]*>/gi, '').trim()
   }
 }
