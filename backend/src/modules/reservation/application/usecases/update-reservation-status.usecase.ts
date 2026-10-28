@@ -12,7 +12,7 @@ export class UpdateReservationStatusUseCase {
 
   async execute(id: number, status: ReservationStatus): Promise<ReservationModel> {
     const existsReservation = await this.reservationRepository.existsById(id)
-    if (!existsReservation) throw new NotFoundException('Reservation not found')
+    if (!existsReservation) throw new NotFoundException('Reserva no encontrada.')
 
     return await this.reservationRepository.updateStatus(id, status)
   }

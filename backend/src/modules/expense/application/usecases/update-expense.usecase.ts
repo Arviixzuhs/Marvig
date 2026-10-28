@@ -12,7 +12,7 @@ export class UpdateExpenseUseCase {
 
   async execute(expenseId: number, data: UpdateExpenseDto): Promise<ExpenseModel> {
     const expense = await this.expenseRepository.existsExpenseById(expenseId)
-    if (!expense) throw new NotFoundException('Expense not found')
+    if (!expense) throw new NotFoundException('Gasto no encontrado.')
 
     return await this.expenseRepository.updateExpense(expenseId, data)
   }

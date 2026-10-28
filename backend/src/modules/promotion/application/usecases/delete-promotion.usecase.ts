@@ -10,7 +10,7 @@ export class DeletePromotionUseCase {
 
   async execute(id: number): Promise<void> {
     const exists = await this.promotionRepository.existsById(id)
-    if (!exists) throw new NotFoundException('Promotion not found')
+    if (!exists) throw new NotFoundException('Promoción no encontrada.')
 
     await this.promotionRepository.deletePromotion(id)
   }

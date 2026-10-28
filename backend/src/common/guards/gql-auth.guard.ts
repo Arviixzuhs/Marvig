@@ -41,13 +41,13 @@ export class GqlAuthGuard implements CanActivate {
       }
 
       if (!token) {
-        throw new UnauthorizedException('No token provided')
+        throw new UnauthorizedException('No se proporcionó ningún token.')
       }
 
       const decoded = await new Promise<User>((resolve, reject) => {
         jwt.verify(token, process.env.SECRET_KEY as string, (error, decodedToken) => {
           if (error) {
-            return reject(new UnauthorizedException('Invalid or expired token'))
+            return reject(new UnauthorizedException('El token no es válido o ha expirado.'))
           }
           resolve(decodedToken as User)
         })
@@ -60,7 +60,7 @@ export class GqlAuthGuard implements CanActivate {
         throw error
       }
 
-      throw new InternalServerErrorException('Internal server error')
+      throw new InternalServerErrorException('Error interno del servidor.')
     }
   }
 }

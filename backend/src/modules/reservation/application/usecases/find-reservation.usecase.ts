@@ -11,7 +11,7 @@ export class FindReservationUseCase {
 
   async execute(id: number): Promise<ReservationModel> {
     const reservation = await this.reservationRepository.findReservationById(id)
-    if (!reservation) throw new NotFoundException('Reservation not found')
+    if (!reservation) throw new NotFoundException('Reserva no encontrada.')
 
     return reservation
   }

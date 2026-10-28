@@ -127,7 +127,10 @@ export class AuthService {
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password)
     if (!isPasswordValid)
-      throw new HttpException('Email o contraseña no válidos.', HttpStatus.UNAUTHORIZED)
+      throw new HttpException(
+        'El correo electrónico o la contraseña no son válidos.',
+        HttpStatus.UNAUTHORIZED,
+      )
 
     const token = jwt.sign(
       { userId: user.id, username: user.name, email: user.email, role: user.role },
