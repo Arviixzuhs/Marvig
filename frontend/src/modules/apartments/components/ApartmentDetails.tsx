@@ -11,6 +11,7 @@ import {
   UtensilsCrossed,
   Utensils,
 } from 'lucide-react'
+import { pluralize } from '@/utils/pluralize'
 
 const amenities = [
   { icon: ChefHat, label: 'Cocina' },
@@ -51,10 +52,10 @@ export const ApartmentDetails = () => {
     <div className='flex flex-col gap-7 w-full'>
       <div className='flex items-center gap-7 py-5 border-y border-border'>
         <span className='flex items-center gap-2 text-sm font-medium'>
-          <Bed size={17} /> {apartment.bedrooms} habitaciones
+          <Bed size={17} /> {apartment.bedrooms} {pluralize(apartment.bathrooms, 'habitación', 'habitaciones')}
         </span>
         <span className='flex items-center gap-2 text-sm font-medium'>
-          <Bath size={17} /> {apartment.bathrooms} baños
+          <Bath size={17} /> {apartment.bathrooms} {pluralize(apartment.bathrooms, 'baño', 'baños')}
         </span>
         <span className='flex items-center gap-2 text-sm font-medium'>
           <Square size={17} /> {apartment.squareMeters} m²
