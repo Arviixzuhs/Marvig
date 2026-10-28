@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import { DateValue, RangeValue } from '@heroui/react'
 import { getLocalTimeZone } from '@internationalized/date'
 import { useLocation } from 'react-router-dom'
@@ -9,6 +9,7 @@ interface CalendarContextType {
   setDate: React.Dispatch<React.SetStateAction<RangeValue<DateValue> | null | undefined>>
   refresh: boolean
   refreshCalendar: () => void
+  clearCalendar: () => void
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined)
@@ -27,20 +28,26 @@ export const CalendarProvider = ({ children }: { children: ReactNode }) => {
     setNights(totalDays)
   }, [totalDays])
 
+  const clearCalendar = useCallback(() => {
+    setDate(null)
+    setNights(0)
+  }, [])
+
   React.useEffect(() => {
     if (/apartment|checkout/.test(location.pathname)) return
     return () => {
-      setDate(null)
-      setNights(0)
+      clearCalendar()
     }
-  }, [location.pathname])
+  }, [location.pathname, clearCalendar])
 
   const refreshCalendar = () => {
     setRefress(!refresh)
   }
 
   return (
-    <CalendarContext.Provider value={{ date, nights, setDate, refreshCalendar, refresh }}>
+    <CalendarContext.Provider
+      value={{ date, nights, setDate, refreshCalendar, refresh, clearCalendar }}
+    >
       {children}
     </CalendarContext.Provider>
   )

@@ -4,6 +4,7 @@ import { manageUserSlice } from '@/features/userSlice'
 import { manageCheckoutSlice } from '@/features/checkoutSlice'
 import { manageAppTableSlice } from '@/features/appTableSlice'
 import { manageApartmentSlice } from '@/features/apartmentSlice'
+import { manageReservationSlice } from '@/features/reservationSlice'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 const appReducer = combineReducers({
@@ -13,6 +14,7 @@ const appReducer = combineReducers({
   checkout: manageCheckoutSlice.reducer,
   appTable: manageAppTableSlice.reducer,
   apartment: manageApartmentSlice.reducer,
+  reservation: manageReservationSlice.reducer
 })
 
 const store = configureStore({
