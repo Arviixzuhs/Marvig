@@ -10,7 +10,7 @@ export class DeleteExpenseUseCase {
 
   async execute(expenseId: number): Promise<void> {
     const expense = await this.expenseRepository.existsExpenseById(expenseId)
-    if (!expense) throw new NotFoundException('Expense not found')
+    if (!expense) throw new NotFoundException('Gasto no encontrado.')
 
     await this.expenseRepository.deleteExpense(expenseId)
   }

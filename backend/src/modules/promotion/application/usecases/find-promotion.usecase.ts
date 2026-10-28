@@ -11,7 +11,7 @@ export class FindPromotionUseCase {
 
   async execute(id: number): Promise<PromotionModel> {
     const promotion = await this.promotionRepository.findPromotion(id)
-    if (!promotion) throw new NotFoundException('Promotion not found')
+    if (!promotion) throw new NotFoundException('Promoción no encontrada.')
 
     return promotion
   }

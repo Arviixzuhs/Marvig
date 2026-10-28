@@ -11,7 +11,7 @@ export class FindEmployeeUseCase {
 
   async execute(id: number): Promise<EmployeeModel> {
     const employee = await this.employeeRepository.findEmployee(id)
-    if (!employee) throw new NotFoundException('Employee not found')
+    if (!employee) throw new NotFoundException('Empleado no encontrado.')
 
     return employee
   }

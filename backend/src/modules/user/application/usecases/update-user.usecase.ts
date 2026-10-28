@@ -12,7 +12,7 @@ export class UpdateUserUseCase {
 
   async execute(userId: number, newData: UpdateUserDto): Promise<UserModel> {
     const user = await this.userRepository.existsById(userId)
-    if (!user) throw new NotFoundException('User not found')
+    if (!user) throw new NotFoundException('Usuario no encontrado.')
 
     const updatedUser = await this.userRepository.updateUser(userId, newData)
     return updatedUser

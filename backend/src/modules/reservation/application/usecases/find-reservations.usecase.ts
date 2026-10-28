@@ -19,20 +19,22 @@ export class FindReservationsUseCase {
   ) {}
 
   async execute(filters: ReservationFilterDto, user: User): Promise<ReservationPageDto> {
-    if (!user) throw new UnauthorizedException()
+    if (!user) throw new UnauthorizedException('No estás autorizado para realizar esta acción.')
 
     const { mine, ...rest } = filters
 
     if (mine && filters.userId !== undefined) {
       throw new BadRequestException(
-        'No puedes utilizar dos filtros relacionados al usuario al mismo tiempo.',
+        'No puedes utilizar dos filtros relacionados con el usuario al mismo tiempo.',
       )
     }
 
     const isAdmin = user.role === UserRole.ADMIN
 
     if (!isAdmin && filters.userId !== undefined && filters.userId !== user.userId) {
-      throw new ForbiddenException('Access denied.')
+      throw new ForbiddenException(
+        `Acceso denegado. Se requiere el rol ${UserRole.ADMIN}.`,
+      )
     }
 
     const canQueryOthers = isAdmin && !mine

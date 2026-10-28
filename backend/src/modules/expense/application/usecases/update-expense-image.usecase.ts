@@ -16,7 +16,7 @@ export class UpdateExpenseImagesUseCase {
 
   async execute(data: ExpenseImageDto): Promise<ExpenseModel> {
     const expense = await this.expenseRepository.existsExpenseById(data.id)
-    if (!expense) throw new NotFoundException('Expense not found')
+    if (!expense) throw new NotFoundException('Gasto no encontrado.')
 
     await this.expenseImageRepository.deleteImagesByExpense(data.id)
 

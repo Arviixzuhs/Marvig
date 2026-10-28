@@ -27,14 +27,16 @@ export class PermissionGuard implements CanActivate {
 
     if (!requiredRole) return true
 
-    if (!currentUser) throw new ForbiddenException('User not found in request.')
+    if (!currentUser) throw new ForbiddenException('No se encontró al usuario en la solicitud.')
 
     const user = await this.prisma.user.findUnique({
       where: { id: currentUser.userId },
     })
 
     if (!user || user.role !== requiredRole) {
-      throw new ForbiddenException(`Access denied. Role ${requiredRole} required.`)
+      throw new ForbiddenException(
+        `Acceso denegado. Se requiere el rol ${requiredRole}.`,
+      )
     }
 
     return true

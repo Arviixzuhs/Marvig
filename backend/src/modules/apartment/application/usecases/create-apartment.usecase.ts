@@ -13,7 +13,7 @@ export class CreateApartmentUseCase {
   async execute(data: ApartmentDto): Promise<ApartmentModel> {
     const existingApartment = await this.apartmentRepository.existsByNumber(data.number)
     if (existingApartment)
-      throw new ConflictException('Apartment with the same number already exists')
+      throw new ConflictException('Ya existe un apartamento con el mismo número.')
 
     const createdApartment = await this.apartmentRepository.createApartment(data)
     return createdApartment

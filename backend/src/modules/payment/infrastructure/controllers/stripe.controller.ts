@@ -18,6 +18,7 @@ import {
   Controller,
   RawBodyRequest,
   BadRequestException,
+  HttpException,
 } from '@nestjs/common'
 
 config()
@@ -68,7 +69,9 @@ export class StripeController {
       return { url: session.url }
     } catch (error) {
       console.error('Error al crear sesión:', error)
-      throw new BadRequestException(error.message)
+      const message =
+        error instanceof HttpException ? error.message : 'No se pudo crear la sesión de pago.'
+      throw new BadRequestException(message)
     }
   }
 
@@ -85,7 +88,7 @@ export class StripeController {
       event = this.stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret)
     } catch (err) {
       console.error(`Error de validación de Webhook: ${err.message}`)
-      throw new BadRequestException(`Webhook Error: ${err.message}`)
+      throw new BadRequestException('No se pudo validar la firma del webhook.')
     }
 
     switch (event.type) {
