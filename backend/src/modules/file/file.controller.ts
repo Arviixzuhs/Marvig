@@ -41,7 +41,7 @@ export class FileController {
     @UploadedFile() file: Express.Multer.File,
     @Query(queryPipe) query: UploadFileQueryDto,
   ) {
-    if (!file) throw new BadRequestException('File is required')
+    if (!file) throw new BadRequestException('Se requiere un archivo.')
 
     const filename = this.fileService.saveFile(file, query.visibility)
     const fileUrl = this.fileService.generateFileUrl(filename, query.visibility)
@@ -55,7 +55,7 @@ export class FileController {
     @UploadedFiles() files: Express.Multer.File[],
     @Query(queryPipe) query: UploadFileQueryDto,
   ) {
-    if (!files?.length) throw new BadRequestException('Files are required')
+    if (!files?.length) throw new BadRequestException('Se requiere al menos un archivo.')
 
     const fileUrls = files.map((file) => {
       const filename = this.fileService.saveFile(file, query.visibility)
@@ -68,7 +68,7 @@ export class FileController {
   @RequiredRole(UserRole.ADMIN)
   getPrivateFile(@Param('filename') filename: string, @Res() res: Response) {
     const filePath = this.fileService.getPrivateFilePath(filename)
-    if (!filePath) throw new NotFoundException('File not found')
+    if (!filePath) throw new NotFoundException('Archivo no encontrado.')
     return res.sendFile(filePath)
   }
 }

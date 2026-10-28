@@ -41,13 +41,13 @@ export class FileService {
     const baseDir = this.getDirectory(visibility)
     const filePath = join(baseDir, basename(filename))
 
-    if (!fs.existsSync(filePath)) throw new Error('File not found')
+    if (!fs.existsSync(filePath)) throw new Error('Archivo no encontrado.')
     fs.unlinkSync(filePath)
   }
 
   validateFileType(file: Express.Multer.File, allowedTypes: string[]): void {
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new Error(`Invalid file type. Allowed types are: ${allowedTypes.join(', ')}`)
+      throw new Error(`Tipo de archivo no válido. Tipos permitidos: ${allowedTypes.join(', ')}`)
     }
   }
 

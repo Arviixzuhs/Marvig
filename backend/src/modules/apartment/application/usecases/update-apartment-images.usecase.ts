@@ -16,7 +16,7 @@ export class UpdateApartmentImagesUseCase {
 
   async execute(data: ApartmentImageDto): Promise<ApartmentModel> {
     const apartment = await this.apartmentRepository.existsById(data.id)
-    if (!apartment) throw new NotFoundException('Apartment not found')
+    if (!apartment) throw new NotFoundException('Apartamento no encontrado.')
 
     await this.imageRepository.deleteImagesByApartment(data.id)
 

@@ -11,7 +11,7 @@ export class FindExpenseUseCase {
 
   async execute(expenseId: number): Promise<ExpenseModel> {
     const expense = await this.expenseRepository.findExpense(expenseId)
-    if (!expense) throw new NotFoundException('Expense not found')
+    if (!expense) throw new NotFoundException('Gasto no encontrado.')
 
     return expense
   }

@@ -17,7 +17,7 @@ export class CreatePaymentUseCase {
 
   async execute(filters: CreatePaymentDto): Promise<PaymentModel> {
     const reservation = await this.reservationRepository.findReservationById(filters.reservationId)
-    if (!reservation) throw new Error('Reservation not found')
+    if (!reservation) throw new Error('Reserva no encontrada.')
 
     if (reservation.status !== ReservationStatus.CONFIRMED) {
       this.reservationRepository.updateStatus(filters.reservationId, ReservationStatus.CONFIRMED)

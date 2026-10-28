@@ -12,7 +12,7 @@ export class UpdatePaymentStatusUseCase {
 
   async execute(id: number, status: PaymentStatus): Promise<PaymentModel> {
     const payment = await this.paymentRepository.existsById(id)
-    if (!payment) throw new Error('Payment not found')
+    if (!payment) throw new Error('Pago no encontrado.')
 
     return this.paymentRepository.updateStatus(id, status)
   }

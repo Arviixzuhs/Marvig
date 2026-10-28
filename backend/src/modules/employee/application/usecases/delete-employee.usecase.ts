@@ -10,7 +10,7 @@ export class DeleteEmployeeUseCase {
 
   async execute(id: number): Promise<void> {
     const employee = await this.employeeRepository.findEmployee(id)
-    if (!employee) throw new NotFoundException('Employee not found')
+    if (!employee) throw new NotFoundException('Empleado no encontrado.')
 
     await this.employeeRepository.deleteEmployee(id)
   }

@@ -11,7 +11,7 @@ export class FindPaymentUseCase {
 
   async execute(id: number): Promise<PaymentModel> {
     const payment = await this.paymentRepository.existsById(id)
-    if (!payment) throw new NotFoundException('Payment not found')
+    if (!payment) throw new NotFoundException('Pago no encontrado.')
 
     return await this.paymentRepository.findPayment(id)
   }

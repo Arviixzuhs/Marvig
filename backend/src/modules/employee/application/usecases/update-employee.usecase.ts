@@ -12,7 +12,7 @@ export class UpdateEmployeeUseCase {
 
   async execute(id: number, newData: UpdateEmployeeDto): Promise<EmployeeModel> {
     const employee = await this.employeeRepository.findEmployee(id)
-    if (!employee) throw new NotFoundException('Employee not found')
+    if (!employee) throw new NotFoundException('Empleado no encontrado.')
 
     const updatedEmployee = await this.employeeRepository.updateEmployee(id, newData)
     return updatedEmployee
