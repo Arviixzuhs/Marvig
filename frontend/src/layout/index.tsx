@@ -17,7 +17,7 @@ export const UserLayout = () => {
   return (
     <div className='flex flex-col min-h-screen bg-background text-foreground'>
       <UserNavbar />
-      <main className='flex-grow w-full'>
+      <main className='flex flex-col flex-grow w-full min-h-screen'>
         <Outlet />
       </main>
       <Footer />
