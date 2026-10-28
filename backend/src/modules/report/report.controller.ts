@@ -1,12 +1,12 @@
-import { Response } from 'express'
 import { UserRole } from '@/common/enums/user-role.enum'
 import { RequiredRole } from '@/common/decorators/required-role.decorator'
 import { ReportService } from './report.service'
+import { Request, Response } from 'express'
 import { PaymentReportQueryDto } from './dto/payment-report-query.dto'
 import { ExpenseReportQueryDto } from './dto/expense-report-query.dto'
 import { OccupancyReportQueryDto } from './dto/occupancy-report-query.dto'
 import { ReservationReportQueryDto } from './dto/reservation-report-query.dto'
-import { Controller, Get, Query, Res, Param, ParseIntPipe } from '@nestjs/common'
+import { Controller, Get, Query, Res, Param, ParseIntPipe, Req } from '@nestjs/common'
 
 @Controller('reports')
 export class ReportController {
@@ -52,8 +52,8 @@ export class ReportController {
 
   @Get('reservations/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getReservationReportPdf(@Query() query: ReservationReportQueryDto, @Res() res: Response) {
-    const buffer = await this.reportService.getReservationReportPdf(query)
+  async getReservationReportPdf(@Query() query: ReservationReportQueryDto, @Req() req: Request, @Res() res: Response) {
+    const buffer = await this.reportService.getReservationReportPdf(query, req.user)
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="reporte-reservas-${Date.now()}.pdf"`,
