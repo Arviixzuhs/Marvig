@@ -1,3 +1,4 @@
+import { User } from '@/interfaces/user.interface'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { Injectable } from '@nestjs/common'
@@ -80,8 +81,8 @@ export class ReportService {
     return this.findExpensesUseCase.execute(filters)
   }
 
-  async getReservationReport(filters: ReservationReportQueryDto) {
-    return this.findReservationsUseCase.execute(filters)
+  async getReservationReport(filters: ReservationReportQueryDto, user: User) {
+    return this.findReservationsUseCase.execute(filters, user)
   }
 
   async getOccupancyReport(filters: OccupancyReportInput) {
@@ -496,8 +497,8 @@ export class ReportService {
     return Buffer.from(doc.output('arraybuffer') as ArrayBuffer)
   }
 
-  async getReservationReportPdf(filters: ReservationReportQueryDto): Promise<Buffer> {
-    const data = await this.getReservationReport({ ...filters, page: 0, pageSize: 10000 })
+  async getReservationReportPdf(filters: ReservationReportQueryDto, user: User): Promise<Buffer> {
+    const data = await this.getReservationReport({ ...filters, page: 0, pageSize: 10000 }, user)
     const doc = new jsPDF({ orientation: 'landscape' })
     const subtitle =
       filters.startDate && filters.endDate

@@ -1,7 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { User } from '@/interfaces/user.interface'
+import { UserRole } from '@/common/enums/user-role.enum'
 import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
+import {
+  Inject,
+  Injectable,
+  ForbiddenException,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common'
 
 @Injectable()
 export class FindReservationsUseCase {
@@ -10,11 +18,26 @@ export class FindReservationsUseCase {
     private readonly reservationRepository: ReservationRepositoryPort,
   ) {}
 
-  async execute(filters: ReservationFilterDto, userId?: number): Promise<ReservationPageDto> {
-    const reservations = await this.reservationRepository.findReservations({
-      ...filters,
-      ...(filters.mine && userId && { userId }),
-    })
-    return reservations
+  async execute(filters: ReservationFilterDto, user: User): Promise<ReservationPageDto> {
+    if (!user) throw new UnauthorizedException()
+
+    const { mine, ...rest } = filters
+
+    if (mine && filters.userId !== undefined) {
+      throw new BadRequestException(
+        'No puedes utilizar dos filtros relacionados al usuario al mismo tiempo.',
+      )
+    }
+
+    const isAdmin = user.role === UserRole.ADMIN
+
+    if (!isAdmin && filters.userId !== undefined && filters.userId !== user.userId) {
+      throw new ForbiddenException('Access denied.')
+    }
+
+    const canQueryOthers = isAdmin && !mine
+    const userId = canQueryOthers ? filters.userId : user.userId
+
+    return this.reservationRepository.findReservations({ ...rest, userId })
   }
 }

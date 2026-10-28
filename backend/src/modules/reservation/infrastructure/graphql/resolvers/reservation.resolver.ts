@@ -66,7 +66,7 @@ export class ReservationResolver {
     @Args('filters') filters: ReservationFilterInput,
     @CurrentUser() user: User,
   ): Promise<ReservationPageType> {
-    return this.findReservationsUseCase.execute(filters, user.userId)
+    return this.findReservationsUseCase.execute(filters, user)
   }
 
   @Mutation(() => ReservationType, { description: 'Actualiza los datos generales de una reserva' })
