@@ -81,8 +81,8 @@ export const MyReservationsPage = () => {
         </div>
 
         {loading ? (
-          <div className='flex justify-center items-center h-64'>
-            <Spinner size='lg' label='Cargando tus reservas...' color='primary' />
+          <div className='flex justify-center items-center py-24 text-sm text-muted-foreground animate-pulse'>
+            <Spinner />
           </div>
         ) : reservations.length === 0 ? (
           <div className='flex flex-col items-center justify-center pt-30 w-full text-center'>
