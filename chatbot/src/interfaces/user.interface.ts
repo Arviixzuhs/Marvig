@@ -1,4 +1,4 @@
-import { UserRole } from "@/models/UserModel"
+import { UserRole } from '@/models/UserModel'
 
 export interface User {
   iat: number
