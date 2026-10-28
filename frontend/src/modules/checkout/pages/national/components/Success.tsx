@@ -2,15 +2,14 @@ import { Link } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
-import { useCalendarContext } from '@/context/calendarContext'
-import { formatCalendarDate } from '@/utils/formatCalendarDate'
 import { formatCurrency } from '@/utils/formatCurrency'
+import { getFormattedDateTime } from '@/utils/getFormattedDateTime'
 
 export const Success = () => {
-  const { date } = useCalendarContext()
   const apartment = useSelector((state: RootState) => state.apartment.data)
-  const checkout = useSelector((state: RootState) => state.checkout)
-  if (!apartment) return null
+  const reservation = useSelector((state: RootState) => state.reservation.data)
+
+  if (!apartment || !reservation) return null
 
   return (
     <div className='flex flex-col items-center justify-center text-center w-full min-h-[400px]'>
@@ -27,18 +26,18 @@ export const Success = () => {
         <div className='flex justify-between items-center'>
           <span className='text-muted-foreground'>Entrada</span>
           <span className='font-medium text-foreground'>
-            {date?.start && formatCalendarDate(date.start)}
+            {getFormattedDateTime({ value: reservation.startDate })}
           </span>
         </div>
         <div className='flex justify-between items-center'>
           <span className='text-muted-foreground'>Sálida</span>
           <span className='font-medium text-foreground'>
-            {date?.end && formatCalendarDate(date.end)}
+            {getFormattedDateTime({ value: reservation.endDate })}
           </span>
         </div>
         <div className='flex justify-between items-center font-bold border-t border-border pt-2.5 mt-1'>
           <span className='text-foreground'>Total pagado</span>
-          <span className='text-foreground'>{formatCurrency(checkout.totalPrice)}</span>
+          <span className='text-foreground'>{formatCurrency(reservation.totalPrice)}</span>
         </div>
       </div>
       <Link

@@ -4,24 +4,27 @@ import Confetti from 'react-confetti'
 import { Success } from './components/Success'
 import { Summary } from './components/Summary'
 import { RootState } from '@/store'
-import { useSelector } from 'react-redux'
 import { PaymentInfo } from './components/PaymentInfo'
 import { useNavigate } from 'react-router-dom'
 import { PaymentMethod } from '@/models/PaymentModel'
+import { clearCheckout } from '@/features/checkoutSlice'
+import { setReservation } from '@/features/reservationSlice'
 import { Stepper, StepItem } from '@/components/Stepper'
 import { reservationService } from '@/services/reservation'
 import { useCalendarContext } from '@/context/calendarContext'
 import { PersonalInformation } from './components/PersonalInformation'
+import { useDispatch, useSelector } from 'react-redux'
 
 export const NationalCheckoutPage = () => {
   const [step, setStep] = React.useState<number>(1)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user)
   const checkout = useSelector((state: RootState) => state.checkout)
   const apartment = useSelector((state: RootState) => state.apartment.data)
   const [isLoading, setLoading] = React.useState(false)
   const [showConfetti, setShowConfetti] = React.useState(false)
-  const { date, refreshCalendar } = useCalendarContext()
+  const { date, refreshCalendar,clearCalendar } = useCalendarContext()
   const [windowDimension, setWindowDimension] = React.useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -104,10 +107,15 @@ export const NationalCheckoutPage = () => {
 
     try {
       setLoading(true)
-      await reservationService.create(payload)
-      setStep(checkoutSteps.length)
-      window.scrollTo(0, 0)
-      setShowConfetti(true)
+      const reservation = await reservationService.create(payload)
+      if (reservation) {
+        dispatch(setReservation(reservation))
+        clearCalendar()
+        window.scrollTo(0, 0)
+        setStep(checkoutSteps.length)
+        setShowConfetti(true)
+      }
+      dispatch(clearCheckout())
     } catch (error: any) {
       refreshCalendar()
       toast.error(error.message)
@@ -117,7 +125,7 @@ export const NationalCheckoutPage = () => {
   }
 
   return (
-    <div className='relative flex items-center justify-center'>
+    <div className='w-full relative flex items-center justify-center'>
       {showConfetti && (
         <div className='absolute inset-0 z-10 overflow-hidden'>
           <Confetti
@@ -130,9 +138,11 @@ export const NationalCheckoutPage = () => {
       )}
       <div className='w-full max-w-5xl px-4 sm:px-6 py-6 md:py-10 z-20'>
         <div
-          className={`grid gap-8 items-start w-full ${isFinalStep ? 'grid-cols-1 max-w-xl mx-auto' : 'grid-cols-1 lg:grid-cols-5'}`}
+          className={`flex flex-col gap-8 items-start w-full ${
+            isFinalStep ? 'max-w-xl mx-auto' : 'lg:flex-row'
+          }`}
         >
-          <div className='col-span-3 w-full order-1'>
+          <div className={`w-full order-1 ${isFinalStep ? '' : 'lg:w-3/5 lg:flex-none'}`}>
             <Stepper
               items={checkoutSteps}
               currentStep={step}
@@ -144,7 +154,7 @@ export const NationalCheckoutPage = () => {
             />
           </div>
           {!isFinalStep && (
-            <div className='lg:col-span-2 max-w-2xl w-fit order-2 lg:sticky lg:top-34'>
+            <div className='w-full lg:w-2/5 lg:flex-none order-2 lg:sticky lg:top-34'>
               <Summary />
             </div>
           )}
