@@ -33,7 +33,7 @@ export class MarvigAIService {
     private chatService: ChatService,
     private messageService: MessageService,
   ) {}
-  
+
   async ask({
     user,
     chatId,
@@ -114,24 +114,21 @@ export class MarvigAIService {
         let totalCachedTokens = 0
 
         for await (const chunk of stream) {
-
           if (chunk.usage) {
             const usage = chunk.usage
 
             totalPromptTokens += usage.prompt_tokens ?? 0
             totalCompletionTokens += usage.completion_tokens ?? 0
-            totalCachedTokens +=
-              usage.prompt_tokens_details?.cached_tokens ?? 0
+            totalCachedTokens += usage.prompt_tokens_details?.cached_tokens ?? 0
 
             this.logger.log(
               `[TOKENS] Paso ${step} | ` +
-              `Entrada: ${usage.prompt_tokens} | ` +
-              `Salida: ${usage.completion_tokens} | ` +
-              `Total: ${usage.total_tokens} | ` +
-              `Cache: ${usage.prompt_tokens_details?.cached_tokens ?? 0}`,
+                `Entrada: ${usage.prompt_tokens} | ` +
+                `Salida: ${usage.completion_tokens} | ` +
+                `Total: ${usage.total_tokens} | ` +
+                `Cache: ${usage.prompt_tokens_details?.cached_tokens ?? 0}`,
             )
           }
-
 
           const delta = chunk.choices[0]?.delta
           if (!delta) continue

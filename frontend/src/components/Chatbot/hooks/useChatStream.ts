@@ -99,7 +99,13 @@ export const useChatStream = (scrollToBottom: () => void) => {
           // Con texto parcial se conserva lo generado, también al cancelar
           dispatch(finishTypingMessage({ id: aiMsgId, content: fullResponse }))
         } else if (reason === 'error') {
-          dispatch(setErrorMessage({ id: aiMsgId, error: 'No estoy disponible en este momento; por favor, inténtelo de nuevo en unos minutos.' }))
+          dispatch(
+            setErrorMessage({
+              id: aiMsgId,
+              error:
+                'No estoy disponible en este momento; por favor, inténtelo de nuevo en unos minutos.',
+            }),
+          )
         } else if (reason === 'cancel') {
           dispatch(setErrorMessage({ id: aiMsgId, error: 'Respuesta cancelada.' }))
         }

@@ -2,7 +2,16 @@ import { RentalType } from '@/modules/reservation/domain/enums/rental-type.enum'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { PaginationFilterInput } from '@/common/graphql/inputs/pagination-filter.input'
 import { InputType, Field, Int } from '@nestjs/graphql'
-import { IsOptional, IsString, IsInt, IsBoolean, IsEnum, IsNumber, IsArray, IsPositive } from 'class-validator'
+import {
+  IsOptional,
+  IsString,
+  IsInt,
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsArray,
+  IsPositive,
+} from 'class-validator'
 
 @InputType()
 export class ReservationFilterInput extends PaginationFilterInput {

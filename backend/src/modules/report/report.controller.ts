@@ -52,7 +52,11 @@ export class ReportController {
 
   @Get('reservations/pdf')
   @RequiredRole(UserRole.ADMIN)
-  async getReservationReportPdf(@Query() query: ReservationReportQueryDto, @Req() req: Request, @Res() res: Response) {
+  async getReservationReportPdf(
+    @Query() query: ReservationReportQueryDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const buffer = await this.reportService.getReservationReportPdf(query, req.user)
     res.set({
       'Content-Type': 'application/pdf',
