@@ -1,4 +1,5 @@
 import { RootState } from '@/store'
+import { pluralize } from '@/utils/pluralize'
 import { LoginModal } from '@/modules/auth/components/LoginModal'
 import { useNavigate } from 'react-router-dom'
 import { formatCurrency } from '@/utils/formatCurrency'
@@ -42,7 +43,10 @@ export const ApartmentCalendarRange = () => {
         </CardBody>
         <CardFooter className='flex flex-col gap-2'>
           <div className='flex flex-col gap-2 w-full'>
-            <span className='text-muted-foreground text-sm'>{nights} noches seleccionadas</span>
+            <span className='text-muted-foreground text-sm'>
+              {nights} {pluralize(nights, 'noche', 'noches')}{' '}
+              {pluralize(nights, 'seleccionada', 'seleccionadas')}
+            </span>
             <Divider />
             <div className='flex justify-between font-bold'>
               <span>Total</span>

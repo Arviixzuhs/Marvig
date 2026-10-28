@@ -1,3 +1,4 @@
+import { pluralize } from '@/utils/pluralize'
 import { ApartmentModel } from '@/models/ApartmentModel'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { Bath, Bed, Square } from 'lucide-react'
@@ -19,7 +20,8 @@ export const ApartmentMiniCard = ({ apartment }: ApartmentMiniCardProps) => {
             <Bed size={11} /> {apartment.bedrooms} hab.
           </span>
           <span className='flex items-center gap-1'>
-            <Bath size={11} /> {apartment.bathrooms} baños
+            <Bath size={11} /> {apartment.bathrooms}{' '}
+            {pluralize(apartment.bathrooms, 'baño', 'baños')}
           </span>
           <span className='flex items-center gap-1'>
             <Square size={11} /> {apartment.squareMeters}m²
