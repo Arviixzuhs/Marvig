@@ -52,7 +52,7 @@ export const ApartmentDetails = () => {
     <div className='flex flex-col gap-7 w-full'>
       <div className='flex items-center gap-7 py-5 border-y border-border'>
         <span className='flex items-center gap-2 text-sm font-medium'>
-          <Bed size={17} /> {apartment.bedrooms} {pluralize(apartment.bathrooms, 'habitación', 'habitaciones')}
+          <Bed size={17} /> {apartment.bedrooms} {pluralize(apartment.bedrooms, 'habitación', 'habitaciones')}
         </span>
         <span className='flex items-center gap-2 text-sm font-medium'>
           <Bath size={17} /> {apartment.bathrooms} {pluralize(apartment.bathrooms, 'baño', 'baños')}
