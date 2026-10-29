@@ -139,10 +139,6 @@ export const ProfileSidebar = ({ activeSection, setActiveSection }: ProfileSideb
 
             <p className='text-sm text-default-500 text-center break-all'>{user?.email}</p>
 
-            <span className='mt-2 rounded-full bg-default-100 px-3 py-1 text-xs font-medium uppercase tracking-wide'>
-              {user?.role}
-            </span>
-
             <p className='text-xs text-default-500 text-center mt-2'>
               Miembro desde {getFormattedDateTime({ value: user?.createdAt })}
             </p>
