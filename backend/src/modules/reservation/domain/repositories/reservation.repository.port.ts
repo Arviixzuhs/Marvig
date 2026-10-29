@@ -3,6 +3,7 @@ import { ReservationModel } from '@/modules/reservation/domain/models/reservatio
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
 import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
+import { CreateReservationTransactionInput } from '@/modules/reservation/application/dto/create-reservation-transaction.dto'
 
 export interface ReservationRepositoryPort {
   existsById(id: number): Promise<boolean>
@@ -18,4 +19,7 @@ export interface ReservationRepositoryPort {
     apartmentIds: number[],
     reserveIdToExclude?: number,
   ): Promise<ReservationModel[]>
+  createReservationWithRelations(
+    input: CreateReservationTransactionInput,
+  ): Promise<ReservationModel>
 }

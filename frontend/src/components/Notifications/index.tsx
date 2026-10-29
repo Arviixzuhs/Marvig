@@ -1,5 +1,4 @@
 import React from 'react'
-import { UserRole } from '@/models/UserModel'
 import { IPageResponse } from '@/api/interfaces'
 import { getFormattedDateTime } from '@/utils/getFormattedDateTime'
 import { useMutation, useQuery } from '@apollo/client/react'
@@ -7,7 +6,18 @@ import { GET_NOTIFICATIONS_FEED } from '@/services/notification/graphql/getNotif
 import { MARK_NOTIFICATIONS_AS_READ } from '@/services/notification/graphql/markNotificationsAsReadMutation'
 import { NotificationType, Notification, NotificationStatus } from '@/models/NotificationModel'
 import { AlertTriangle, Bell, BellOff, CreditCard, HelpCircle } from 'lucide-react'
-import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react'
+import {
+  Badge,
+  Button,
+  Spinner,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@heroui/react'
+
+const PAGE_SIZE = 10
+const LOAD_MORE_ID = '__load_more__'
 
 const iconMap: Record<NotificationType, React.ReactNode> = {
   [NotificationType.PAYMENT_ACTIVITY]: <CreditCard className='w-4 h-4 text-success' />,
@@ -18,6 +28,8 @@ interface NotificationsFeedData {
   findNotifications: IPageResponse<Notification>
   getUnreadNotificationsCount: number
 }
+
+type FeedItem = Notification | { id: typeof LOAD_MORE_ID }
 
 const EmptyNotifications = () => (
   <div className='flex flex-col items-center justify-center py-8 gap-3 text-default-400'>
@@ -31,25 +43,68 @@ const EmptyNotifications = () => (
 
 export const Notifications = () => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const { data, loading } = useQuery<NotificationsFeedData>(GET_NOTIFICATIONS_FEED, {
+  const [isFetchingMore, setIsFetchingMore] = React.useState(false)
+
+  const { data, loading, fetchMore } = useQuery<NotificationsFeedData>(GET_NOTIFICATIONS_FEED, {
     variables: {
       filters: {
-        userTargetRole: UserRole.ADMIN,
+        page: 0,
+        pageSize: PAGE_SIZE,
       },
     },
   })
 
   const [markAllAsRead] = useMutation(MARK_NOTIFICATIONS_AS_READ, {
-    refetchQueries: [{ query: GET_NOTIFICATIONS_FEED, variables: { filters: {} } }],
+    refetchQueries: [GET_NOTIFICATIONS_FEED],
   })
 
   const unreadCount = data?.getUnreadNotificationsCount ?? 0
   const notifications = data?.findNotifications?.content ?? []
+  const currentPage = data?.findNotifications?.currentPage ?? 1
+  const totalPages = data?.findNotifications?.totalPages ?? 1
+  const hasNextPage = currentPage < totalPages
+
+  const items = React.useMemo<FeedItem[]>(
+    () => (hasNextPage ? [...notifications, { id: LOAD_MORE_ID }] : notifications),
+    [notifications, hasNextPage],
+  )
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open)
     if (open && unreadCount > 0) {
       markAllAsRead().catch((error) => console.error('Error marking notifications as read:', error))
+    }
+  }
+
+  const handleLoadMore = async () => {
+    if (isFetchingMore || !hasNextPage) return
+    setIsFetchingMore(true)
+    try {
+      await fetchMore({
+        variables: {
+          filters: {
+            page: currentPage + 1,
+            pageSize: PAGE_SIZE,
+          },
+        },
+        updateQuery: (previousData, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return previousData
+          return {
+            ...fetchMoreResult,
+            findNotifications: {
+              ...fetchMoreResult.findNotifications,
+              content: [
+                ...(previousData?.findNotifications?.content ?? []),
+                ...fetchMoreResult.findNotifications.content,
+              ],
+            },
+          }
+        },
+      })
+    } catch (error) {
+      console.error('Error loading more notifications:', error)
+    } finally {
+      setIsFetchingMore(false)
     }
   }
 
@@ -69,7 +124,9 @@ export const Notifications = () => {
             </Button>
           </DropdownTrigger>
           <DropdownMenu
-            items={notifications}
+            items={items}
+            data-lenis-prevent
+            disabledKeys={[isFetchingMore ? LOAD_MORE_ID : '']}
             variant='flat'
             aria-label='Notificaciones del sistema'
             closeOnSelect={false}
@@ -82,7 +139,24 @@ export const Notifications = () => {
               description: 'text-tiny text-default-400 whitespace-normal',
             }}
           >
-            {(notification) => {
+            {(item) => {
+              if (item.id === LOAD_MORE_ID) {
+                return (
+                  <DropdownItem
+                    key={LOAD_MORE_ID}
+                    onPress={handleLoadMore}
+                    textValue='Cargar más notificaciones'
+                    className='text-center'
+                  >
+                    <div className='flex items-center justify-center gap-2 text-small text-primary font-medium'>
+                      {isFetchingMore ? <Spinner size='sm' /> : 'Cargar más'}
+                    </div>
+                  </DropdownItem>
+                )
+              }
+
+              const notification = item as Notification
+
               return (
                 <DropdownItem key={notification.id} textValue={notification.title}>
                   <div className='flex gap-3 items-start w-full'>

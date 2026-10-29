@@ -5,6 +5,7 @@ import { RootState } from '@/store'
 import { companyInfo } from '@/constants'
 import { ChevronLeft } from 'lucide-react'
 import { useSelector } from 'react-redux'
+import { Notifications } from '@/components/Notifications'
 import { NavbarUserOptions } from '@/components/UserOptions'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -97,7 +98,10 @@ export const UserNavbar = () => {
             {user.isLoading ? (
               <div className='h-9 w-[215px] rounded-sm animate-pulse' />
             ) : user.data ? (
-              <NavbarUserOptions />
+              <div className='flex items-center gap-6'>
+                <Notifications />
+                <NavbarUserOptions />
+              </div>
             ) : (
               <div className='flex items-center gap-2 h-9 w-[215px] justify-end whitespace-nowrap'>
                 <Link to='/login' className='inline-block'>

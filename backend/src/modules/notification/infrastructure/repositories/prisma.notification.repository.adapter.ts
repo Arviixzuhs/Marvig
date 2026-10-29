@@ -1,3 +1,4 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from 'generated/prisma/client'
 import { NotificationMapper } from '@/modules/notification/infrastructure/mapper/notification.mapper'
@@ -13,12 +14,11 @@ export class PrismaNotificationRepositoryAdapter implements NotificationReposito
 
   private readonly notificationMapper = new NotificationMapper()
 
-  async findNotifications(filters: NotificationFilterDto, userId?: number) {
+  async findNotifications(filters: NotificationFilterDto, userId: number, role: UserRole) {
     const query = new NotificationSpecificationBuilder()
       .withType(filters.type)
       .withStatus(filters.status)
-      .withUserId(userId)
-      .withUserTargetRole(filters.userTargetRole)
+      .withVisibleTo(userId, role)
       .withDateBetween(filters.fromDate, filters.toDate)
       .withPagination(filters.page, filters.pageSize, filters.isUnpaged)
       .withOrderBy({ createdAt: 'desc' })
@@ -26,14 +26,12 @@ export class PrismaNotificationRepositoryAdapter implements NotificationReposito
 
     const [notifications, notificationsCount] = await this.prisma.$transaction([
       this.prisma.notification.findMany(query),
-      this.prisma.notification.count({
-        where: query.where,
-      }),
+      this.prisma.notification.count({ where: query.where }),
     ])
 
     return {
       content: this.notificationMapper.modelsToDomain(notifications),
-      totalPages: Math.ceil(notificationsCount / query.take),
+      totalPages: query.take ? Math.ceil(notificationsCount / query.take) : 1,
       totalItems: notificationsCount,
       currentPage: filters.page,
       rowsPerPage: query.take,
@@ -56,26 +54,22 @@ export class PrismaNotificationRepositoryAdapter implements NotificationReposito
     return this.notificationMapper.modelToDomain(createdNotification)
   }
 
-  async markNotificationsAsRead(userId: number): Promise<void> {
+  async markNotificationsAsRead(userId: number, role: UserRole): Promise<void> {
     await this.prisma.notification.updateMany({
       where: {
-        userId,
         status: NotificationStatus.UNREAD,
+        OR: [{ userId }, { userId: null, userTargetRole: role }],
       },
-      data: {
-        status: NotificationStatus.READ,
-      },
+      data: { status: NotificationStatus.READ },
     })
   }
 
-  async getUnreadNotificationsCount(userId?: number): Promise<number> {
-    const count = await this.prisma.notification.count({
+  async getUnreadNotificationsCount(userId: number, role: UserRole): Promise<number> {
+    return this.prisma.notification.count({
       where: {
-        userId,
         status: NotificationStatus.UNREAD,
+        OR: [{ userId }, { userId: null, userTargetRole: role }],
       },
     })
-
-    return count
   }
 }
