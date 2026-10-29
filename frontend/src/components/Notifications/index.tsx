@@ -29,7 +29,8 @@ interface NotificationsFeedData {
   getUnreadNotificationsCount: number
 }
 
-type FeedItem = Notification | { id: typeof LOAD_MORE_ID }
+type LoadMoreItem = { id: typeof LOAD_MORE_ID; isLoading: boolean }
+type FeedItem = Notification | LoadMoreItem
 
 const EmptyNotifications = () => (
   <div className='flex flex-col items-center justify-center py-8 gap-3 text-default-400'>
@@ -60,13 +61,17 @@ export const Notifications = () => {
 
   const unreadCount = data?.getUnreadNotificationsCount ?? 0
   const notifications = data?.findNotifications?.content ?? []
-  const currentPage = data?.findNotifications?.currentPage ?? 1
-  const totalPages = data?.findNotifications?.totalPages ?? 1
-  const hasNextPage = currentPage < totalPages
+
+  const currentPage = data?.findNotifications?.currentPage ?? 0
+  const totalPages = data?.findNotifications?.totalPages ?? 0
+  const hasNextPage = currentPage + 1 < totalPages
 
   const items = React.useMemo<FeedItem[]>(
-    () => (hasNextPage ? [...notifications, { id: LOAD_MORE_ID }] : notifications),
-    [notifications, hasNextPage],
+    () =>
+      hasNextPage
+        ? [...notifications, { id: LOAD_MORE_ID, isLoading: isFetchingMore }]
+        : notifications,
+    [notifications, hasNextPage, isFetchingMore],
   )
 
   const handleOpenChange = (open: boolean) => {
@@ -126,7 +131,7 @@ export const Notifications = () => {
           <DropdownMenu
             items={items}
             data-lenis-prevent
-            disabledKeys={[isFetchingMore ? LOAD_MORE_ID : '']}
+            disabledKeys={isFetchingMore ? [LOAD_MORE_ID] : []}
             variant='flat'
             aria-label='Notificaciones del sistema'
             closeOnSelect={false}
@@ -141,6 +146,8 @@ export const Notifications = () => {
           >
             {(item) => {
               if (item.id === LOAD_MORE_ID) {
+                const { isLoading } = item as LoadMoreItem
+
                 return (
                   <DropdownItem
                     key={LOAD_MORE_ID}
@@ -149,7 +156,7 @@ export const Notifications = () => {
                     className='text-center'
                   >
                     <div className='flex items-center justify-center gap-2 text-small text-primary font-medium'>
-                      {isFetchingMore ? <Spinner size='sm' /> : 'Cargar más'}
+                      {isLoading ? <Spinner size='sm' /> : 'Cargar más'}
                     </div>
                   </DropdownItem>
                 )
