@@ -32,9 +32,7 @@ export class FindReservationsUseCase {
     const isAdmin = user.role === UserRole.ADMIN
 
     if (!isAdmin && filters.userId !== undefined && filters.userId !== user.userId) {
-      throw new ForbiddenException(
-        `Acceso denegado. Se requiere el rol ${UserRole.ADMIN}.`,
-      )
+      throw new ForbiddenException(`Acceso denegado. Se requiere el rol ${UserRole.ADMIN}.`)
     }
 
     const canQueryOthers = isAdmin && !mine
