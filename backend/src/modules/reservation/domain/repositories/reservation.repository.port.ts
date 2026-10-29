@@ -19,6 +19,11 @@ export interface ReservationRepositoryPort {
     apartmentIds: number[],
     reserveIdToExclude?: number,
   ): Promise<ReservationModel[]>
+
+  /**
+   * @throws ApartmentNotAvailableError si algún apartamento ya está reservado en el rango.
+   * @throws ConcurrentReservationError si no se pudo completar por contención concurrente.
+   */
   createReservationWithRelations(
     input: CreateReservationTransactionInput,
   ): Promise<ReservationModel>

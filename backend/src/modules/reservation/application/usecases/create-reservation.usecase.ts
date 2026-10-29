@@ -10,6 +10,8 @@ import { SeasonRepositoryPort } from '@/modules/season/domain/repositories/seaso
 import { ApartmentRepositoryPort } from '@/modules/apartment/domain/repositories/apartment.repository.port'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { getReservationEmailContent } from '@/common/utils/get-reservation-email-template.util'
+import { ApartmentNotAvailableError } from '@/common/errors/apartment-not-available.error'
+import { ConcurrentReservationError } from '@/common/errors/concurrent-reservation.error'
 import { calcTotalByApartmentsAndDates } from '@/common/utils/calc-total-by-apartments.util'
 import {
   Inject,
@@ -58,18 +60,6 @@ export class CreateReservationUseCase {
       throw new ConflictException('Uno o más apartamentos están en mantenimiento.')
     }
 
-    const isAvailable = await this.reservationRepository.checkAvailability(
-      data.apartmentIds,
-      startDate,
-      endDate,
-    )
-
-    if (!isAvailable) {
-      throw new ConflictException(
-        'Uno o más apartamentos ya se encuentran reservados en ese rango de fechas.',
-      )
-    }
-
     const seasons = await this.seasonRepository.findOverlappingSeasons({
       endDate,
       startDate,
@@ -92,23 +82,40 @@ export class CreateReservationUseCase {
     const isAdmin = user.role === UserRole.ADMIN
     const paymentStatus = isAdmin ? PaymentStatus.CONFIRMED : PaymentStatus.PENDING
 
-    const createdReservation = await this.reservationRepository.createReservationWithRelations({
-      userId,
-      userRole: user.role,
-      reservation: {
-        ...data,
-        status: isAdmin ? data.status : ReservationStatus.PENDING,
-        totalPrice: finalTotal,
-      },
-      payment: {
-        date: new Date(),
-        amount: finalTotal,
-        status: paymentStatus,
-        method: data.payment.method,
-        reference: data.payment.reference,
-        description: data.payment.description,
-      },
-    })
+    let createdReservation: ReservationModel
+    try {
+      createdReservation = await this.reservationRepository.createReservationWithRelations({
+        userId,
+        userRole: user.role,
+        reservation: {
+          ...data,
+          status: isAdmin ? data.status : ReservationStatus.PENDING,
+          totalPrice: finalTotal,
+        },
+        payment: {
+          date: new Date(),
+          amount: finalTotal,
+          status: paymentStatus,
+          method: data.payment.method,
+          reference: data.payment.reference,
+          description: data.payment.description,
+        },
+      })
+    } catch (error) {
+      if (error instanceof ApartmentNotAvailableError) {
+        throw new ConflictException(
+          'Uno o más apartamentos ya se encuentran reservados en ese rango de fechas.',
+        )
+      }
+
+      if (error instanceof ConcurrentReservationError) {
+        throw new ConflictException(
+          'Otra reserva se estaba procesando al mismo tiempo. Intenta de nuevo.',
+        )
+      }
+
+      throw error
+    }
 
     const recipientEmail = data.clientEmail || user.email
     const recipientName = data.clientName || user.name || 'Cliente'
