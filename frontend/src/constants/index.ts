@@ -8,7 +8,7 @@ const COMPANY_PHONE = '+58 4126229592'
 
 export const companyInfo = {
   company: COMPANY_NAME,
-  address: 'Transversal 3, numero 8, San Lorenzo, municipio Manerio',
+  address: 'Transversal 3, número 8, San Lorenzo, municipio Manerio',
   contact: {
     phone: COMPANY_PHONE,
     mail: 'posada.marvig@gmail.com',
