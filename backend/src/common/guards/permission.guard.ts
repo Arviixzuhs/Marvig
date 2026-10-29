@@ -34,9 +34,7 @@ export class PermissionGuard implements CanActivate {
     })
 
     if (!user || user.role !== requiredRole) {
-      throw new ForbiddenException(
-        `Acceso denegado. Se requiere el rol ${requiredRole}.`,
-      )
+      throw new ForbiddenException(`Acceso denegado. Se requiere el rol ${requiredRole}.`)
     }
 
     return true
