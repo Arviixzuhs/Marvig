@@ -210,7 +210,7 @@ export const getEmailTemplate = (title: string, subtitle: string, content: strin
     <div class="footer">
       <div class="company">Posada Marvig</div>
       <div class="contact">
-        📧 <a href="mailto:contacto@posadamarvig.com">contacto@posadamarvig.com</a> &nbsp;|&nbsp; 
+        📧 <a href="mailto:posada.marvig@gmail.com">posada.marvig@gmail.com</a> &nbsp;|&nbsp; 
         🌐 <a href="https://posadamarvig.com" target="_blank">posadamarvig.com</a><br>
         📞 +58 412-6229592
       </div>
