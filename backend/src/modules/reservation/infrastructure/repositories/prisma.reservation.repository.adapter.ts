@@ -1,14 +1,19 @@
+import { UserRole } from '@/common/enums/user-role.enum'
 import { Injectable } from '@nestjs/common'
-import { PrismaClient } from 'generated/prisma/client'
+import { formatCurrency } from '@/common/utils/format-currency.util'
 import { ReservationDto } from '@/modules/reservation/application/dto/reservation.dto'
+import { NotificationType } from '@/modules/notification/domain/enums/notification-type.enum'
 import { ReservationModel } from '@/modules/reservation/domain/models/reservation.model'
 import { ReservationMapper } from '@/modules/reservation/infrastructure/mappers/reservation.mapper'
 import { ReservationStatus } from '@/modules/reservation/domain/enums/reservation-status.enum'
+import { NotificationStatus } from '@/modules/notification/domain/enums/notification-status.enum'
 import { ReservationPageDto } from '@/modules/reservation/application/dto/reservation-page.dto'
 import { ReservationFilterDto } from '@/modules/reservation/application/dto/reservation-filter.dto'
 import { CreateReservationDto } from '@/modules/reservation/application/dto/create-reservation.dto'
+import { Prisma, PrismaClient } from 'generated/prisma/client'
 import { ReservationRepositoryPort } from '@/modules/reservation/domain/repositories/reservation.repository.port'
 import { ReservationSpecificationBuilder } from './prisma.reservation.specificationBuilder'
+import { CreateReservationTransactionInput } from '@/modules/reservation/application/dto/create-reservation-transaction.dto'
 
 @Injectable()
 export class PrismaReservationRepositoryAdapter implements ReservationRepositoryPort {
@@ -54,6 +59,88 @@ export class PrismaReservationRepositoryAdapter implements ReservationRepository
       currentPage: filters.page,
       rowsPerPage: query.take,
     }
+  }
+
+  async createReservationWithRelations(
+    input: CreateReservationTransactionInput,
+  ): Promise<ReservationModel> {
+    const { reservation: data, userId, userRole, payment } = input
+
+    const created = await this.prisma.$transaction(
+      async (tx) => {
+        const reservation = await tx.reservation.create({
+          data: {
+            type: data.type,
+            status: data.status,
+            persons: data.persons,
+            endDate: data.endDate,
+            startDate: data.startDate,
+            totalPrice: data.totalPrice,
+            clientName: data.clientName,
+            clientEmail: data.clientEmail,
+            clientPhone: data.clientPhone,
+            user: { connect: { id: userId } },
+            apartments: { connect: data.apartmentIds.map((id) => ({ id })) },
+          },
+          include: {
+            apartments: { include: { promotion: true } },
+            user: true,
+          },
+        })
+
+        await tx.payment.create({
+          data: {
+            date: payment.date,
+            amount: payment.amount,
+            status: payment.status,
+            method: payment.method,
+            reference: payment.reference,
+            description: payment.description,
+            reservationId: reservation.id,
+          },
+        })
+
+        if (userRole !== UserRole.ADMIN) {
+          const clientLabel = reservation.clientName || reservation.user?.name || 'Un cliente'
+          const amount = formatCurrency(payment.amount)
+          const payload = { reservationId: reservation.id }
+
+          await tx.notification.createMany({
+            data: [
+              {
+                title: 'Nueva reserva por verificar',
+                body:
+                  `${clientLabel} registró la reserva #${reservation.id} y reportó un pago de ${amount} ` +
+                  `(Ref: ${payment.reference}). Verifica el pago para confirmar la reserva.`,
+                type: NotificationType.PAYMENT_ACTIVITY,
+                status: NotificationStatus.UNREAD,
+                userTargetRole: UserRole.ADMIN,
+                payload,
+              },
+              {
+                title: 'Reserva en proceso de confirmación',
+                body:
+                  `Recibimos tu reserva #${reservation.id} y tu reporte de pago por ${amount} ` +
+                  `(Ref: ${payment.reference}). Estamos verificándolo y te avisaremos cuando quede confirmada.`,
+                type: NotificationType.PAYMENT_ACTIVITY,
+                status: NotificationStatus.UNREAD,
+                userId,
+                payload,
+              },
+            ],
+          })
+        }
+
+        return reservation
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        maxWait: 5000,
+        timeout: 10000,
+      },
+    )
+
+    return this.reservationMapper.modelToDomain(created)
   }
 
   async findAvailableReservations(apartmentIds: number[], reserveIdToExclude?: number) {

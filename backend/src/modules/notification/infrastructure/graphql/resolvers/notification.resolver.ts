@@ -21,17 +21,17 @@ export class NotificationResolver {
     @CurrentUser() user: User,
     @Args('filters') filters: NotificationFilterInput,
   ): Promise<NotificationPageType> {
-    return this.findNotificationsUseCase.execute(filters, user.userId)
+    return this.findNotificationsUseCase.execute(filters, user.userId, user.role)
   }
 
   @Query(() => Number)
   getUnreadNotificationsCount(@CurrentUser() user: User): Promise<number> {
-    return this.getUnreadNotificationsCountUseCase.execute(user.userId)
+    return this.getUnreadNotificationsCountUseCase.execute(user.userId, user.role)
   }
 
   @Mutation(() => String)
   async markNotificationsAsRead(@CurrentUser() user: User): Promise<String> {
-    await this.markNotificationsAsReadUseCase.execute(user.userId)
+    await this.markNotificationsAsReadUseCase.execute(user.userId, user.role)
     return 'Notificaciones leidas correctamente'
   }
 }

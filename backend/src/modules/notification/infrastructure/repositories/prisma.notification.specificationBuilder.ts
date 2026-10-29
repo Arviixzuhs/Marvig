@@ -15,6 +15,11 @@ export class NotificationSpecificationBuilder extends PaginateSpecificationBuild
   private where: Prisma.NotificationWhereInput = {}
   private orderBy?: Prisma.NotificationOrderByWithRelationInput
 
+  withVisibleTo(userId: number, role: UserRole) {
+    this.where.OR = [{ userId }, { userId: null, userTargetRole: role }]
+    return this
+  }
+
   withType(type: NotificationType) {
     if (type) {
       this.where.type = type
@@ -25,13 +30,6 @@ export class NotificationSpecificationBuilder extends PaginateSpecificationBuild
   withStatus(status: NotificationStatus) {
     if (status) {
       this.where.status = status
-    }
-    return this
-  }
-
-  withUserTargetRole(userTargetRole: UserRole) {
-    if (userTargetRole) {
-      this.where.userTargetRole = userTargetRole
     }
     return this
   }
