@@ -2,6 +2,7 @@ import { userService } from '@/services/user'
 import { PromotionType } from '@/models/PromotionModel'
 import { expenseService } from '@/services/exepense'
 import { paymentService } from '@/services/payment'
+import { getFileContent } from '@/utils/getFileContent'
 import { ExpenseCategory } from '@/models/ExpenseModel'
 import { ApartmentStatus } from '@/models/ApartmentModel'
 import { employeeService } from '@/services/employee'
@@ -20,6 +21,39 @@ const todayTool = defineTool({
   },
   execute() {
     return new Date()
+  },
+})
+
+const servicesTool = defineTool({
+  schema: {
+    name: 'get_services',
+    description:
+      'Returns the general services offered by Posada Marvig (water supply, Wi-Fi, parking, barbecue area, location). Use it for questions about the posada amenities in general. Does not include unit-specific amenities, prices or availability.',
+  },
+  async execute() {
+    return getFileContent('skills/prompts/marvig', 'SERVICES.SKILL.md')
+  },
+})
+
+const faqTool = defineTool({
+  schema: {
+    name: 'get_faq',
+    description:
+      'Returns the official policies and frequently asked questions of Posada Marvig: check-in/check-out times, cancellation policy, accepted payment methods, water and electricity backup, and pets. Use it for general questions about how a stay works or the posada rules.',
+  },
+  async execute() {
+    return getFileContent('skills/prompts/marvig', 'FAQ.SKILL.md')
+  },
+})
+
+const contactTool = defineTool({
+  schema: {
+    name: 'get_contact_info',
+    description:
+      'Returns the official contact channels of Posada Marvig (phone/WhatsApp, email, Instagram), its business hours and street address. Use it when the user asks how to contact the posada, its phone number, email, social media, business hours or where it is located.',
+  },
+  async execute() {
+    return getFileContent('skills/prompts/marvig', 'CONTACT.SKILL.md')
   },
 })
 
@@ -596,7 +630,10 @@ const listUsersTool = defineTool({
 })
 
 export const tools = [
+  faqTool,
   todayTool,
+  contactTool,
+  servicesTool,
   listUsersTool,
   userContextTool,
   listPaymentsTool,

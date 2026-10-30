@@ -242,10 +242,10 @@ export class MarvigAIService {
     return response.choices[0]?.message?.content ?? ''
   }
 
-  private basePrompt?: string
+  private readonly promptCache = new Map<UserRole, string>()
 
   private async buildSystemInstruction(summary: string, userRole: UserRole): Promise<string> {
-    this.basePrompt ??= await getFileContent('skills/prompts/marvig', 'SKILL.md')
+    const basePrompt = await this.getBasePrompt(userRole)
 
     const today = new Intl.DateTimeFormat('es-VE', {
       dateStyle: 'full',
@@ -259,7 +259,19 @@ export class MarvigAIService {
       ? `<resumen_conversacion_previa>\n${cleanSummary}\n</resumen_conversacion_previa>`
       : ''
 
-    return [this.basePrompt, sessionBlock, summaryBlock].filter(Boolean).join('\n\n')
+    return [basePrompt, sessionBlock, summaryBlock].filter(Boolean).join('\n\n')
+  }
+
+  private async getBasePrompt(userRole: UserRole): Promise<string> {
+    const role = userRole === UserRole.ADMIN ? UserRole.ADMIN : UserRole.USER
+
+    let prompt = this.promptCache.get(role)
+    if (!prompt) {
+      const file = role === UserRole.ADMIN ? 'ADMIN_ASSIST.SKILL.md' : 'USER_ASSIST.SKILL.md'
+      prompt = await getFileContent('skills/prompts/marvig', file)
+      this.promptCache.set(role, prompt)
+    }
+    return prompt
   }
 
   private sanitize(text: string): string {
