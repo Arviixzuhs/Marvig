@@ -51,9 +51,8 @@ const RecoverPasswordCode = () => {
             <div className='text-center'>
               <p>
                 Enviamos un
-                <span className='text-blue-500'> pin a su email</span> y
-                <span className='text-blue-500'> número de celular</span> Por favor ingrese el pin
-                de verificación a continuación:
+                <span className='text-blue-500'> pin a su email</span>, por favor ingrese el pin de
+                verificación a continuación:
               </p>
             </div>
           }
